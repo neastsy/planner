@@ -137,4 +137,15 @@ class AppLocalizationsZh extends AppLocalizations {
   String targetDayNotEmptyContent(String dayName) {
     return '日期 \'$dayName\' 已有活动。您确定要添加新活动吗？';
   }
+
+  @override
+  String get deleteAll => '全部删除';
+
+  @override
+  String get deleteAllActivitiesTitle => '删除所有活动';
+
+  @override
+  String deleteAllActivitiesContent(String dayName) {
+    return '您确定要删除 $dayName 的所有活动吗？';
+  }
 }

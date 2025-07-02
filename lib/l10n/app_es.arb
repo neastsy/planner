@@ -59,5 +59,17 @@
         "example": "Martes"
       }
     }
+  },
+    "deleteAll": "Eliminar todo",
+  "deleteAllActivitiesTitle": "Eliminar todas las actividades",
+  "deleteAllActivitiesContent": "¿Está seguro de que desea eliminar todas las actividades para el {dayName}?",
+  "@deleteAllActivitiesContent": {
+    "description": "Diálogo de confirmación para eliminar todas las actividades de un día específico.",
+    "placeholders": {
+      "dayName": {
+        "type": "String",
+        "example": "Lunes"
+      }
+    }
   }
 }

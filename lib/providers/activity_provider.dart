@@ -117,5 +117,12 @@ class ActivityProvider with ChangeNotifier {
     notifyListeners();
   }
 
+  void clearAllActivitiesForDay(String dayKey) {
+    _dailyActivities[dayKey] = [];
+
+    _saveActivities();
+    notifyListeners();
+  }
+
   int _timeOfDayToMinutes(TimeOfDay time) => time.hour * 60 + time.minute;
 }

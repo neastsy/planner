@@ -59,5 +59,17 @@
         "example": "火曜日"
       }
     }
+  },
+    "deleteAll": "すべて削除",
+  "deleteAllActivitiesTitle": "すべてのアクティビティを削除",
+  "deleteAllActivitiesContent": "{dayName}のすべてのアクティビティを削除してもよろしいですか？",
+  "@deleteAllActivitiesContent": {
+    "description": "特定の曜日のすべてのアクティビティを削除するための確認ダイアログ。",
+    "placeholders": {
+      "dayName": {
+        "type": "String",
+        "example": "月曜日"
+      }
+    }
   }
 }

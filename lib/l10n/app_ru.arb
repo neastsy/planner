@@ -59,5 +59,17 @@
         "example": "Вторник"
       }
     }
+  },
+    "deleteAll": "Удалить все",
+  "deleteAllActivitiesTitle": "Удалить все занятия",
+  "deleteAllActivitiesContent": "Вы уверены, что хотите удалить все занятия для {dayName}?",
+  "@deleteAllActivitiesContent": {
+    "description": "Диалоговое окно подтверждения для удаления всех занятий определенного дня.",
+    "placeholders": {
+      "dayName": {
+        "type": "String",
+        "example": "Понедельник"
+      }
+    }
   }
 }

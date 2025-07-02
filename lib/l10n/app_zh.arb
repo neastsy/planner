@@ -59,5 +59,17 @@
         "example": "星期二"
       }
     }
+  },
+    "deleteAll": "全部删除",
+  "deleteAllActivitiesTitle": "删除所有活动",
+  "deleteAllActivitiesContent": "您确定要删除 {dayName} 的所有活动吗？",
+  "@deleteAllActivitiesContent": {
+    "description": "用于删除特定一天所有活动的确认对话框。",
+    "placeholders": {
+      "dayName": {
+        "type": "String",
+        "example": "星期一"
+      }
+    }
   }
 }

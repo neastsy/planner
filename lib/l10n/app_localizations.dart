@@ -363,6 +363,24 @@ abstract class AppLocalizations {
   /// In tr, this message translates to:
   /// **'\'{dayName}\' gününde zaten aktiviteler mevcut. Yeni aktiviteleri yine de eklemek istediğinize emin misiniz?'**
   String targetDayNotEmptyContent(String dayName);
+
+  /// No description provided for @deleteAll.
+  ///
+  /// In tr, this message translates to:
+  /// **'Tümünü Sil'**
+  String get deleteAll;
+
+  /// No description provided for @deleteAllActivitiesTitle.
+  ///
+  /// In tr, this message translates to:
+  /// **'Tüm Aktiviteleri Sil'**
+  String get deleteAllActivitiesTitle;
+
+  /// Belirli bir günün tüm aktivitelerini silmek için onay diyaloğu.
+  ///
+  /// In tr, this message translates to:
+  /// **'{dayName} gününe ait tüm aktiviteleri silmek istediğinize emin misiniz?'**
+  String deleteAllActivitiesContent(String dayName);
 }
 
 class _AppLocalizationsDelegate

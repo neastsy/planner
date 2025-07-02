@@ -139,4 +139,15 @@ class AppLocalizationsTr extends AppLocalizations {
   String targetDayNotEmptyContent(String dayName) {
     return '\'$dayName\' gününde zaten aktiviteler mevcut. Yeni aktiviteleri yine de eklemek istediğinize emin misiniz?';
   }
+
+  @override
+  String get deleteAll => 'Tümünü Sil';
+
+  @override
+  String get deleteAllActivitiesTitle => 'Tüm Aktiviteleri Sil';
+
+  @override
+  String deleteAllActivitiesContent(String dayName) {
+    return '$dayName gününe ait tüm aktiviteleri silmek istediğinize emin misiniz?';
+  }
 }

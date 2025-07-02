@@ -139,4 +139,15 @@ class AppLocalizationsAr extends AppLocalizations {
   String targetDayNotEmptyContent(String dayName) {
     return 'يوم \'$dayName\' يحتوي بالفعل على أنشطة. هل أنت متأكد من أنك تريد إضافة الأنشطة الجديدة؟';
   }
+
+  @override
+  String get deleteAll => 'حذف الكل';
+
+  @override
+  String get deleteAllActivitiesTitle => 'حذف جميع الأنشطة';
+
+  @override
+  String deleteAllActivitiesContent(String dayName) {
+    return 'هل أنت متأكد من أنك تريد حذف جميع الأنشطة ليوم $dayName؟';
+  }
 }

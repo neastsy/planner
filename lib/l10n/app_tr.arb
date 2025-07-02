@@ -60,5 +60,17 @@
         "example": "Salı"
       }
     }
+  },
+    "deleteAll": "Tümünü Sil",
+  "deleteAllActivitiesTitle": "Tüm Aktiviteleri Sil",
+  "deleteAllActivitiesContent": "{dayName} gününe ait tüm aktiviteleri silmek istediğinize emin misiniz?",
+  "@deleteAllActivitiesContent": {
+    "description": "Belirli bir günün tüm aktivitelerini silmek için onay diyaloğu.",
+    "placeholders": {
+      "dayName": {
+        "type": "String",
+        "example": "Pazartesi"
+      }
+    }
   }
 }

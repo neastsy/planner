@@ -355,6 +355,42 @@ class _PlannerHomePageState extends State<PlannerHomePage> {
     );
   }
 
+  void _showClearAllConfirmationDialog(BuildContext context) {
+    final activityProvider =
+        Provider.of<ActivityProvider>(context, listen: false);
+    final l10n = AppLocalizations.of(context)!;
+
+    // Silinecek günün okunabilir adını alalım.
+    final String dayLabel =
+        _days[hiveKeys.indexOf(activityProvider.selectedDay)];
+
+    showDialog(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: Text(l10n.deleteAllActivitiesTitle), // Yeni dil anahtarı
+        content: Text(
+            l10n.deleteAllActivitiesContent(dayLabel)), // Yeni dil anahtarı
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(ctx).pop(),
+            child: Text(l10n.cancel),
+          ),
+          // Silme butonunu daha belirgin hale getirelim.
+          TextButton(
+            style: TextButton.styleFrom(foregroundColor: Colors.red.shade400),
+            onPressed: () {
+              // Kullanıcı onaylarsa, Provider'daki silme metodunu çağır.
+              activityProvider
+                  .clearAllActivitiesForDay(activityProvider.selectedDay);
+              Navigator.of(ctx).pop();
+            },
+            child: Text(l10n.delete),
+          ),
+        ],
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final activityProvider = Provider.of<ActivityProvider>(context);
@@ -459,12 +495,25 @@ class _PlannerHomePageState extends State<PlannerHomePage> {
               Text(l10n.activityList,
                   style: Theme.of(context).textTheme.headlineSmall),
               if (activityProvider.selectedDayActivities.isNotEmpty)
-                IconButton(
-                  icon: const Icon(Icons.copy_all_outlined),
-                  tooltip: l10n.copyDay,
-                  onPressed: () {
-                    _showCopyDayDialog(context);
-                  },
+                Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    IconButton(
+                      icon: const Icon(Icons.copy_all_outlined),
+                      tooltip: l10n.copyDay,
+                      onPressed: () {
+                        _showCopyDayDialog(context);
+                      },
+                    ),
+                    IconButton(
+                      icon: Icon(Icons.delete_sweep_outlined,
+                          color: Colors.red.shade400),
+                      tooltip: l10n.deleteAll, // Yeni dil anahtarı
+                      onPressed: () {
+                        _showClearAllConfirmationDialog(context);
+                      },
+                    ),
+                  ],
                 ),
             ],
           ),

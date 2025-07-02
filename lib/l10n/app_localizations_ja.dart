@@ -137,4 +137,15 @@ class AppLocalizationsJa extends AppLocalizations {
   String targetDayNotEmptyContent(String dayName) {
     return '曜日 \'$dayName\' にはすでにアクティビティがあります。新しいアクティビティを追加してもよろしいですか？';
   }
+
+  @override
+  String get deleteAll => 'すべて削除';
+
+  @override
+  String get deleteAllActivitiesTitle => 'すべてのアクティビティを削除';
+
+  @override
+  String deleteAllActivitiesContent(String dayName) {
+    return '$dayNameのすべてのアクティビティを削除してもよろしいですか？';
+  }
 }

@@ -59,5 +59,17 @@
         "example": "Dienstag"
       }
     }
+  },
+    "deleteAll": "Alle löschen",
+  "deleteAllActivitiesTitle": "Alle Aktivitäten löschen",
+  "deleteAllActivitiesContent": "Möchten Sie wirklich alle Aktivitäten für {dayName} löschen?",
+  "@deleteAllActivitiesContent": {
+    "description": "Bestätigungsdialog zum Löschen aller Aktivitäten eines bestimmten Tages.",
+    "placeholders": {
+      "dayName": {
+        "type": "String",
+        "example": "Montag"
+      }
+    }
   }
 }

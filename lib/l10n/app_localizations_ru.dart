@@ -140,4 +140,15 @@ class AppLocalizationsRu extends AppLocalizations {
   String targetDayNotEmptyContent(String dayName) {
     return 'В дне \'$dayName\' уже есть занятия. Вы уверены, что хотите добавить новые занятия?';
   }
+
+  @override
+  String get deleteAll => 'Удалить все';
+
+  @override
+  String get deleteAllActivitiesTitle => 'Удалить все занятия';
+
+  @override
+  String deleteAllActivitiesContent(String dayName) {
+    return 'Вы уверены, что хотите удалить все занятия для $dayName?';
+  }
 }

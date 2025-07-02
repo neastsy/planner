@@ -141,4 +141,15 @@ class AppLocalizationsEs extends AppLocalizations {
   String targetDayNotEmptyContent(String dayName) {
     return 'El día \'$dayName\' ya tiene actividades. ¿Está seguro de que desea agregar las nuevas actividades?';
   }
+
+  @override
+  String get deleteAll => 'Eliminar todo';
+
+  @override
+  String get deleteAllActivitiesTitle => 'Eliminar todas las actividades';
+
+  @override
+  String deleteAllActivitiesContent(String dayName) {
+    return '¿Está seguro de que desea eliminar todas las actividades para el $dayName?';
+  }
 }
