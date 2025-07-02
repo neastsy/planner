@@ -131,4 +131,12 @@ class AppLocalizationsTr extends AppLocalizations {
   String copyFromTo(String dayName) {
     return '$dayName günündeki tüm aktiviteleri şuraya kopyala:';
   }
+
+  @override
+  String get targetDayNotEmptyTitle => 'Hedef Gün Boş Değil';
+
+  @override
+  String targetDayNotEmptyContent(String dayName) {
+    return '\'$dayName\' gününde zaten aktiviteler mevcut. Yeni aktiviteleri yine de eklemek istediğinize emin misiniz?';
+  }
 }

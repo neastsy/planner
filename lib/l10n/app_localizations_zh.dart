@@ -129,4 +129,12 @@ class AppLocalizationsZh extends AppLocalizations {
   String copyFromTo(String dayName) {
     return '将 $dayName 的所有活动复制到：';
   }
+
+  @override
+  String get targetDayNotEmptyTitle => '目标日期不为空';
+
+  @override
+  String targetDayNotEmptyContent(String dayName) {
+    return '日期 \'$dayName\' 已有活动。您确定要添加新活动吗？';
+  }
 }

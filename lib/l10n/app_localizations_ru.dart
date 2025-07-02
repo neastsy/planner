@@ -132,4 +132,12 @@ class AppLocalizationsRu extends AppLocalizations {
   String copyFromTo(String dayName) {
     return 'Копировать все занятия с $dayName на:';
   }
+
+  @override
+  String get targetDayNotEmptyTitle => 'Целевой день не пуст';
+
+  @override
+  String targetDayNotEmptyContent(String dayName) {
+    return 'В дне \'$dayName\' уже есть занятия. Вы уверены, что хотите добавить новые занятия?';
+  }
 }

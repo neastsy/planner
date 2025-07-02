@@ -247,6 +247,39 @@ class _PlannerHomePageState extends State<PlannerHomePage> {
     );
   }
 
+  void _showOverwriteConfirmationDialog(BuildContext context,
+      {required String fromDay, required String toDay}) {
+    final activityProvider =
+        Provider.of<ActivityProvider>(context, listen: false);
+    final l10n = AppLocalizations.of(context)!;
+
+    final String targetDayLabel = _days[hiveKeys.indexOf(toDay)];
+
+    showDialog(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: Text(l10n.targetDayNotEmptyTitle),
+        content: Text(l10n.targetDayNotEmptyContent(targetDayLabel)),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(ctx).pop(),
+            child: Text(l10n.cancel),
+          ),
+          TextButton(
+            onPressed: () {
+              activityProvider.forceCopyDayActivities(
+                fromDay: fromDay,
+                toDay: toDay,
+              );
+              Navigator.of(ctx).pop();
+            },
+            child: Text(l10n.copy),
+          ),
+        ],
+      ),
+    );
+  }
+
   void _showCopyDayDialog(BuildContext context) {
     final activityProvider =
         Provider.of<ActivityProvider>(context, listen: false);
@@ -301,11 +334,16 @@ class _PlannerHomePageState extends State<PlannerHomePage> {
                 ),
                 TextButton(
                   onPressed: () {
-                    activityProvider.copyDayActivities(
-                      fromDay: sourceDayKey,
-                      toDay: targetDayKey,
-                    );
                     Navigator.of(dialogContext).pop();
+                    if (activityProvider.isDayEmpty(targetDayKey)) {
+                      activityProvider.forceCopyDayActivities(
+                        fromDay: sourceDayKey,
+                        toDay: targetDayKey,
+                      );
+                    } else {
+                      _showOverwriteConfirmationDialog(context,
+                          fromDay: sourceDayKey, toDay: targetDayKey);
+                    }
                   },
                   child: Text(l10n.copy),
                 ),
@@ -355,7 +393,6 @@ class _PlannerHomePageState extends State<PlannerHomePage> {
                 itemBuilder: (context, index) {
                   final dayLabel = _days[index];
                   final dayKey = hiveKeys[index];
-                  // Seçili günü provider'dan alıyoruz
                   final isSelected = dayKey == activityProvider.selectedDay;
                   return Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 4.0),
@@ -370,7 +407,6 @@ class _PlannerHomePageState extends State<PlannerHomePage> {
                                 : BorderSide(
                                     color: Theme.of(context).dividerColor)),
                       ),
-                      // Günü değiştirmek için provider'daki metodu çağırıyoruz
                       onPressed: () =>
                           Provider.of<ActivityProvider>(context, listen: false)
                               .changeDay(dayKey),

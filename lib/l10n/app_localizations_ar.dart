@@ -131,4 +131,12 @@ class AppLocalizationsAr extends AppLocalizations {
   String copyFromTo(String dayName) {
     return 'نسخ جميع الأنشطة من يوم $dayName إلى:';
   }
+
+  @override
+  String get targetDayNotEmptyTitle => 'اليوم المستهدف ليس فارغًا';
+
+  @override
+  String targetDayNotEmptyContent(String dayName) {
+    return 'يوم \'$dayName\' يحتوي بالفعل على أنشطة. هل أنت متأكد من أنك تريد إضافة الأنشطة الجديدة؟';
+  }
 }

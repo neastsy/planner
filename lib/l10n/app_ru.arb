@@ -48,5 +48,16 @@
         "example": "Понедельник"
       }
     }
+  },
+  "targetDayNotEmptyTitle": "Целевой день не пуст",
+  "targetDayNotEmptyContent": "В дне '{dayName}' уже есть занятия. Вы уверены, что хотите добавить новые занятия?",
+  "@targetDayNotEmptyContent": {
+    "description": "Диалоговое окно подтверждения при копировании занятий в непустой день.",
+    "placeholders": {
+      "dayName": {
+        "type": "String",
+        "example": "Вторник"
+      }
+    }
   }
 }

@@ -49,5 +49,16 @@
         "example": "Monday"
       }
     }
+  },
+  "targetDayNotEmptyTitle": "Target Day Not Empty",
+  "targetDayNotEmptyContent": "The day '{dayName}' already has activities. Are you sure you want to add the new activities?",
+  "@targetDayNotEmptyContent": {
+    "description": "Confirmation dialog when copying activities to a day that is not empty.",
+    "placeholders": {
+      "dayName": {
+        "type": "String",
+        "example": "Tuesday"
+      }
+    }
   }
 }

@@ -48,5 +48,16 @@
         "example": "月曜日"
       }
     }
+  },
+  "targetDayNotEmptyTitle": "ターゲット日が空ではありません",
+  "targetDayNotEmptyContent": "曜日 '{dayName}' にはすでにアクティビティがあります。新しいアクティビティを追加してもよろしいですか？",
+  "@targetDayNotEmptyContent": {
+    "description": "空でない曜日にアクティビティをコピーする際の確認ダイアログ。",
+    "placeholders": {
+      "dayName": {
+        "type": "String",
+        "example": "火曜日"
+      }
+    }
   }
 }

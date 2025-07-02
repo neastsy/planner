@@ -49,5 +49,16 @@
           "example": "Pazartesi"
       }
     }
+  },
+  "targetDayNotEmptyTitle": "Hedef Gün Boş Değil",
+  "targetDayNotEmptyContent": "'{dayName}' gününde zaten aktiviteler mevcut. Yeni aktiviteleri yine de eklemek istediğinize emin misiniz?",
+  "@targetDayNotEmptyContent": {
+    "description": "Boş olmayan bir güne aktivite kopyalarken çıkan onay diyaloğu.",
+    "placeholders": {
+      "dayName": {
+        "type": "String",
+        "example": "Salı"
+      }
+    }
   }
 }

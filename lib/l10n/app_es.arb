@@ -48,5 +48,16 @@
         "example": "Lunes"
       }
     }
+  },
+  "targetDayNotEmptyTitle": "Día de destino no vacío",
+  "targetDayNotEmptyContent": "El día '{dayName}' ya tiene actividades. ¿Está seguro de que desea agregar las nuevas actividades?",
+  "@targetDayNotEmptyContent": {
+    "description": "Diálogo de confirmación al copiar actividades a un día que no está vacío.",
+    "placeholders": {
+      "dayName": {
+        "type": "String",
+        "example": "Martes"
+      }
+    }
   }
 }

@@ -133,4 +133,12 @@ class AppLocalizationsEs extends AppLocalizations {
   String copyFromTo(String dayName) {
     return 'Copiar todas las actividades de $dayName a:';
   }
+
+  @override
+  String get targetDayNotEmptyTitle => 'Día de destino no vacío';
+
+  @override
+  String targetDayNotEmptyContent(String dayName) {
+    return 'El día \'$dayName\' ya tiene actividades. ¿Está seguro de que desea agregar las nuevas actividades?';
+  }
 }

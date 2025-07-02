@@ -351,6 +351,18 @@ abstract class AppLocalizations {
   /// In tr, this message translates to:
   /// **'{dayName} günündeki tüm aktiviteleri şuraya kopyala:'**
   String copyFromTo(String dayName);
+
+  /// No description provided for @targetDayNotEmptyTitle.
+  ///
+  /// In tr, this message translates to:
+  /// **'Hedef Gün Boş Değil'**
+  String get targetDayNotEmptyTitle;
+
+  /// Boş olmayan bir güne aktivite kopyalarken çıkan onay diyaloğu.
+  ///
+  /// In tr, this message translates to:
+  /// **'\'{dayName}\' gününde zaten aktiviteler mevcut. Yeni aktiviteleri yine de eklemek istediğinize emin misiniz?'**
+  String targetDayNotEmptyContent(String dayName);
 }
 
 class _AppLocalizationsDelegate

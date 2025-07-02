@@ -48,5 +48,16 @@
         "example": "الاثنين"
       }
     }
+  },
+  "targetDayNotEmptyTitle": "اليوم المستهدف ليس فارغًا",
+  "targetDayNotEmptyContent": "يوم '{dayName}' يحتوي بالفعل على أنشطة. هل أنت متأكد من أنك تريد إضافة الأنشطة الجديدة؟",
+  "@targetDayNotEmptyContent": {
+    "description": "مربع حوار التأكيد عند نسخ الأنشطة إلى يوم غير فارغ.",
+    "placeholders": {
+      "dayName": {
+        "type": "String",
+        "example": "الثلاثاء"
+      }
+    }
   }
 }

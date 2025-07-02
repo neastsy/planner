@@ -48,5 +48,16 @@
         "example": "Montag"
       }
     }
+  },
+  "targetDayNotEmptyTitle": "Zieltag nicht leer",
+  "targetDayNotEmptyContent": "Der Tag '{dayName}' hat bereits Aktivitäten. Möchten Sie die neuen Aktivitäten trotzdem hinzufügen?",
+  "@targetDayNotEmptyContent": {
+    "description": "Bestätigungsdialog beim Kopieren von Aktivitäten auf einen nicht leeren Tag.",
+    "placeholders": {
+      "dayName": {
+        "type": "String",
+        "example": "Dienstag"
+      }
+    }
   }
 }

@@ -87,15 +87,18 @@ class ActivityProvider with ChangeNotifier {
     });
   }
 
-  void copyDayActivities({required String fromDay, required String toDay}) {
+  bool isDayEmpty(String dayKey) {
+    return _dailyActivities[dayKey]?.isEmpty ?? true;
+  }
+
+  void forceCopyDayActivities(
+      {required String fromDay, required String toDay}) {
     final List<Activity> sourceActivities =
         List.from(_dailyActivities[fromDay] ?? []);
-
-    if (sourceActivities.isEmpty) {
-      return;
-    }
+    if (sourceActivities.isEmpty) return;
     final List<Activity> targetActivities =
         List.from(_dailyActivities[toDay] ?? []);
+
     final List<Activity> copiedActivities = sourceActivities.map((activity) {
       return Activity(
         name: activity.name,
@@ -108,6 +111,7 @@ class ActivityProvider with ChangeNotifier {
 
     targetActivities.addAll(copiedActivities);
     _dailyActivities[toDay] = targetActivities;
+
     _sortAllActivities();
     _saveActivities();
     notifyListeners();

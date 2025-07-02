@@ -129,4 +129,12 @@ class AppLocalizationsJa extends AppLocalizations {
   String copyFromTo(String dayName) {
     return '$dayNameのすべてのアクティビティをコピー先:';
   }
+
+  @override
+  String get targetDayNotEmptyTitle => 'ターゲット日が空ではありません';
+
+  @override
+  String targetDayNotEmptyContent(String dayName) {
+    return '曜日 \'$dayName\' にはすでにアクティビティがあります。新しいアクティビティを追加してもよろしいですか？';
+  }
 }

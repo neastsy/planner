@@ -48,5 +48,16 @@
         "example": "星期一"
       }
     }
+  },
+  "targetDayNotEmptyTitle": "目标日期不为空",
+  "targetDayNotEmptyContent": "日期 '{dayName}' 已有活动。您确定要添加新活动吗？",
+  "@targetDayNotEmptyContent": {
+    "description": "将活动复制到非空日期时的确认对话框。",
+    "placeholders": {
+      "dayName": {
+        "type": "String",
+        "example": "星期二"
+      }
+    }
   }
 }

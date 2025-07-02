@@ -48,5 +48,16 @@
         "example": "Lundi"
       }
     }
+  },
+  "targetDayNotEmptyTitle": "Jour cible non vide",
+  "targetDayNotEmptyContent": "Le jour '{dayName}' a déjà des activités. Êtes-vous sûr de vouloir ajouter les nouvelles activités ?",
+  "@targetDayNotEmptyContent": {
+    "description": "Boîte de dialogue de confirmation lors de la copie d'activités vers un jour non vide.",
+    "placeholders": {
+      "dayName": {
+        "type": "String",
+        "example": "Mardi"
+      }
+    }
   }
 }
