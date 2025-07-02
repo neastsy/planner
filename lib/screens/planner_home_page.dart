@@ -418,6 +418,7 @@ class _PlannerHomePageState extends State<PlannerHomePage> {
         title: Text(l10n.appTitle),
         backgroundColor: Colors.transparent,
         elevation: 0,
+        scrolledUnderElevation: 0.0,
         centerTitle: true,
         actions: [
           IconButton(
