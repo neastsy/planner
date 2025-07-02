@@ -138,6 +138,9 @@ class _PlannerHomePageState extends State<PlannerHomePage> {
         content: Text(l10n.deleteActivityContent),
         actions: <Widget>[
           TextButton(
+              child: Text(l10n.cancel),
+              onPressed: () => Navigator.of(ctx).pop()),
+          TextButton(
             child: Text(l10n.delete,
                 style: const TextStyle(color: Colors.redAccent)),
             onPressed: () {
@@ -146,9 +149,6 @@ class _PlannerHomePageState extends State<PlannerHomePage> {
               Navigator.of(ctx).pop();
             },
           ),
-          TextButton(
-              child: Text(l10n.cancel),
-              onPressed: () => Navigator.of(ctx).pop()),
         ],
       ),
     );
