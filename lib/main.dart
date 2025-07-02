@@ -10,6 +10,9 @@ import 'adepters/time_of_day_adapter.dart';
 import 'l10n/app_localizations.dart';
 import 'models/activity_model.dart';
 import 'screens/planner_home_page.dart';
+import 'package:provider/provider.dart';
+import 'providers/activity_provider.dart';
+import 'repositories/activity_repository.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
