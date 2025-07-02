@@ -9,6 +9,7 @@ import '../widgets/add_activity_sheet.dart';
 import '../widgets/circular_planner_painter.dart';
 import '../models/language_model.dart';
 import '../widgets/theme_switcher.dart';
+import '../repositories/activity_repository.dart';
 
 class PlannerHomePage extends StatefulWidget {
   const PlannerHomePage({super.key});
@@ -18,9 +19,10 @@ class PlannerHomePage extends StatefulWidget {
 }
 
 class _PlannerHomePageState extends State<PlannerHomePage> {
+  late final ActivityRepository _activityRepository;
   late List<String> _days;
   late String _selectedDay;
-  final Map<String, List<Activity>> _dailyActivities = {};
+  Map<String, List<Activity>> _dailyActivities = {};
   Timer? _timer;
   String _currentTime = '...';
   bool _isFirstLoad = true;
@@ -37,18 +39,7 @@ class _PlannerHomePageState extends State<PlannerHomePage> {
   @override
   void initState() {
     super.initState();
-    final List<String> hiveKeys = [
-      'PZT',
-      'SAL',
-      'ÇAR',
-      'PER',
-      'CUM',
-      'CMT',
-      'PAZ'
-    ];
-    for (var day in hiveKeys) {
-      _dailyActivities[day] = [];
-    }
+    _activityRepository = ActivityRepository(Hive.box<Map>('activitiesBox'));
     _loadActivities();
     _updateTime();
     _timer = Timer.periodic(const Duration(seconds: 1), (_) => _updateTime());
@@ -96,30 +87,26 @@ class _PlannerHomePageState extends State<PlannerHomePage> {
   }
 
   void _loadActivities() {
-    final box = Hive.box<Map>('activitiesBox');
-    final dynamic savedData = box.get('daily_activities');
-    if (savedData != null && savedData is Map) {
-      savedData.forEach((key, value) {
-        if (_dailyActivities.containsKey(key) && value is List) {
-          _dailyActivities[key] = value.cast<Activity>().toList();
-        }
+    // <-- DEĞİŞİKLİK
+    final loadedActivities = _activityRepository.loadActivities();
+    loadedActivities.forEach((_, list) {
+      list.sort((a, b) {
+        final startTimeComparison = _timeOfDayToMinutes(a.startTime)
+            .compareTo(_timeOfDayToMinutes(b.startTime));
+        if (startTimeComparison != 0) return startTimeComparison;
+        return _timeOfDayToMinutes(a.endTime)
+            .compareTo(_timeOfDayToMinutes(b.endTime));
       });
-      _dailyActivities.forEach((_, list) {
-        list.sort((a, b) {
-          final startTimeComparison = _timeOfDayToMinutes(a.startTime)
-              .compareTo(_timeOfDayToMinutes(b.startTime));
-          if (startTimeComparison != 0) return startTimeComparison;
-          return _timeOfDayToMinutes(a.endTime)
-              .compareTo(_timeOfDayToMinutes(b.endTime));
-        });
-      });
+    });
 
-      setState(() {});
-    }
+    setState(() {
+      _dailyActivities = loadedActivities;
+    });
   }
 
-  Future<void> _saveActivities() async => await Hive.box<Map>('activitiesBox')
-      .put('daily_activities', _dailyActivities);
+  Future<void> _saveActivities() async {
+    await _activityRepository.saveActivities(_dailyActivities);
+  }
 
   void _updateAndSortDayActivities(List<Activity> updatedList) {
     updatedList.sort((a, b) {
