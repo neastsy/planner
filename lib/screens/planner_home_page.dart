@@ -247,32 +247,27 @@ class _PlannerHomePageState extends State<PlannerHomePage> {
     );
   }
 
-  void _showOverwriteConfirmationDialog(BuildContext context,
-      {required String fromDay, required String toDay}) {
-    final activityProvider =
-        Provider.of<ActivityProvider>(context, listen: false);
+  Future<bool?> _showOverwriteConfirmationDialog(BuildContext context,
+      {required String toDay}) async {
     final l10n = AppLocalizations.of(context)!;
 
     final String targetDayLabel = _days[hiveKeys.indexOf(toDay)];
 
-    showDialog(
+    return showDialog<bool>(
       context: context,
       builder: (ctx) => AlertDialog(
         title: Text(l10n.targetDayNotEmptyTitle),
         content: Text(l10n.targetDayNotEmptyContent(targetDayLabel)),
         actions: [
           TextButton(
-            onPressed: () => Navigator.of(ctx).pop(),
+            // İptal durumunda 'false' döndürerek kapat
+            onPressed: () => Navigator.of(ctx).pop(false),
             child: Text(l10n.cancel),
           ),
           TextButton(
-            onPressed: () {
-              activityProvider.forceCopyDayActivities(
-                fromDay: fromDay,
-                toDay: toDay,
-              );
-              Navigator.of(ctx).pop();
-            },
+            style: TextButton.styleFrom(foregroundColor: Colors.red.shade400),
+            // Onay durumunda 'true' döndürerek kapat
+            onPressed: () => Navigator.of(ctx).pop(true),
             child: Text(l10n.copy),
           ),
         ],
@@ -333,16 +328,29 @@ class _PlannerHomePageState extends State<PlannerHomePage> {
                   child: Text(l10n.cancel),
                 ),
                 TextButton(
-                  onPressed: () {
-                    Navigator.of(dialogContext).pop();
+                  onPressed: () async {
+                    bool? shouldCopy;
                     if (activityProvider.isDayEmpty(targetDayKey)) {
+                      shouldCopy = true;
+                    } else {
+                      // İkinci diyaloğu göster ve sonucunu bekle
+                      shouldCopy = await _showOverwriteConfirmationDialog(
+                          context,
+                          toDay: targetDayKey);
+                    }
+
+                    // Eğer kopyalama işlemi onaylandıysa veya gün zaten boşsa
+                    if (shouldCopy ?? false) {
                       activityProvider.forceCopyDayActivities(
                         fromDay: sourceDayKey,
                         toDay: targetDayKey,
                       );
-                    } else {
-                      _showOverwriteConfirmationDialog(context,
-                          fromDay: sourceDayKey, toDay: targetDayKey);
+                    }
+
+                    // Tüm işlemler bittikten sonra, en sonda ilk diyaloğu kapat.
+                    // context'in hala geçerli olup olmadığını kontrol edelim.
+                    if (dialogContext.mounted) {
+                      Navigator.of(dialogContext).pop();
                     }
                   },
                   child: Text(l10n.copy),
