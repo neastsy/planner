@@ -37,5 +37,17 @@
     "theme": "Tema",
     "lightTheme": "Açık Tema",
     "darkTheme": "Karanlık Tema",
-    "notes": "Notlar (İsteğe Bağlı)"
+    "notes": "Notlar (İsteğe Bağlı)",
+    "copyDay": "Günü Kopyala",
+    "copy": "Kopyala",
+    "copyFromTo": "{dayName} günündeki tüm aktiviteleri şuraya kopyala:",
+     "@copyFromTo": {
+     "description": "Aktiviteleri bir günden diğerine kopyalamak için diyalog metni.",
+        "placeholders": {
+          "dayName": {
+          "type": "String",
+          "example": "Pazartesi"
+      }
+    }
+  }
 }

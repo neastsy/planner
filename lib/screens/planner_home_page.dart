@@ -20,10 +20,18 @@ class PlannerHomePage extends StatefulWidget {
 }
 
 class _PlannerHomePageState extends State<PlannerHomePage> {
+  final List<String> hiveKeys = const [
+    'PZT',
+    'SAL',
+    'ÇAR',
+    'PER',
+    'CUM',
+    'CMT',
+    'PAZ'
+  ];
   Timer? _timer;
   String _currentTime = '...';
   late List<String> _days;
-  bool _isFirstLoad = true;
 
   @override
   void initState() {
@@ -35,19 +43,16 @@ class _PlannerHomePageState extends State<PlannerHomePage> {
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    if (_isFirstLoad) {
-      final l10n = AppLocalizations.of(context)!;
-      _days = [
-        l10n.days_PZT,
-        l10n.days_SAL,
-        l10n.days_CAR,
-        l10n.days_PER,
-        l10n.days_CUM,
-        l10n.days_CMT,
-        l10n.days_PAZ
-      ];
-      _isFirstLoad = false;
-    }
+    final l10n = AppLocalizations.of(context)!;
+    _days = [
+      l10n.days_PZT,
+      l10n.days_SAL,
+      l10n.days_CAR,
+      l10n.days_PER,
+      l10n.days_CUM,
+      l10n.days_CMT,
+      l10n.days_PAZ
+    ];
   }
 
   @override
@@ -242,20 +247,81 @@ class _PlannerHomePageState extends State<PlannerHomePage> {
     );
   }
 
+  void _showCopyDayDialog(BuildContext context) {
+    final activityProvider =
+        Provider.of<ActivityProvider>(context, listen: false);
+    final l10n = AppLocalizations.of(context)!;
+
+    final String sourceDayKey = activityProvider.selectedDay;
+    final String sourceDayLabel = _days[hiveKeys.indexOf(sourceDayKey)];
+
+    final List<String> availableDays = List.from(hiveKeys)
+      ..remove(sourceDayKey);
+    String targetDayKey = availableDays.first;
+
+    showDialog(
+      context: context,
+      builder: (BuildContext dialogContext) {
+        return StatefulBuilder(
+          builder: (context, setDialogState) {
+            return AlertDialog(
+              title: Text(l10n.copyDay),
+              content: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    l10n.copyFromTo(sourceDayLabel),
+                  ),
+                  const SizedBox(height: 20),
+                  DropdownButton<String>(
+                    value: targetDayKey,
+                    isExpanded: true,
+                    items: availableDays.map((dayKey) {
+                      final dayLabel = _days[hiveKeys.indexOf(dayKey)];
+                      return DropdownMenuItem(
+                        value: dayKey,
+                        child: Text(dayLabel),
+                      );
+                    }).toList(),
+                    onChanged: (String? newValue) {
+                      if (newValue != null) {
+                        setDialogState(() {
+                          targetDayKey = newValue;
+                        });
+                      }
+                    },
+                  ),
+                ],
+              ),
+              actions: [
+                TextButton(
+                  onPressed: () => Navigator.of(dialogContext).pop(),
+                  child: Text(l10n.cancel),
+                ),
+                TextButton(
+                  onPressed: () {
+                    activityProvider.copyDayActivities(
+                      fromDay: sourceDayKey,
+                      toDay: targetDayKey,
+                    );
+                    Navigator.of(dialogContext).pop();
+                  },
+                  child: Text(l10n.copy),
+                ),
+              ],
+            );
+          },
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final activityProvider = Provider.of<ActivityProvider>(context);
 
     final l10n = AppLocalizations.of(context)!;
-    final List<String> hiveKeys = [
-      'PZT',
-      'SAL',
-      'ÇAR',
-      'PER',
-      'CUM',
-      'CMT',
-      'PAZ'
-    ];
     final isDarkMode = Theme.of(context).brightness == Brightness.dark;
     final clockColor = isDarkMode
         ? Theme.of(context)
@@ -350,10 +416,21 @@ class _PlannerHomePageState extends State<PlannerHomePage> {
               icon: const Icon(Icons.add),
               label: Text(l10n.addNewActivity)),
           const SizedBox(height: 20),
-          Align(
-            alignment: Alignment.centerLeft,
-            child: Text(l10n.activityList,
-                style: Theme.of(context).textTheme.headlineSmall),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              Text(l10n.activityList,
+                  style: Theme.of(context).textTheme.headlineSmall),
+              if (activityProvider.selectedDayActivities.isNotEmpty)
+                IconButton(
+                  icon: const Icon(Icons.copy_all_outlined),
+                  tooltip: l10n.copyDay,
+                  onPressed: () {
+                    _showCopyDayDialog(context);
+                  },
+                ),
+            ],
           ),
           const SizedBox(height: 10),
           Expanded(

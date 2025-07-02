@@ -36,5 +36,17 @@
   "theme": "Thème",
   "lightTheme": "Thème clair",
   "darkTheme": "Thème sombre",
-  "notes": "Notes (Facultatif)"
+  "notes": "Notes (Facultatif)",
+  "copyDay": "Copier le jour",
+  "copy": "Copier",
+  "copyFromTo": "Copier toutes les activités de {dayName} vers :",
+  "@copyFromTo": {
+    "description": "Texte de dialogue pour copier les activités d'un jour à l'autre.",
+    "placeholders": {
+      "dayName": {
+        "type": "String",
+        "example": "Lundi"
+      }
+    }
+  }
 }

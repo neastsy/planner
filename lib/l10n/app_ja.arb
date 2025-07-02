@@ -36,5 +36,17 @@
   "theme": "テーマ",
   "lightTheme": "ライトテーマ",
   "darkTheme": "ダークテーマ",
-  "notes": "メモ (任意)"
+  "notes": "メモ (任意)",
+  "copyDay": "曜日をコピー" ,
+  "copy": "コピー",
+  "copyFromTo": "{dayName}のすべてのアクティビティをコピー先:",
+  "@copyFromTo": {
+    "description": "ある曜日のアクティビティを別の曜日にコピーするためのダイアログテキスト。",
+    "placeholders": {
+      "dayName": {
+        "type": "String",
+        "example": "月曜日"
+      }
+    }
+  }
 }

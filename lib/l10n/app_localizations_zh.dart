@@ -118,4 +118,15 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get notes => '备注 (可选)';
+
+  @override
+  String get copyDay => '复制日期';
+
+  @override
+  String get copy => '复制';
+
+  @override
+  String copyFromTo(String dayName) {
+    return '将 $dayName 的所有活动复制到：';
+  }
 }

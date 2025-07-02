@@ -118,4 +118,15 @@ class AppLocalizationsJa extends AppLocalizations {
 
   @override
   String get notes => 'メモ (任意)';
+
+  @override
+  String get copyDay => '曜日をコピー';
+
+  @override
+  String get copy => 'コピー';
+
+  @override
+  String copyFromTo(String dayName) {
+    return '$dayNameのすべてのアクティビティをコピー先:';
+  }
 }

@@ -36,5 +36,17 @@
   "theme": "主题",
   "lightTheme": "浅色主题",
   "darkTheme": "深色主题",
-  "notes": "备注 (可选)"
+  "notes": "备注 (可选)",
+  "copyDay": "复制日期"  ,
+  "copy": "复制",
+  "copyFromTo": "将 {dayName} 的所有活动复制到：",
+  "@copyFromTo": {
+    "description": "用于将活动从一天复制到另一天的对话框文本。",
+    "placeholders": {
+      "dayName": {
+        "type": "String",
+        "example": "星期一"
+      }
+    }
+  }
 }

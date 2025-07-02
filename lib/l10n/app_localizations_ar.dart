@@ -120,4 +120,15 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get notes => 'ملاحظات (اختياري)';
+
+  @override
+  String get copyDay => 'نسخ اليوم';
+
+  @override
+  String get copy => 'نسخ';
+
+  @override
+  String copyFromTo(String dayName) {
+    return 'نسخ جميع الأنشطة من يوم $dayName إلى:';
+  }
 }

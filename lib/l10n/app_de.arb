@@ -36,5 +36,17 @@
   "theme": "Thema",
   "lightTheme": "Helles Thema",
   "darkTheme": "Dunkles Thema",
-  "notes": "Notizen (Optional)"
+  "notes": "Notizen (Optional)",
+  "copyDay": "Tag kopieren",
+  "copy": "Kopieren",
+  "copyFromTo": "Alle Aktivitäten von {dayName} kopieren nach:",
+  "@copyFromTo": {
+    "description": "Dialogtext zum Kopieren von Aktivitäten von einem Tag auf einen anderen.",
+    "placeholders": {
+      "dayName": {
+        "type": "String",
+        "example": "Montag"
+      }
+    }
+  }
 }

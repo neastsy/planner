@@ -120,4 +120,15 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get notes => 'Notes (Optional)';
+
+  @override
+  String get copyDay => 'Copy Day';
+
+  @override
+  String get copy => 'Copy';
+
+  @override
+  String copyFromTo(String dayName) {
+    return 'Copy all activities from $dayName to:';
+  }
 }

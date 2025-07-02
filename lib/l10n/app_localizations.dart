@@ -333,6 +333,24 @@ abstract class AppLocalizations {
   /// In tr, this message translates to:
   /// **'Notlar (İsteğe Bağlı)'**
   String get notes;
+
+  /// No description provided for @copyDay.
+  ///
+  /// In tr, this message translates to:
+  /// **'Günü Kopyala'**
+  String get copyDay;
+
+  /// No description provided for @copy.
+  ///
+  /// In tr, this message translates to:
+  /// **'Kopyala'**
+  String get copy;
+
+  /// Aktiviteleri bir günden diğerine kopyalamak için diyalog metni.
+  ///
+  /// In tr, this message translates to:
+  /// **'{dayName} günündeki tüm aktiviteleri şuraya kopyala:'**
+  String copyFromTo(String dayName);
 }
 
 class _AppLocalizationsDelegate

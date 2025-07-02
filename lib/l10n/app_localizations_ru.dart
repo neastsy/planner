@@ -121,4 +121,15 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get notes => 'Заметки (необязательно)';
+
+  @override
+  String get copyDay => 'Копировать день';
+
+  @override
+  String get copy => 'Копировать';
+
+  @override
+  String copyFromTo(String dayName) {
+    return 'Копировать все занятия с $dayName на:';
+  }
 }

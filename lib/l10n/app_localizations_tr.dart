@@ -120,4 +120,15 @@ class AppLocalizationsTr extends AppLocalizations {
 
   @override
   String get notes => 'Notlar (İsteğe Bağlı)';
+
+  @override
+  String get copyDay => 'Günü Kopyala';
+
+  @override
+  String get copy => 'Kopyala';
+
+  @override
+  String copyFromTo(String dayName) {
+    return '$dayName günündeki tüm aktiviteleri şuraya kopyala:';
+  }
 }

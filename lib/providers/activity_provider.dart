@@ -87,5 +87,31 @@ class ActivityProvider with ChangeNotifier {
     });
   }
 
+  void copyDayActivities({required String fromDay, required String toDay}) {
+    final List<Activity> sourceActivities =
+        List.from(_dailyActivities[fromDay] ?? []);
+
+    if (sourceActivities.isEmpty) {
+      return;
+    }
+    final List<Activity> targetActivities =
+        List.from(_dailyActivities[toDay] ?? []);
+    final List<Activity> copiedActivities = sourceActivities.map((activity) {
+      return Activity(
+        name: activity.name,
+        startTime: activity.startTime,
+        endTime: activity.endTime,
+        color: activity.color,
+        note: activity.note,
+      );
+    }).toList();
+
+    targetActivities.addAll(copiedActivities);
+    _dailyActivities[toDay] = targetActivities;
+    _sortAllActivities();
+    _saveActivities();
+    notifyListeners();
+  }
+
   int _timeOfDayToMinutes(TimeOfDay time) => time.hour * 60 + time.minute;
 }

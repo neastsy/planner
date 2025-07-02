@@ -36,5 +36,17 @@
   "theme": "المظهر",
   "lightTheme": "مظهر فاتح",
   "darkTheme": "مظهر داكن",
-  "notes": "ملاحظات (اختياري)"
+  "notes": "ملاحظات (اختياري)",
+  "copyDay": "نسخ اليوم",
+  "copy": "نسخ",
+  "copyFromTo": "نسخ جميع الأنشطة من يوم {dayName} إلى:",
+  "@copyFromTo": {
+    "description": "نص الحوار لنسخ الأنشطة من يوم إلى آخر.",
+    "placeholders": {
+      "dayName": {
+        "type": "String",
+        "example": "الاثنين"
+      }
+    }
+  }
 }
