@@ -260,13 +260,11 @@ class _PlannerHomePageState extends State<PlannerHomePage> {
         content: Text(l10n.targetDayNotEmptyContent(targetDayLabel)),
         actions: [
           TextButton(
-            // İptal durumunda 'false' döndürerek kapat
             onPressed: () => Navigator.of(ctx).pop(false),
             child: Text(l10n.cancel),
           ),
           TextButton(
             style: TextButton.styleFrom(foregroundColor: Colors.red.shade400),
-            // Onay durumunda 'true' döndürerek kapat
             onPressed: () => Navigator.of(ctx).pop(true),
             child: Text(l10n.copy),
           ),
@@ -333,22 +331,16 @@ class _PlannerHomePageState extends State<PlannerHomePage> {
                     if (activityProvider.isDayEmpty(targetDayKey)) {
                       shouldCopy = true;
                     } else {
-                      // İkinci diyaloğu göster ve sonucunu bekle
                       shouldCopy = await _showOverwriteConfirmationDialog(
                           context,
                           toDay: targetDayKey);
                     }
-
-                    // Eğer kopyalama işlemi onaylandıysa veya gün zaten boşsa
                     if (shouldCopy ?? false) {
                       activityProvider.forceCopyDayActivities(
                         fromDay: sourceDayKey,
                         toDay: targetDayKey,
                       );
                     }
-
-                    // Tüm işlemler bittikten sonra, en sonda ilk diyaloğu kapat.
-                    // context'in hala geçerli olup olmadığını kontrol edelim.
                     if (dialogContext.mounted) {
                       Navigator.of(dialogContext).pop();
                     }
@@ -367,27 +359,22 @@ class _PlannerHomePageState extends State<PlannerHomePage> {
     final activityProvider =
         Provider.of<ActivityProvider>(context, listen: false);
     final l10n = AppLocalizations.of(context)!;
-
-    // Silinecek günün okunabilir adını alalım.
     final String dayLabel =
         _days[hiveKeys.indexOf(activityProvider.selectedDay)];
 
     showDialog(
       context: context,
       builder: (ctx) => AlertDialog(
-        title: Text(l10n.deleteAllActivitiesTitle), // Yeni dil anahtarı
-        content: Text(
-            l10n.deleteAllActivitiesContent(dayLabel)), // Yeni dil anahtarı
+        title: Text(l10n.deleteAllActivitiesTitle),
+        content: Text(l10n.deleteAllActivitiesContent(dayLabel)),
         actions: [
           TextButton(
             onPressed: () => Navigator.of(ctx).pop(),
             child: Text(l10n.cancel),
           ),
-          // Silme butonunu daha belirgin hale getirelim.
           TextButton(
             style: TextButton.styleFrom(foregroundColor: Colors.red.shade400),
             onPressed: () {
-              // Kullanıcı onaylarsa, Provider'daki silme metodunu çağır.
               activityProvider
                   .clearAllActivitiesForDay(activityProvider.selectedDay);
               Navigator.of(ctx).pop();
