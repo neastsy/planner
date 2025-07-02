@@ -539,6 +539,7 @@ class _PlannerHomePageState extends State<PlannerHomePage> {
                     ),
                   )
                 : ListView.builder(
+                    key: ValueKey<String>(activityProvider.selectedDay),
                     itemCount: activityProvider.selectedDayActivities.length,
                     itemBuilder: (context, index) {
                       final activity =
