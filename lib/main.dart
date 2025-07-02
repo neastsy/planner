@@ -4,13 +4,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:hive_flutter/hive_flutter.dart';
+import 'package:provider/provider.dart';
 
 import 'adepters/color_adapter.dart';
 import 'adepters/time_of_day_adapter.dart';
 import 'l10n/app_localizations.dart';
 import 'models/activity_model.dart';
 import 'screens/planner_home_page.dart';
-import 'package:provider/provider.dart';
 import 'providers/activity_provider.dart';
 import 'repositories/activity_repository.dart';
 
@@ -24,7 +24,14 @@ Future<void> main() async {
 
   await Hive.openBox<Map>('activitiesBox');
 
-  runApp(const MyApp());
+  runApp(
+    ChangeNotifierProvider(
+      create: (context) => ActivityProvider(
+        ActivityRepository(Hive.box<Map>('activitiesBox')),
+      ),
+      child: const MyApp(),
+    ),
+  );
 }
 
 class MyApp extends StatefulWidget {

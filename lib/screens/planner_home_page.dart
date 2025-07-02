@@ -1,15 +1,16 @@
 import 'dart:async';
-import 'package:flutter/material.dart';
-import 'package:hive_flutter/hive_flutter.dart';
 
+import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+
+import '../l10n/app_localizations.dart';
 import '../main.dart';
 import '../models/activity_model.dart';
-import '../l10n/app_localizations.dart';
+import '../models/language_model.dart';
+import '../providers/activity_provider.dart';
 import '../widgets/add_activity_sheet.dart';
 import '../widgets/circular_planner_painter.dart';
-import '../models/language_model.dart';
 import '../widgets/theme_switcher.dart';
-import '../repositories/activity_repository.dart';
 
 class PlannerHomePage extends StatefulWidget {
   const PlannerHomePage({super.key});
@@ -19,28 +20,14 @@ class PlannerHomePage extends StatefulWidget {
 }
 
 class _PlannerHomePageState extends State<PlannerHomePage> {
-  late final ActivityRepository _activityRepository;
-  late List<String> _days;
-  late String _selectedDay;
-  Map<String, List<Activity>> _dailyActivities = {};
   Timer? _timer;
   String _currentTime = '...';
+  late List<String> _days;
   bool _isFirstLoad = true;
-
-  String _formatTime(TimeOfDay time) {
-    return "${time.hour.toString().padLeft(2, '0')}:${time.minute.toString().padLeft(2, '0')}";
-  }
-
-  int _timeOfDayToMinutes(TimeOfDay time) => time.hour * 60 + time.minute;
-
-  List<Activity> get _selectedDayActivities =>
-      _dailyActivities[_selectedDay] ?? [];
 
   @override
   void initState() {
     super.initState();
-    _activityRepository = ActivityRepository(Hive.box<Map>('activitiesBox'));
-    _loadActivities();
     _updateTime();
     _timer = Timer.periodic(const Duration(seconds: 1), (_) => _updateTime());
   }
@@ -48,27 +35,17 @@ class _PlannerHomePageState extends State<PlannerHomePage> {
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    final l10n = AppLocalizations.of(context)!;
-    _days = [
-      l10n.days_PZT,
-      l10n.days_SAL,
-      l10n.days_CAR,
-      l10n.days_PER,
-      l10n.days_CUM,
-      l10n.days_CMT,
-      l10n.days_PAZ
-    ];
     if (_isFirstLoad) {
-      final List<String> hiveKeys = [
-        'PZT',
-        'SAL',
-        'ÇAR',
-        'PER',
-        'CUM',
-        'CMT',
-        'PAZ'
+      final l10n = AppLocalizations.of(context)!;
+      _days = [
+        l10n.days_PZT,
+        l10n.days_SAL,
+        l10n.days_CAR,
+        l10n.days_PER,
+        l10n.days_CUM,
+        l10n.days_CMT,
+        l10n.days_PAZ
       ];
-      _selectedDay = hiveKeys[DateTime.now().weekday - 1];
       _isFirstLoad = false;
     }
   }
@@ -86,49 +63,19 @@ class _PlannerHomePageState extends State<PlannerHomePage> {
     }
   }
 
-  void _loadActivities() {
-    // <-- DEĞİŞİKLİK
-    final loadedActivities = _activityRepository.loadActivities();
-    loadedActivities.forEach((_, list) {
-      list.sort((a, b) {
-        final startTimeComparison = _timeOfDayToMinutes(a.startTime)
-            .compareTo(_timeOfDayToMinutes(b.startTime));
-        if (startTimeComparison != 0) return startTimeComparison;
-        return _timeOfDayToMinutes(a.endTime)
-            .compareTo(_timeOfDayToMinutes(b.endTime));
-      });
-    });
+  String _formatTime(TimeOfDay time) =>
+      "${time.hour.toString().padLeft(2, '0')}:${time.minute.toString().padLeft(2, '0')}";
 
-    setState(() {
-      _dailyActivities = loadedActivities;
-    });
-  }
+  int _timeOfDayToMinutes(TimeOfDay time) => time.hour * 60 + time.minute;
 
-  Future<void> _saveActivities() async {
-    await _activityRepository.saveActivities(_dailyActivities);
-  }
-
-  void _updateAndSortDayActivities(List<Activity> updatedList) {
-    updatedList.sort((a, b) {
-      final startTimeComparison = _timeOfDayToMinutes(a.startTime)
-          .compareTo(_timeOfDayToMinutes(b.startTime));
-      if (startTimeComparison != 0) return startTimeComparison;
-      return _timeOfDayToMinutes(a.endTime)
-          .compareTo(_timeOfDayToMinutes(b.endTime));
-    });
-    setState(() => _dailyActivities[_selectedDay] = updatedList);
-    _saveActivities();
-  }
-
-  bool _isOverlapping(Activity newActivity, {int? editIndex}) {
+  bool _isOverlapping(Activity newActivity, List<Activity> activities,
+      {int? editIndex}) {
     final newStart = _timeOfDayToMinutes(newActivity.startTime);
     int newEnd = _timeOfDayToMinutes(newActivity.endTime);
     if (newEnd < newStart) newEnd += 24 * 60;
-    for (int i = 0; i < _selectedDayActivities.length; i++) {
-      if (i == editIndex) {
-        continue;
-      }
-      final existingActivity = _selectedDayActivities[i];
+    for (int i = 0; i < activities.length; i++) {
+      if (i == editIndex) continue;
+      final existingActivity = activities[i];
       final existingStart = _timeOfDayToMinutes(existingActivity.startTime);
       int existingEnd = _timeOfDayToMinutes(existingActivity.endTime);
       if (existingEnd < existingStart) existingEnd += 24 * 60;
@@ -137,9 +84,13 @@ class _PlannerHomePageState extends State<PlannerHomePage> {
     return false;
   }
 
-  void _handleActivitySubmission(Activity activity, {int? editIndex}) {
+  void _handleActivitySubmission(BuildContext context, Activity activity,
+      {int? editIndex}) {
+    final activityProvider =
+        Provider.of<ActivityProvider>(context, listen: false);
     final l10n = AppLocalizations.of(context)!;
-    if (_isOverlapping(activity, editIndex: editIndex)) {
+    if (_isOverlapping(activity, activityProvider.selectedDayActivities,
+        editIndex: editIndex)) {
       showDialog(
         context: context,
         builder: (ctx) => AlertDialog(
@@ -152,28 +103,28 @@ class _PlannerHomePageState extends State<PlannerHomePage> {
             TextButton(
                 onPressed: () {
                   Navigator.of(ctx).pop();
-                  _performSave(activity, editIndex: editIndex);
+                  _performSave(context, activity, editIndex: editIndex);
                 },
                 child: Text(l10n.continueAction)),
           ],
         ),
       );
     } else {
-      _performSave(activity, editIndex: editIndex);
+      _performSave(context, activity, editIndex: editIndex);
     }
   }
 
-  void _performSave(Activity activity, {int? editIndex}) {
-    List<Activity> currentActivities = List.from(_selectedDayActivities);
+  void _performSave(BuildContext context, Activity activity, {int? editIndex}) {
+    final activityProvider =
+        Provider.of<ActivityProvider>(context, listen: false);
     if (editIndex != null) {
-      currentActivities[editIndex] = activity;
+      activityProvider.updateActivity(activity, editIndex);
     } else {
-      currentActivities.add(activity);
+      activityProvider.addActivity(activity);
     }
-    _updateAndSortDayActivities(currentActivities);
   }
 
-  void _deleteActivity(Activity activity) {
+  void _deleteActivity(BuildContext context, Activity activity) {
     final l10n = AppLocalizations.of(context)!;
     showDialog(
       context: context,
@@ -185,9 +136,8 @@ class _PlannerHomePageState extends State<PlannerHomePage> {
             child: Text(l10n.delete,
                 style: const TextStyle(color: Colors.redAccent)),
             onPressed: () {
-              _updateAndSortDayActivities(_selectedDayActivities
-                  .where((a) => a.id != activity.id)
-                  .toList());
+              Provider.of<ActivityProvider>(context, listen: false)
+                  .deleteActivity(activity);
               Navigator.of(ctx).pop();
             },
           ),
@@ -199,31 +149,40 @@ class _PlannerHomePageState extends State<PlannerHomePage> {
     );
   }
 
-  void _editActivity(Activity activity) async {
-    final index = _selectedDayActivities.indexWhere((a) => a.id == activity.id);
-    if (index == -1) return;
+  void _editActivity(BuildContext context, Activity activity) async {
     final result = await showModalBottomSheet<Activity>(
         context: context,
         isScrollControlled: true,
         backgroundColor: Colors.transparent,
         builder: (_) => AddActivitySheet(activityToEdit: activity));
-    if (result != null) _handleActivitySubmission(result, editIndex: index);
+
+    if (result != null && context.mounted) {
+      final activityProvider =
+          Provider.of<ActivityProvider>(context, listen: false);
+      final index = activityProvider.selectedDayActivities
+          .indexWhere((a) => a.id == activity.id);
+      if (index != -1) {
+        _handleActivitySubmission(context, result, editIndex: index);
+      }
+    }
   }
 
-  void _addActivity() async {
+  void _addActivity(BuildContext context) async {
     final result = await showModalBottomSheet<Activity>(
         context: context,
         isScrollControlled: true,
         backgroundColor: Colors.transparent,
         builder: (_) => const AddActivitySheet());
-    if (result != null) _handleActivitySubmission(result);
+    if (result != null && context.mounted) {
+      _handleActivitySubmission(context, result);
+    }
   }
 
-  void _showSettingsDialog() {
+  void _showSettingsDialog(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
     showDialog(
       context: context,
-      builder: (BuildContext context) {
+      builder: (BuildContext dialogContext) {
         final currentThemeMode = Theme.of(context).brightness == Brightness.dark
             ? ThemeMode.dark
             : ThemeMode.light;
@@ -233,7 +192,6 @@ class _PlannerHomePageState extends State<PlannerHomePage> {
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // --- TEMA SEÇENEKLERİ ---
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
@@ -249,7 +207,6 @@ class _PlannerHomePageState extends State<PlannerHomePage> {
                 ],
               ),
               const Divider(),
-              // --- DİL SEÇENEKLERİ ---
               Text(l10n.selectLanguage,
                   style: const TextStyle(fontWeight: FontWeight.bold)),
               const SizedBox(height: 8),
@@ -262,22 +219,19 @@ class _PlannerHomePageState extends State<PlannerHomePage> {
                 ),
                 decoration: InputDecoration(
                   border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(12),
-                  ),
+                      borderRadius: BorderRadius.circular(12)),
                   contentPadding:
                       const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                 ),
                 items: Language.languageList()
                     .map<DropdownMenuItem<Language>>((Language language) {
                   return DropdownMenuItem<Language>(
-                    value: language,
-                    child: Text(language.name),
-                  );
+                      value: language, child: Text(language.name));
                 }).toList(),
                 onChanged: (Language? newLanguage) {
                   if (newLanguage != null) {
                     MyApp.setLocale(context, Locale(newLanguage.code, ''));
-                    Navigator.of(context).pop();
+                    Navigator.of(dialogContext).pop();
                   }
                 },
               ),
@@ -290,6 +244,8 @@ class _PlannerHomePageState extends State<PlannerHomePage> {
 
   @override
   Widget build(BuildContext context) {
+    final activityProvider = Provider.of<ActivityProvider>(context);
+
     final l10n = AppLocalizations.of(context)!;
     final List<String> hiveKeys = [
       'PZT',
@@ -318,9 +274,7 @@ class _PlannerHomePageState extends State<PlannerHomePage> {
         actions: [
           IconButton(
             icon: const Icon(Icons.settings_outlined),
-            onPressed: () {
-              _showSettingsDialog();
-            },
+            onPressed: () => _showSettingsDialog(context),
           ),
         ],
       ),
@@ -335,7 +289,8 @@ class _PlannerHomePageState extends State<PlannerHomePage> {
                 itemBuilder: (context, index) {
                   final dayLabel = _days[index];
                   final dayKey = hiveKeys[index];
-                  final isSelected = dayKey == _selectedDay;
+                  // Seçili günü provider'dan alıyoruz
+                  final isSelected = dayKey == activityProvider.selectedDay;
                   return Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 4.0),
                     child: TextButton(
@@ -349,7 +304,10 @@ class _PlannerHomePageState extends State<PlannerHomePage> {
                                 : BorderSide(
                                     color: Theme.of(context).dividerColor)),
                       ),
-                      onPressed: () => setState(() => _selectedDay = dayKey),
+                      // Günü değiştirmek için provider'daki metodu çağırıyoruz
+                      onPressed: () =>
+                          Provider.of<ActivityProvider>(context, listen: false)
+                              .changeDay(dayKey),
                       child: Text(
                         dayLabel,
                         style: TextStyle(
@@ -370,7 +328,7 @@ class _PlannerHomePageState extends State<PlannerHomePage> {
             height: 300,
             child: CustomPaint(
               painter: CircularPlannerPainter(
-                activities: _selectedDayActivities,
+                activities: activityProvider.selectedDayActivities,
                 textColor: Theme.of(context).textTheme.bodySmall!.color!,
                 circleColor: Theme.of(context).dividerColor,
               ),
@@ -388,7 +346,7 @@ class _PlannerHomePageState extends State<PlannerHomePage> {
           ),
           const SizedBox(height: 30),
           ElevatedButton.icon(
-              onPressed: _addActivity,
+              onPressed: () => _addActivity(context),
               icon: const Icon(Icons.add),
               label: Text(l10n.addNewActivity)),
           const SizedBox(height: 20),
@@ -399,7 +357,7 @@ class _PlannerHomePageState extends State<PlannerHomePage> {
           ),
           const SizedBox(height: 10),
           Expanded(
-            child: _selectedDayActivities.isEmpty
+            child: activityProvider.selectedDayActivities.isEmpty
                 ? Center(
                     child: Text(
                       l10n.noActivityToday,
@@ -410,9 +368,10 @@ class _PlannerHomePageState extends State<PlannerHomePage> {
                     ),
                   )
                 : ListView.builder(
-                    itemCount: _selectedDayActivities.length,
+                    itemCount: activityProvider.selectedDayActivities.length,
                     itemBuilder: (context, index) {
-                      final activity = _selectedDayActivities[index];
+                      final activity =
+                          activityProvider.selectedDayActivities[index];
                       return Card(
                         margin: const EdgeInsets.symmetric(vertical: 8.0),
                         child: ListTile(
@@ -477,11 +436,13 @@ class _PlannerHomePageState extends State<PlannerHomePage> {
                                           .iconTheme
                                           .color
                                           ?.withAlpha((255 * 0.6).round())),
-                                  onPressed: () => _editActivity(activity)),
+                                  onPressed: () =>
+                                      _editActivity(context, activity)),
                               IconButton(
                                   icon: const Icon(Icons.delete,
                                       color: Colors.redAccent),
-                                  onPressed: () => _deleteActivity(activity)),
+                                  onPressed: () =>
+                                      _deleteActivity(context, activity)),
                             ],
                           ),
                         ),
