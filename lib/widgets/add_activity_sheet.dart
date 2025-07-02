@@ -361,13 +361,13 @@ class _AddActivitySheetState extends State<AddActivitySheet>
               ),
               const SizedBox(height: 30),
               Row(mainAxisAlignment: MainAxisAlignment.end, children: [
-                ElevatedButton(
-                    onPressed: _submitForm,
-                    child: Text(isEditing ? l10n.save : l10n.add)),
-                const SizedBox(width: 10),
                 TextButton(
                     onPressed: () => Navigator.pop(context),
                     child: Text(l10n.cancel)),
+                const SizedBox(width: 10),
+                ElevatedButton(
+                    onPressed: _submitForm,
+                    child: Text(isEditing ? l10n.save : l10n.add)),
               ]),
               const SizedBox(height: 16),
             ],
