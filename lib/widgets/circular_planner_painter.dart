@@ -1,6 +1,6 @@
 import 'dart:math';
 import 'package:flutter/material.dart';
-import 'activity_model.dart';
+import '../models/activity_model.dart';
 
 class CircularPlannerPainter extends CustomPainter {
   final List<Activity> activities;
@@ -30,28 +30,25 @@ class CircularPlannerPainter extends CustomPainter {
     final textStyle = TextStyle(color: textColor, fontSize: 14);
     for (int hour = 0; hour < 24; hour++) {
       final angle = (hour / 24) * 2 * pi - (pi / 2);
-      final textPosition = Offset(
-          center.dx + (radius + 15) * cos(angle),
-          center.dy + (radius + 15) * sin(angle)
-      );
-      final textSpan = TextSpan(
-          text: hour.toString().padLeft(2, '0'), style: textStyle);
+      final textPosition = Offset(center.dx + (radius + 15) * cos(angle),
+          center.dy + (radius + 15) * sin(angle));
+      final textSpan =
+          TextSpan(text: hour.toString().padLeft(2, '0'), style: textStyle);
       final textPainter = TextPainter(
           text: textSpan,
           textAlign: TextAlign.center,
-          textDirection: TextDirection.ltr
-      )
+          textDirection: TextDirection.ltr)
         ..layout();
-      textPainter.paint(canvas, Offset(
-          textPosition.dx - textPainter.width / 2,
-          textPosition.dy - textPainter.height / 2)
-      );
+      textPainter.paint(
+          canvas,
+          Offset(textPosition.dx - textPainter.width / 2,
+              textPosition.dy - textPainter.height / 2));
     }
 
     final drawableActivities = List<Activity>.from(activities);
 
-    drawableActivities.sort((a, b) =>
-        b.durationInMinutes.compareTo(a.durationInMinutes));
+    drawableActivities
+        .sort((a, b) => b.durationInMinutes.compareTo(a.durationInMinutes));
 
     for (final activity in drawableActivities) {
       final startAngle = _timeToAngle(activity.startTime);
@@ -88,9 +85,12 @@ class CircularPlannerPainter extends CustomPainter {
     final outerRadius = radius - 1;
     final innerRadius = radius - 36;
 
-    final p1 = Offset(center.dx + outerRadius * cos(nowAngle), center.dy + outerRadius * sin(nowAngle));
-    final p2 = Offset(center.dx + innerRadius * cos(nowAngle - 0.05), center.dy + innerRadius * sin(nowAngle - 0.05));
-    final p3 = Offset(center.dx + innerRadius * cos(nowAngle + 0.05), center.dy + innerRadius * sin(nowAngle + 0.05));
+    final p1 = Offset(center.dx + outerRadius * cos(nowAngle),
+        center.dy + outerRadius * sin(nowAngle));
+    final p2 = Offset(center.dx + innerRadius * cos(nowAngle - 0.05),
+        center.dy + innerRadius * sin(nowAngle - 0.05));
+    final p3 = Offset(center.dx + innerRadius * cos(nowAngle + 0.05),
+        center.dy + innerRadius * sin(nowAngle + 0.05));
 
     path.moveTo(p1.dx, p1.dy);
     path.lineTo(p2.dx, p2.dy);
@@ -103,6 +103,6 @@ class CircularPlannerPainter extends CustomPainter {
   @override
   bool shouldRepaint(covariant CircularPlannerPainter oldDelegate) =>
       oldDelegate.activities != activities ||
-          oldDelegate.textColor != textColor ||
-          oldDelegate.circleColor != circleColor;
+      oldDelegate.textColor != textColor ||
+      oldDelegate.circleColor != circleColor;
 }

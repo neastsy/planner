@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_colorpicker/flutter_colorpicker.dart';
-import 'package:gunluk_planlayici/activity_model.dart';
+import 'package:gunluk_planlayici/models/activity_model.dart';
 import 'package:gunluk_planlayici/l10n/app_localizations.dart';
 
 class AddActivitySheet extends StatefulWidget {
@@ -11,7 +11,8 @@ class AddActivitySheet extends StatefulWidget {
   State<AddActivitySheet> createState() => _AddActivitySheetState();
 }
 
-class _AddActivitySheetState extends State<AddActivitySheet> with SingleTickerProviderStateMixin {
+class _AddActivitySheetState extends State<AddActivitySheet>
+    with SingleTickerProviderStateMixin {
   final _formKey = GlobalKey<FormState>();
   final _activityNameController = TextEditingController();
   final _noteController = TextEditingController();
@@ -39,8 +40,7 @@ class _AddActivitySheetState extends State<AddActivitySheet> with SingleTickerPr
       duration: const Duration(milliseconds: 400),
       vsync: this,
     );
-    _shakeAnimation = Tween<double>(begin: 0, end: 8)
-        .animate(CurvedAnimation(
+    _shakeAnimation = Tween<double>(begin: 0, end: 8).animate(CurvedAnimation(
       parent: _animationController,
       curve: Curves.elasticIn,
     ));
@@ -75,15 +75,14 @@ class _AddActivitySheetState extends State<AddActivitySheet> with SingleTickerPr
         title: Text(l10n.chooseColor),
         content: SingleChildScrollView(
             child: ColorPicker(
-              pickerColor: pickerColor,
-              onColorChanged: (color) => pickerColor = color,
-              paletteType: PaletteType.hueWheel,
-              labelTypes: const [],
-              hexInputBar: false,
-              displayThumbColor: true,
-              enableAlpha: false,
-            )
-        ),
+          pickerColor: pickerColor,
+          onColorChanged: (color) => pickerColor = color,
+          paletteType: PaletteType.hueWheel,
+          labelTypes: const [],
+          hexInputBar: false,
+          displayThumbColor: true,
+          enableAlpha: false,
+        )),
         actions: <Widget>[
           TextButton(
             child: Text(l10n.cancel),
@@ -104,9 +103,11 @@ class _AddActivitySheetState extends State<AddActivitySheet> with SingleTickerPr
     }
   }
 
-  String _formatTime(TimeOfDay time) => "${time.hour.toString().padLeft(2, '0')}:${time.minute.toString().padLeft(2, '0')}";
+  String _formatTime(TimeOfDay time) =>
+      "${time.hour.toString().padLeft(2, '0')}:${time.minute.toString().padLeft(2, '0')}";
 
-  Future<void> _selectTime(BuildContext context, {required bool isStartTime}) async {
+  Future<void> _selectTime(BuildContext context,
+      {required bool isStartTime}) async {
     final l10n = AppLocalizations.of(context)!;
     final bool isEditing = widget.activityToEdit != null;
     TimeOfDay initialTimeValue;
@@ -121,11 +122,9 @@ class _AddActivitySheetState extends State<AddActivitySheet> with SingleTickerPr
     final TimeOfDay? picked = await showTimePicker(
       context: context,
       initialTime: initialTimeValue,
-
       cancelText: l10n.cancel.toUpperCase(),
       confirmText: l10n.timePickerSet.toUpperCase(),
       helpText: l10n.timePickerSelect.toUpperCase(),
-
       builder: (BuildContext context, Widget? child) {
         return MediaQuery(
           data: MediaQuery.of(context).copyWith(alwaysUse24HourFormat: true),
@@ -164,7 +163,8 @@ class _AddActivitySheetState extends State<AddActivitySheet> with SingleTickerPr
       return;
     }
 
-    if (_startTime!.hour == _endTime!.hour && _startTime!.minute == _endTime!.minute) {
+    if (_startTime!.hour == _endTime!.hour &&
+        _startTime!.minute == _endTime!.minute) {
       setState(() {
         _timeError = l10n.errorStartEndTimeSame;
       });
@@ -177,7 +177,9 @@ class _AddActivitySheetState extends State<AddActivitySheet> with SingleTickerPr
       startTime: _startTime!,
       endTime: _endTime!,
       color: _selectedColor,
-      note: _noteController.text.trim().isEmpty ? null : _noteController.text.trim(),
+      note: _noteController.text.trim().isEmpty
+          ? null
+          : _noteController.text.trim(),
     );
     Navigator.pop(context, activity);
   }
@@ -195,7 +197,9 @@ class _AddActivitySheetState extends State<AddActivitySheet> with SingleTickerPr
       child: Container(
         padding: EdgeInsets.only(
             bottom: MediaQuery.of(context).viewInsets.bottom,
-            left: 24, right: 24, top: 24),
+            left: 24,
+            right: 24,
+            top: 24),
         decoration: BoxDecoration(
           color: Theme.of(context).dialogTheme.backgroundColor ??
               Theme.of(context).scaffoldBackgroundColor,
@@ -211,15 +215,16 @@ class _AddActivitySheetState extends State<AddActivitySheet> with SingleTickerPr
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(isEditing ? l10n.editActivity : l10n.addNewActivity,
-                  style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold)),
+                  style: const TextStyle(
+                      fontSize: 24, fontWeight: FontWeight.bold)),
               const SizedBox(height: 20),
               TextFormField(
                 controller: _activityNameController,
                 decoration: InputDecoration(
-                    labelText: l10n.activityName, border: const OutlineInputBorder()),
-                validator: (v) => (v == null || v.isEmpty)
-                    ? l10n.activityNameHint
-                    : null,
+                    labelText: l10n.activityName,
+                    border: const OutlineInputBorder()),
+                validator: (v) =>
+                    (v == null || v.isEmpty) ? l10n.activityNameHint : null,
               ),
               const SizedBox(height: 20),
               Row(children: [
@@ -258,7 +263,8 @@ class _AddActivitySheetState extends State<AddActivitySheet> with SingleTickerPr
                 ),
               const SizedBox(height: 20),
               Text(l10n.chooseColor,
-                  style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
+                  style: const TextStyle(
+                      fontWeight: FontWeight.bold, fontSize: 16)),
               const SizedBox(height: 10),
               Wrap(
                 spacing: 12.0,
@@ -266,18 +272,21 @@ class _AddActivitySheetState extends State<AddActivitySheet> with SingleTickerPr
                 crossAxisAlignment: WrapCrossAlignment.center,
                 children: [
                   ..._availableColors.map((color) => InkWell(
-                    onTap: () => setState(() => _selectedColor = color),
-                    child: Container(
-                      width: 40, height: 40,
-                      decoration: BoxDecoration(
-                        color: color,
-                        shape: BoxShape.circle,
-                        border: _selectedColor == color
-                            ? Border.all(color: Theme.of(context).primaryColor, width: 3)
-                            : null,
-                      ),
-                    ),
-                  )),
+                        onTap: () => setState(() => _selectedColor = color),
+                        child: Container(
+                          width: 40,
+                          height: 40,
+                          decoration: BoxDecoration(
+                            color: color,
+                            shape: BoxShape.circle,
+                            border: _selectedColor == color
+                                ? Border.all(
+                                    color: Theme.of(context).primaryColor,
+                                    width: 3)
+                                : null,
+                          ),
+                        ),
+                      )),
                   InkWell(
                     onTap: _showColorPickerDialog,
                     child: Container(
@@ -328,17 +337,17 @@ class _AddActivitySheetState extends State<AddActivitySheet> with SingleTickerPr
                       );
                     }
                   },
-
                   buildCounter: (
-                      BuildContext context, {
-                        required int currentLength,
-                        required bool isFocused,
-                        required int? maxLength,
-                      }) {
+                    BuildContext context, {
+                    required int currentLength,
+                    required bool isFocused,
+                    required int? maxLength,
+                  }) {
                     final ayniStil = Theme.of(context).textTheme.bodySmall;
-                    final sinirdaStil = Theme.of(context).textTheme.bodySmall?.copyWith(
-                      color: Theme.of(context).colorScheme.error,
-                    );
+                    final sinirdaStil =
+                        Theme.of(context).textTheme.bodySmall?.copyWith(
+                              color: Theme.of(context).colorScheme.error,
+                            );
                     const max = noteMaxLength;
                     if (isFocused || currentLength > 0) {
                       return Text(

@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
 import 'package:uuid/uuid.dart';
 
-part 'activity_model.g.dart';
+part '../activity_model.g.dart';
 
 @HiveType(typeId: 1)
 class Activity extends HiveObject {

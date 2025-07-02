@@ -1,6 +1,6 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'activity_model.dart';
+part of 'models/activity_model.dart';
 
 // **************************************************************************
 // TypeAdapterGenerator
