@@ -11,6 +11,7 @@ import '../providers/activity_provider.dart';
 import '../widgets/add_activity_sheet.dart';
 import '../widgets/circular_planner_painter.dart';
 import '../widgets/theme_switcher.dart';
+import '../services/notification_service.dart';
 
 class PlannerHomePage extends StatefulWidget {
   const PlannerHomePage({super.key});
@@ -36,6 +37,7 @@ class _PlannerHomePageState extends State<PlannerHomePage> {
   @override
   void initState() {
     super.initState();
+    NotificationService().requestPermissions();
     _updateTime();
     _timer = Timer.periodic(const Duration(seconds: 1), (_) => _updateTime());
   }

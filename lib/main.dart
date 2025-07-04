@@ -5,6 +5,10 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:provider/provider.dart';
+import 'package:gunluk_planlayici/services/notification_service.dart';
+import 'package:timezone/data/latest_all.dart' as tz;
+import 'package:timezone/timezone.dart' as tz;
+import 'package:flutter_timezone/flutter_timezone.dart';
 
 import 'adepters/color_adapter.dart';
 import 'adepters/time_of_day_adapter.dart';
@@ -16,6 +20,13 @@ import 'repositories/activity_repository.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
+
+  tz.initializeTimeZones();
+  final String localTimezone = await FlutterTimezone.getLocalTimezone();
+  tz.setLocalLocation(tz.getLocation(localTimezone));
+
+  await NotificationService().init();
+
   await Hive.initFlutter();
 
   Hive.registerAdapter(ActivityAdapter());

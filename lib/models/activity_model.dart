@@ -24,6 +24,9 @@ class Activity extends HiveObject {
   @HiveField(5)
   final String? note;
 
+  @HiveField(6)
+  final int? notificationMinutesBefore;
+
   int get durationInMinutes {
     final startMinutes = startTime.hour * 60 + startTime.minute;
     int endMinutes = endTime.hour * 60 + endTime.minute;
@@ -40,5 +43,6 @@ class Activity extends HiveObject {
     required this.endTime,
     required this.color,
     this.note,
+    this.notificationMinutesBefore,
   }) : id = id ?? const Uuid().v4();
 }
