@@ -222,6 +222,7 @@ class _AddActivitySheetState extends State<AddActivitySheet>
               const SizedBox(height: 20),
               TextFormField(
                 controller: _activityNameController,
+                maxLength: 30,
                 decoration: InputDecoration(
                     labelText: l10n.activityName,
                     border: const OutlineInputBorder()),
@@ -308,6 +309,7 @@ class _AddActivitySheetState extends State<AddActivitySheet>
                   ),
                 ],
               ),
+              const SizedBox(height: 20),
               Text(l10n.notificationSettings,
                   style: const TextStyle(
                       fontWeight: FontWeight.bold, fontSize: 16)),
