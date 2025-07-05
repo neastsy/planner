@@ -20,30 +20,35 @@ import 'providers/activity_provider.dart';
 import 'repositories/activity_repository.dart';
 
 Future<void> main() async {
-  WidgetsFlutterBinding.ensureInitialized();
+  try {
+    WidgetsFlutterBinding.ensureInitialized();
 
-  tz.initializeTimeZones();
-  final String localTimezone = await FlutterTimezone.getLocalTimezone();
-  tz.setLocalLocation(tz.getLocation(localTimezone));
+    tz.initializeTimeZones();
+    final String localTimezone = await FlutterTimezone.getLocalTimezone();
+    tz.setLocalLocation(tz.getLocation(localTimezone));
 
-  await NotificationService().init();
+    await NotificationService().init();
 
-  await Hive.initFlutter();
+    await Hive.initFlutter();
 
-  Hive.registerAdapter(ActivityAdapter());
-  Hive.registerAdapter(TimeOfDayAdapter());
-  Hive.registerAdapter(ColorAdapter());
+    Hive.registerAdapter(ActivityAdapter());
+    Hive.registerAdapter(TimeOfDayAdapter());
+    Hive.registerAdapter(ColorAdapter());
 
-  await Hive.openBox<Map>(AppConstants.activitiesBoxName);
+    await Hive.openBox<Map>(AppConstants.activitiesBoxName);
 
-  runApp(
-    ChangeNotifierProvider(
-      create: (context) => ActivityProvider(
-        ActivityRepository(Hive.box<Map>(AppConstants.activitiesBoxName)),
+    runApp(
+      ChangeNotifierProvider(
+        create: (context) => ActivityProvider(
+          ActivityRepository(Hive.box<Map>(AppConstants.activitiesBoxName)),
+        ),
+        child: const MyApp(),
       ),
-      child: const MyApp(),
-    ),
-  );
+    );
+  } catch (e, stackTrace) {
+    debugPrint("Uygulama başlatılırken kritik bir hata oluştu: $e");
+    debugPrint("Stack Trace: $stackTrace");
+  }
 }
 
 class MyApp extends StatefulWidget {
