@@ -447,8 +447,6 @@ class _PlannerHomePageState extends State<PlannerHomePage> {
 
   @override
   Widget build(BuildContext context) {
-    final activityProvider = Provider.of<ActivityProvider>(context);
-
     final l10n = AppLocalizations.of(context)!;
     final isDarkMode = Theme.of(context).brightness == Brightness.dark;
     final clockColor = isDarkMode
@@ -476,63 +474,73 @@ class _PlannerHomePageState extends State<PlannerHomePage> {
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(children: [
-          SizedBox(
-              height: 50,
-              child: ListView.builder(
-                scrollDirection: Axis.horizontal,
-                itemCount: _days.length,
-                itemBuilder: (context, index) {
-                  final dayLabel = _days[index];
-                  final dayKey = hiveKeys[index];
-                  final isSelected = dayKey == activityProvider.selectedDay;
-                  return Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 4.0),
-                    child: TextButton(
-                      style: TextButton.styleFrom(
-                        backgroundColor:
-                            isSelected ? Colors.blueAccent : Colors.transparent,
-                        shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(20),
-                            side: isSelected
-                                ? BorderSide.none
-                                : BorderSide(
-                                    color: Theme.of(context).dividerColor)),
-                      ),
-                      onPressed: () =>
-                          Provider.of<ActivityProvider>(context, listen: false)
-                              .changeDay(dayKey),
-                      child: Text(
-                        dayLabel,
-                        style: TextStyle(
-                          color: isSelected
-                              ? Colors.white
-                              : Theme.of(context).textTheme.bodySmall?.color,
-                          fontWeight:
-                              isSelected ? FontWeight.bold : FontWeight.normal,
+          Consumer<ActivityProvider>(
+            builder: (context, provider, child) {
+              return SizedBox(
+                height: 50,
+                child: ListView.builder(
+                  scrollDirection: Axis.horizontal,
+                  itemCount: _days.length,
+                  itemBuilder: (context, index) {
+                    final dayLabel = _days[index];
+                    final dayKey = hiveKeys[index];
+                    final isSelected = dayKey == provider.selectedDay;
+                    return Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 4.0),
+                      child: TextButton(
+                        style: TextButton.styleFrom(
+                          backgroundColor: isSelected
+                              ? Colors.blueAccent
+                              : Colors.transparent,
+                          shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(20),
+                              side: isSelected
+                                  ? BorderSide.none
+                                  : BorderSide(
+                                      color: Theme.of(context).dividerColor)),
+                        ),
+                        onPressed: () => provider.changeDay(dayKey),
+                        child: Text(
+                          dayLabel,
+                          style: TextStyle(
+                            color: isSelected
+                                ? Colors.white
+                                : Theme.of(context).textTheme.bodySmall?.color,
+                            fontWeight: isSelected
+                                ? FontWeight.bold
+                                : FontWeight.normal,
+                          ),
                         ),
                       ),
-                    ),
-                  );
-                },
-              )),
+                    );
+                  },
+                ),
+              );
+            },
+          ),
           const SizedBox(height: 30),
-          SizedBox(
-            width: 300,
-            height: 300,
-            child: CustomPaint(
-              painter: CircularPlannerPainter(
-                activities: activityProvider.selectedDayActivities,
-                textColor: Theme.of(context).textTheme.bodySmall!.color!,
-                circleColor: Theme.of(context).dividerColor,
-              ),
-              child: Center(
-                child: Text(
-                  _currentTime,
-                  style: TextStyle(
-                    color: clockColor,
-                    fontSize: 48,
-                    fontWeight: FontWeight.bold,
+          Consumer<ActivityProvider>(
+            builder: (context, provider, child) {
+              return SizedBox(
+                width: 300,
+                height: 300,
+                child: CustomPaint(
+                  painter: CircularPlannerPainter(
+                    activities: provider.selectedDayActivities,
+                    textColor: Theme.of(context).textTheme.bodySmall!.color!,
+                    circleColor: Theme.of(context).dividerColor,
                   ),
+                  child: child,
+                ),
+              );
+            },
+            child: Center(
+              child: Text(
+                _currentTime,
+                style: TextStyle(
+                  color: clockColor,
+                  fontSize: 48,
+                  fontWeight: FontWeight.bold,
                 ),
               ),
             ),
@@ -549,33 +557,42 @@ class _PlannerHomePageState extends State<PlannerHomePage> {
             children: [
               Text(l10n.activityList,
                   style: Theme.of(context).textTheme.headlineSmall),
-              if (activityProvider.selectedDayActivities.isNotEmpty)
-                Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    IconButton(
-                      icon: const Icon(Icons.copy_all_outlined),
-                      tooltip: l10n.copyDay,
-                      onPressed: () {
-                        _showCopyDayDialog(context);
-                      },
-                    ),
-                    IconButton(
-                      icon: Icon(Icons.delete_sweep_outlined,
-                          color: Colors.red.shade400),
-                      tooltip: l10n.deleteAll,
-                      onPressed: () {
-                        _showClearAllConfirmationDialog(context);
-                      },
-                    ),
-                  ],
-                ),
+              Consumer<ActivityProvider>(
+                builder: (context, provider, child) {
+                  if (provider.selectedDayActivities.isEmpty) {
+                    return const SizedBox.shrink();
+                  }
+                  return Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      IconButton(
+                        icon: const Icon(Icons.copy_all_outlined),
+                        tooltip: l10n.copyDay,
+                        onPressed: () {
+                          _showCopyDayDialog(context);
+                        },
+                      ),
+                      IconButton(
+                        icon: Icon(Icons.delete_sweep_outlined,
+                            color: Colors.red.shade400),
+                        tooltip: l10n.deleteAll,
+                        onPressed: () {
+                          _showClearAllConfirmationDialog(context);
+                        },
+                      ),
+                    ],
+                  );
+                },
+              ),
             ],
           ),
           const SizedBox(height: 10),
           Expanded(
-            child: activityProvider.selectedDayActivities.isEmpty
-                ? Center(
+            child: Consumer<ActivityProvider>(
+              builder: (context, provider, child) {
+                final activities = provider.selectedDayActivities;
+                if (activities.isEmpty) {
+                  return Center(
                     child: Text(
                       l10n.noActivityToday,
                       style: TextStyle(
@@ -583,117 +600,119 @@ class _PlannerHomePageState extends State<PlannerHomePage> {
                         fontSize: 16,
                       ),
                     ),
-                  )
-                : ListView.builder(
-                    key: ValueKey<String>(activityProvider.selectedDay),
-                    itemCount: activityProvider.selectedDayActivities.length,
-                    itemBuilder: (context, index) {
-                      final activity =
-                          activityProvider.selectedDayActivities[index];
-                      return Card(
-                        margin: const EdgeInsets.symmetric(vertical: 8.0),
-                        child: ListTile(
-                          leading: Container(width: 10, color: activity.color),
-                          title: Text(activity.name,
+                  );
+                }
+                return ListView.builder(
+                  key: ValueKey<String>(provider.selectedDay),
+                  itemCount: activities.length,
+                  itemBuilder: (context, index) {
+                    final activity = activities[index];
+                    return Card(
+                      margin: const EdgeInsets.symmetric(vertical: 8.0),
+                      child: ListTile(
+                        leading: Container(width: 10, color: activity.color),
+                        title: Text(activity.name,
+                            style: Theme.of(context)
+                                .textTheme
+                                .titleMedium
+                                ?.copyWith(
+                                  fontWeight: FontWeight.bold,
+                                  color: Theme.of(context)
+                                      .textTheme
+                                      .bodyLarge
+                                      ?.color
+                                      ?.withAlpha((255 * 0.8).round()),
+                                )),
+                        subtitle: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              '${_formatTime(activity.startTime)} - ${_formatTime(activity.endTime)}',
                               style: Theme.of(context)
                                   .textTheme
-                                  .titleMedium
+                                  .bodySmall
                                   ?.copyWith(
-                                    fontWeight: FontWeight.bold,
                                     color: Theme.of(context)
                                         .textTheme
                                         .bodyLarge
                                         ?.color
-                                        ?.withAlpha((255 * 0.8).round()),
-                                  )),
-                          subtitle: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                '${_formatTime(activity.startTime)} - ${_formatTime(activity.endTime)}',
-                                style: Theme.of(context)
-                                    .textTheme
-                                    .bodySmall
-                                    ?.copyWith(
-                                      color: Theme.of(context)
-                                          .textTheme
-                                          .bodyLarge
-                                          ?.color
-                                          ?.withAlpha((255 * 0.6).round()),
-                                    ),
-                              ),
-                              if (activity.note != null &&
-                                  activity.note!.isNotEmpty)
-                                Padding(
-                                  padding: const EdgeInsets.only(top: 4.0),
-                                  child: Text(
-                                    activity.note!,
-                                    style: Theme.of(context)
-                                        .textTheme
-                                        .bodySmall
-                                        ?.copyWith(
-                                          fontStyle: FontStyle.italic,
-                                          color: Theme.of(context)
-                                              .textTheme
-                                              .bodyLarge
-                                              ?.color
-                                              ?.withAlpha((255 * 0.5).round()),
-                                        ),
-                                    maxLines: 2,
-                                    overflow: TextOverflow.ellipsis,
+                                        ?.withAlpha((255 * 0.6).round()),
                                   ),
+                            ),
+                            if (activity.note != null &&
+                                activity.note!.isNotEmpty)
+                              Padding(
+                                padding: const EdgeInsets.only(top: 4.0),
+                                child: Text(
+                                  activity.note!,
+                                  style: Theme.of(context)
+                                      .textTheme
+                                      .bodySmall
+                                      ?.copyWith(
+                                        fontStyle: FontStyle.italic,
+                                        color: Theme.of(context)
+                                            .textTheme
+                                            .bodyLarge
+                                            ?.color
+                                            ?.withAlpha((255 * 0.5).round()),
+                                      ),
+                                  maxLines: 2,
+                                  overflow: TextOverflow.ellipsis,
                                 ),
-                            ],
-                          ),
-                          trailing: Row(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              IconButton(
-                                  icon: Icon(Icons.edit,
-                                      color: Theme.of(context)
-                                          .iconTheme
-                                          .color
-                                          ?.withAlpha((255 * 0.6).round())),
-                                  onPressed: () =>
-                                      _editActivity(context, activity)),
-                              IconButton(
-                                  icon: const Icon(Icons.delete,
-                                      color: Colors.redAccent),
-                                  onPressed: () =>
-                                      _deleteActivity(context, activity)),
-                              PopupMenuButton<int>(
-                                tooltip: l10n.notificationSettings,
-                                onSelected: (int value) {
-                                  _setNotification(
-                                      activity, value == -1 ? null : value);
-                                },
-                                itemBuilder: (BuildContext context) =>
-                                    <PopupMenuEntry<int>>[
-                                  PopupMenuItem<int>(
-                                    value: -1,
-                                    child: Text(l10n.notificationsOff),
-                                  ),
-                                  PopupMenuItem<int>(
-                                    value: 0,
-                                    child: Text(l10n.notifyOnTime),
-                                  ),
-                                  PopupMenuItem<int>(
-                                    value: 5,
-                                    child: Text(l10n.notify5MinBefore),
-                                  ),
-                                  PopupMenuItem<int>(
-                                    value: 15,
-                                    child: Text(l10n.notify15MinBefore),
-                                  ),
-                                ],
-                                icon: _getNotificationIcon(activity),
                               ),
-                            ],
-                          ),
+                          ],
                         ),
-                      );
-                    },
-                  ),
+                        trailing: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            IconButton(
+                                icon: Icon(Icons.edit,
+                                    color: Theme.of(context)
+                                        .iconTheme
+                                        .color
+                                        ?.withAlpha((255 * 0.6).round())),
+                                onPressed: () =>
+                                    _editActivity(context, activity)),
+                            IconButton(
+                                icon: const Icon(Icons.delete,
+                                    color: Colors.redAccent),
+                                onPressed: () =>
+                                    _deleteActivity(context, activity)),
+                            PopupMenuButton<int>(
+                              tooltip: l10n.notificationSettings,
+                              onSelected: (int value) {
+                                _setNotification(
+                                    activity, value == -1 ? null : value);
+                              },
+                              itemBuilder: (BuildContext context) =>
+                                  <PopupMenuEntry<int>>[
+                                PopupMenuItem<int>(
+                                  value: -1,
+                                  child: Text(l10n.notificationsOff),
+                                ),
+                                PopupMenuItem<int>(
+                                  value: 0,
+                                  child: Text(l10n.notifyOnTime),
+                                ),
+                                PopupMenuItem<int>(
+                                  value: 5,
+                                  child: Text(l10n.notify5MinBefore),
+                                ),
+                                PopupMenuItem<int>(
+                                  value: 15,
+                                  child: Text(l10n.notify15MinBefore),
+                                ),
+                              ],
+                              icon: _getNotificationIcon(activity),
+                            ),
+                          ],
+                        ),
+                      ),
+                    );
+                  },
+                );
+              },
+            ),
           ),
         ]),
       ),
