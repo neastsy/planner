@@ -22,6 +22,7 @@ class _AddActivitySheetState extends State<AddActivitySheet>
   TimeOfDay? _endTime;
   late Color _selectedColor;
   String? _timeError;
+  int? _selectedNotificationMinutes;
 
   final List<Color> _availableColors = [
     const Color(0xFF42A5F5),
@@ -52,8 +53,10 @@ class _AddActivitySheetState extends State<AddActivitySheet>
       _endTime = activity.endTime;
       _selectedColor = activity.color;
       _noteController.text = activity.note ?? '';
+      _selectedNotificationMinutes = activity.notificationMinutesBefore;
     } else {
       _selectedColor = _availableColors[0];
+      _selectedNotificationMinutes = null;
     }
   }
 
@@ -180,6 +183,7 @@ class _AddActivitySheetState extends State<AddActivitySheet>
       note: _noteController.text.trim().isEmpty
           ? null
           : _noteController.text.trim(),
+      notificationMinutesBefore: _selectedNotificationMinutes,
     );
     Navigator.pop(context, activity);
   }
@@ -191,8 +195,6 @@ class _AddActivitySheetState extends State<AddActivitySheet>
     const int noteMaxLength = 200;
     final isCustomColorSelected = !_availableColors.contains(_selectedColor);
 
-    // Önceki çözümdeki 'Scaffold' sarmalayıcısını kaldırdık.
-    // En dışta SingleChildScrollView olmalı.
     return SingleChildScrollView(
       child: Container(
         padding: EdgeInsets.only(
@@ -303,6 +305,41 @@ class _AddActivitySheetState extends State<AddActivitySheet>
                       ),
                       child: const Icon(Icons.palette_outlined, size: 24),
                     ),
+                  ),
+                ],
+              ),
+              Text(l10n.notificationSettings,
+                  style: const TextStyle(
+                      fontWeight: FontWeight.bold, fontSize: 16)),
+              const SizedBox(height: 10),
+              DropdownButtonFormField<int?>(
+                value: _selectedNotificationMinutes,
+                onChanged: (int? newValue) {
+                  setState(() {
+                    _selectedNotificationMinutes = newValue;
+                  });
+                },
+                decoration: InputDecoration(
+                  border: const OutlineInputBorder(),
+                  contentPadding:
+                      const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                ),
+                items: [
+                  DropdownMenuItem<int?>(
+                    value: null,
+                    child: Text(l10n.notificationsOff),
+                  ),
+                  DropdownMenuItem<int?>(
+                    value: 0,
+                    child: Text(l10n.notifyOnTime),
+                  ),
+                  DropdownMenuItem<int?>(
+                    value: 5,
+                    child: Text(l10n.notify5MinBefore),
+                  ),
+                  DropdownMenuItem<int?>(
+                    value: 15,
+                    child: Text(l10n.notify15MinBefore),
                   ),
                 ],
               ),

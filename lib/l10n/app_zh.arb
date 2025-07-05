@@ -60,7 +60,7 @@
       }
     }
   },
-    "deleteAll": "全部删除",
+  "deleteAll": "全部删除",
   "deleteAllActivitiesTitle": "删除所有活动",
   "deleteAllActivitiesContent": "您确定要删除 {dayName} 的所有活动吗？",
   "@deleteAllActivitiesContent": {
@@ -70,6 +70,18 @@
         "type": "String",
         "example": "星期一"
       }
+    }
+  },
+  "notificationSettings": "通知设置",
+  "notificationsOff": "关闭通知",
+  "notifyOnTime": "准时通知",
+  "notify5MinBefore": "5分钟前",
+  "notify15MinBefore": "15分钟前",
+  "notificationBody": "您的活动“{activityName}”计划于{time}开始。",
+  "@notificationBody": {
+    "placeholders": {
+      "activityName": {"type": "String"},
+      "time": {"type": "String"}
     }
   }
 }

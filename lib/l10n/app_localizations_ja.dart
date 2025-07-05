@@ -148,4 +148,24 @@ class AppLocalizationsJa extends AppLocalizations {
   String deleteAllActivitiesContent(String dayName) {
     return '$dayNameのすべてのアクティビティを削除してもよろしいですか？';
   }
+
+  @override
+  String get notificationSettings => '通知設定';
+
+  @override
+  String get notificationsOff => '通知オフ';
+
+  @override
+  String get notifyOnTime => '時間通りに通知';
+
+  @override
+  String get notify5MinBefore => '5分前';
+
+  @override
+  String get notify15MinBefore => '15分前';
+
+  @override
+  String notificationBody(String activityName, String time) {
+    return 'アクティビティ「$activityName」は$timeに開始予定です。';
+  }
 }

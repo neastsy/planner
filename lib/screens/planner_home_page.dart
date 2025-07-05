@@ -388,6 +388,55 @@ class _PlannerHomePageState extends State<PlannerHomePage> {
     );
   }
 
+  void _setNotification(Activity activity, int? minutes) {
+    final updatedActivity = Activity(
+      id: activity.id,
+      name: activity.name,
+      startTime: activity.startTime,
+      endTime: activity.endTime,
+      color: activity.color,
+      note: activity.note,
+      notificationMinutesBefore: minutes, // Yeni değeri ata
+    );
+
+    final activityProvider =
+        Provider.of<ActivityProvider>(context, listen: false);
+    final index = activityProvider.selectedDayActivities
+        .indexWhere((a) => a.id == activity.id);
+    if (index != -1) {
+      activityProvider.updateActivity(updatedActivity, index);
+    }
+  }
+
+  Widget _getNotificationIcon(Activity activity) {
+    final bool isDarkMode = Theme.of(context).brightness == Brightness.dark;
+    IconData icon;
+    Color color;
+
+    switch (activity.notificationMinutesBefore) {
+      case null:
+        icon = Icons.notifications_off_outlined;
+        color = Colors.grey;
+        break;
+      case 0:
+        icon = Icons.notifications_active;
+        color = Colors.blue;
+        break;
+      case 5:
+        icon = Icons.notifications;
+        color = isDarkMode ? Colors.amber.shade300 : Colors.amber.shade700;
+        break;
+      case 15:
+        icon = Icons.notification_add_outlined;
+        color = isDarkMode ? Colors.orange.shade300 : Colors.orange.shade700;
+        break;
+      default:
+        icon = Icons.notifications_none;
+        color = Colors.grey;
+    }
+    return Icon(icon, color: color);
+  }
+
   @override
   Widget build(BuildContext context) {
     final activityProvider = Provider.of<ActivityProvider>(context);
@@ -506,7 +555,7 @@ class _PlannerHomePageState extends State<PlannerHomePage> {
                     IconButton(
                       icon: Icon(Icons.delete_sweep_outlined,
                           color: Colors.red.shade400),
-                      tooltip: l10n.deleteAll, // Yeni dil anahtarı
+                      tooltip: l10n.deleteAll,
                       onPressed: () {
                         _showClearAllConfirmationDialog(context);
                       },
@@ -604,6 +653,33 @@ class _PlannerHomePageState extends State<PlannerHomePage> {
                                       color: Colors.redAccent),
                                   onPressed: () =>
                                       _deleteActivity(context, activity)),
+                              PopupMenuButton<int>(
+                                tooltip: l10n.notificationSettings,
+                                onSelected: (int value) {
+                                  _setNotification(
+                                      activity, value == -1 ? null : value);
+                                },
+                                itemBuilder: (BuildContext context) =>
+                                    <PopupMenuEntry<int>>[
+                                  PopupMenuItem<int>(
+                                    value: -1,
+                                    child: Text(l10n.notificationsOff),
+                                  ),
+                                  PopupMenuItem<int>(
+                                    value: 0,
+                                    child: Text(l10n.notifyOnTime),
+                                  ),
+                                  PopupMenuItem<int>(
+                                    value: 5,
+                                    child: Text(l10n.notify5MinBefore),
+                                  ),
+                                  PopupMenuItem<int>(
+                                    value: 15,
+                                    child: Text(l10n.notify15MinBefore),
+                                  ),
+                                ],
+                                icon: _getNotificationIcon(activity),
+                              ),
                             ],
                           ),
                         ),

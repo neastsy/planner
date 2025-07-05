@@ -60,7 +60,7 @@
       }
     }
   },
-    "deleteAll": "حذف الكل",
+  "deleteAll": "حذف الكل",
   "deleteAllActivitiesTitle": "حذف جميع الأنشطة",
   "deleteAllActivitiesContent": "هل أنت متأكد من أنك تريد حذف جميع الأنشطة ليوم {dayName}؟",
   "@deleteAllActivitiesContent": {
@@ -70,6 +70,18 @@
         "type": "String",
         "example": "الاثنين"
       }
+    }
+  },
+  "notificationSettings": "إعدادات الإشعار",
+  "notificationsOff": "الإشعارات متوقفة",
+  "notifyOnTime": "إشعار في الوقت المحدد",
+  "notify5MinBefore": "قبل 5 دقائق",
+  "notify15MinBefore": "قبل 15 دقيقة",
+  "notificationBody": "من المقرر أن يبدأ نشاطك '{activityName}' في الساعة {time}.",
+  "@notificationBody": {
+    "placeholders": {
+      "activityName": {"type": "String"},
+      "time": {"type": "String"}
     }
   }
 }

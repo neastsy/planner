@@ -151,4 +151,24 @@ class AppLocalizationsRu extends AppLocalizations {
   String deleteAllActivitiesContent(String dayName) {
     return 'Вы уверены, что хотите удалить все занятия для $dayName?';
   }
+
+  @override
+  String get notificationSettings => 'Настройки уведомлений';
+
+  @override
+  String get notificationsOff => 'Уведомления выключены';
+
+  @override
+  String get notifyOnTime => 'Уведомить вовремя';
+
+  @override
+  String get notify5MinBefore => 'За 5 минут';
+
+  @override
+  String get notify15MinBefore => 'За 15 минут';
+
+  @override
+  String notificationBody(String activityName, String time) {
+    return 'Ваше занятие \'$activityName\' запланировано на $time.';
+  }
 }

@@ -72,5 +72,17 @@
         "example": "Monday"
       }
     }
+  },
+  "notificationSettings": "Notification Settings",
+  "notificationsOff": "Notifications off",
+  "notifyOnTime": "Notify on time",
+  "notify5MinBefore": "5 minutes before",
+  "notify15MinBefore": "15 minutes before",
+  "notificationBody": "Your activity '{activityName}' is scheduled to start at {time}.",
+  "@notificationBody": {
+    "placeholders": {
+      "activityName": {"type": "String"},
+      "time": {"type": "String"}
+    }
   }
 }

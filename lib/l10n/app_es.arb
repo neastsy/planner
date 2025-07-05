@@ -60,7 +60,7 @@
       }
     }
   },
-    "deleteAll": "Eliminar todo",
+  "deleteAll": "Eliminar todo",
   "deleteAllActivitiesTitle": "Eliminar todas las actividades",
   "deleteAllActivitiesContent": "¿Está seguro de que desea eliminar todas las actividades para el {dayName}?",
   "@deleteAllActivitiesContent": {
@@ -70,6 +70,18 @@
         "type": "String",
         "example": "Lunes"
       }
+    }
+  },
+  "notificationSettings": "Ajustes de notificación",
+  "notificationsOff": "Notificaciones desactivadas",
+  "notifyOnTime": "Notificar a tiempo",
+  "notify5MinBefore": "5 minutos antes",
+  "notify15MinBefore": "15 minutos antes",
+  "notificationBody": "Tu actividad '{activityName}' está programada para comenzar a las {time}.",
+  "@notificationBody": {
+    "placeholders": {
+      "activityName": {"type": "String"},
+      "time": {"type": "String"}
     }
   }
 }

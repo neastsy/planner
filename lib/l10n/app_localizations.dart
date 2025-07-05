@@ -381,6 +381,42 @@ abstract class AppLocalizations {
   /// In tr, this message translates to:
   /// **'{dayName} gününe ait tüm aktiviteleri silmek istediğinize emin misiniz?'**
   String deleteAllActivitiesContent(String dayName);
+
+  /// No description provided for @notificationSettings.
+  ///
+  /// In tr, this message translates to:
+  /// **'Bildirim Ayarları'**
+  String get notificationSettings;
+
+  /// No description provided for @notificationsOff.
+  ///
+  /// In tr, this message translates to:
+  /// **'Bildirimler kapalı'**
+  String get notificationsOff;
+
+  /// No description provided for @notifyOnTime.
+  ///
+  /// In tr, this message translates to:
+  /// **'Tam zamanında bildir'**
+  String get notifyOnTime;
+
+  /// No description provided for @notify5MinBefore.
+  ///
+  /// In tr, this message translates to:
+  /// **'5 dakika önce'**
+  String get notify5MinBefore;
+
+  /// No description provided for @notify15MinBefore.
+  ///
+  /// In tr, this message translates to:
+  /// **'15 dakika önce'**
+  String get notify15MinBefore;
+
+  /// No description provided for @notificationBody.
+  ///
+  /// In tr, this message translates to:
+  /// **'\'{activityName}\' aktiviteniz saat {time}\'da başlayacak.'**
+  String notificationBody(String activityName, String time);
 }
 
 class _AppLocalizationsDelegate

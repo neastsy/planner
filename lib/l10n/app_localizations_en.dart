@@ -150,4 +150,24 @@ class AppLocalizationsEn extends AppLocalizations {
   String deleteAllActivitiesContent(String dayName) {
     return 'Are you sure you want to delete all activities for $dayName?';
   }
+
+  @override
+  String get notificationSettings => 'Notification Settings';
+
+  @override
+  String get notificationsOff => 'Notifications off';
+
+  @override
+  String get notifyOnTime => 'Notify on time';
+
+  @override
+  String get notify5MinBefore => '5 minutes before';
+
+  @override
+  String get notify15MinBefore => '15 minutes before';
+
+  @override
+  String notificationBody(String activityName, String time) {
+    return 'Your activity \'$activityName\' is scheduled to start at $time.';
+  }
 }

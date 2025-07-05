@@ -60,7 +60,7 @@
       }
     }
   },
-    "deleteAll": "Tout supprimer",
+  "deleteAll": "Tout supprimer",
   "deleteAllActivitiesTitle": "Supprimer toutes les activités",
   "deleteAllActivitiesContent": "Êtes-vous sûr de vouloir supprimer toutes les activités pour {dayName} ?",
   "@deleteAllActivitiesContent": {
@@ -70,6 +70,18 @@
         "type": "String",
         "example": "Lundi"
       }
+    }
+  },
+  "notificationSettings": "Paramètres de notification",
+  "notificationsOff": "Notifications désactivées",
+  "notifyOnTime": "Notifier à l'heure",
+  "notify5MinBefore": "5 minutes avant",
+  "notify15MinBefore": "15 minutes avant",
+  "notificationBody": "Votre activité '{activityName}' doit commencer à {time}.",
+  "@notificationBody": {
+    "placeholders": {
+      "activityName": {"type": "String"},
+      "time": {"type": "String"}
     }
   }
 }

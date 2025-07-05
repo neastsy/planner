@@ -61,7 +61,7 @@
       }
     }
   },
-    "deleteAll": "Tümünü Sil",
+  "deleteAll": "Tümünü Sil",
   "deleteAllActivitiesTitle": "Tüm Aktiviteleri Sil",
   "deleteAllActivitiesContent": "{dayName} gününe ait tüm aktiviteleri silmek istediğinize emin misiniz?",
   "@deleteAllActivitiesContent": {
@@ -71,6 +71,18 @@
         "type": "String",
         "example": "Pazartesi"
       }
+    }
+  },
+  "notificationSettings": "Bildirim Ayarları",
+  "notificationsOff": "Bildirimler kapalı",
+  "notifyOnTime": "Tam zamanında bildir",
+  "notify5MinBefore": "5 dakika önce",
+  "notify15MinBefore": "15 dakika önce",
+  "notificationBody": "'{activityName}' aktiviteniz saat {time}'da başlayacak.",
+  "@notificationBody": {
+    "placeholders": {
+      "activityName": {"type": "String"},
+      "time": {"type": "String"}
     }
   }
 }

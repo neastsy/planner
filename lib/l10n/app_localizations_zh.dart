@@ -148,4 +148,24 @@ class AppLocalizationsZh extends AppLocalizations {
   String deleteAllActivitiesContent(String dayName) {
     return '您确定要删除 $dayName 的所有活动吗？';
   }
+
+  @override
+  String get notificationSettings => '通知设置';
+
+  @override
+  String get notificationsOff => '关闭通知';
+
+  @override
+  String get notifyOnTime => '准时通知';
+
+  @override
+  String get notify5MinBefore => '5分钟前';
+
+  @override
+  String get notify15MinBefore => '15分钟前';
+
+  @override
+  String notificationBody(String activityName, String time) {
+    return '您的活动“$activityName”计划于$time开始。';
+  }
 }

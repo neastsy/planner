@@ -60,7 +60,7 @@
       }
     }
   },
-    "deleteAll": "Alle löschen",
+  "deleteAll": "Alle löschen",
   "deleteAllActivitiesTitle": "Alle Aktivitäten löschen",
   "deleteAllActivitiesContent": "Möchten Sie wirklich alle Aktivitäten für {dayName} löschen?",
   "@deleteAllActivitiesContent": {
@@ -70,6 +70,18 @@
         "type": "String",
         "example": "Montag"
       }
+    }
+  },
+  "notificationSettings": "Benachrichtigungseinstellungen",
+  "notificationsOff": "Benachrichtigungen aus",
+  "notifyOnTime": "Pünktlich benachrichtigen",
+  "notify5MinBefore": "5 Minuten vorher",
+  "notify15MinBefore": "15 Minuten vorher",
+  "notificationBody": "Ihre Aktivität '{activityName}' beginnt um {time} Uhr.",
+  "@notificationBody": {
+    "placeholders": {
+      "activityName": {"type": "String"},
+      "time": {"type": "String"}
     }
   }
 }

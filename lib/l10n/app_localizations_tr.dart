@@ -150,4 +150,24 @@ class AppLocalizationsTr extends AppLocalizations {
   String deleteAllActivitiesContent(String dayName) {
     return '$dayName gününe ait tüm aktiviteleri silmek istediğinize emin misiniz?';
   }
+
+  @override
+  String get notificationSettings => 'Bildirim Ayarları';
+
+  @override
+  String get notificationsOff => 'Bildirimler kapalı';
+
+  @override
+  String get notifyOnTime => 'Tam zamanında bildir';
+
+  @override
+  String get notify5MinBefore => '5 dakika önce';
+
+  @override
+  String get notify15MinBefore => '15 dakika önce';
+
+  @override
+  String notificationBody(String activityName, String time) {
+    return '\'$activityName\' aktiviteniz saat $time\'da başlayacak.';
+  }
 }

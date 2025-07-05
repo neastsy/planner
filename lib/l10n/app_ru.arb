@@ -60,7 +60,7 @@
       }
     }
   },
-    "deleteAll": "Удалить все",
+  "deleteAll": "Удалить все",
   "deleteAllActivitiesTitle": "Удалить все занятия",
   "deleteAllActivitiesContent": "Вы уверены, что хотите удалить все занятия для {dayName}?",
   "@deleteAllActivitiesContent": {
@@ -70,6 +70,18 @@
         "type": "String",
         "example": "Понедельник"
       }
+    }
+  },
+  "notificationSettings": "Настройки уведомлений",
+  "notificationsOff": "Уведомления выключены",
+  "notifyOnTime": "Уведомить вовремя",
+  "notify5MinBefore": "За 5 минут",
+  "notify15MinBefore": "За 15 минут",
+  "notificationBody": "Ваше занятие '{activityName}' запланировано на {time}.",
+  "@notificationBody": {
+    "placeholders": {
+      "activityName": {"type": "String"},
+      "time": {"type": "String"}
     }
   }
 }

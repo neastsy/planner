@@ -60,7 +60,7 @@
       }
     }
   },
-    "deleteAll": "すべて削除",
+  "deleteAll": "すべて削除",
   "deleteAllActivitiesTitle": "すべてのアクティビティを削除",
   "deleteAllActivitiesContent": "{dayName}のすべてのアクティビティを削除してもよろしいですか？",
   "@deleteAllActivitiesContent": {
@@ -70,6 +70,18 @@
         "type": "String",
         "example": "月曜日"
       }
+    }
+  },
+  "notificationSettings": "通知設定",
+  "notificationsOff": "通知オフ",
+  "notifyOnTime": "時間通りに通知",
+  "notify5MinBefore": "5分前",
+  "notify15MinBefore": "15分前",
+  "notificationBody": "アクティビティ「{activityName}」は{time}に開始予定です。",
+  "@notificationBody": {
+    "placeholders": {
+      "activityName": {"type": "String"},
+      "time": {"type": "String"}
     }
   }
 }
