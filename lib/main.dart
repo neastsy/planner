@@ -9,6 +9,7 @@ import 'package:gunluk_planlayici/services/notification_service.dart';
 import 'package:timezone/data/latest_all.dart' as tz;
 import 'package:timezone/timezone.dart' as tz;
 import 'package:flutter_timezone/flutter_timezone.dart';
+import 'package:gunluk_planlayici/utils/constants.dart';
 
 import 'adepters/color_adapter.dart';
 import 'adepters/time_of_day_adapter.dart';
@@ -33,12 +34,12 @@ Future<void> main() async {
   Hive.registerAdapter(TimeOfDayAdapter());
   Hive.registerAdapter(ColorAdapter());
 
-  await Hive.openBox<Map>('activitiesBox');
+  await Hive.openBox<Map>(AppConstants.activitiesBoxName);
 
   runApp(
     ChangeNotifierProvider(
       create: (context) => ActivityProvider(
-        ActivityRepository(Hive.box<Map>('activitiesBox')),
+        ActivityRepository(Hive.box<Map>(AppConstants.activitiesBoxName)),
       ),
       child: const MyApp(),
     ),

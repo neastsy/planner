@@ -6,6 +6,7 @@ import '../services/notification_service.dart';
 // ignore: unused_import
 import 'package:timezone/timezone.dart' as tz;
 import 'package:gunluk_planlayici/l10n/app_localizations.dart';
+import '../utils/constants.dart';
 
 class ActivityProvider with ChangeNotifier {
   final ActivityRepository _activityRepository;
@@ -24,15 +25,7 @@ class ActivityProvider with ChangeNotifier {
       _dailyActivities[_selectedDay] ?? [];
 
   void _initialize() {
-    final List<String> hiveKeys = [
-      'PZT',
-      'SAL',
-      'ÇAR',
-      'PER',
-      'CUM',
-      'CMT',
-      'PAZ'
-    ];
+    final List<String> hiveKeys = AppConstants.dayKeys;
     _selectedDay = hiveKeys[DateTime.now().weekday - 1];
     _loadActivities();
   }
@@ -154,8 +147,7 @@ class ActivityProvider with ChangeNotifier {
     final l10n = await AppLocalizations.delegate.load(locale);
 
     final now = DateTime.now();
-    final dayIndex =
-        ['PZT', 'SAL', 'ÇAR', 'PER', 'CUM', 'CMT', 'PAZ'].indexOf(dayKey);
+    final dayIndex = AppConstants.dayKeys.indexOf(dayKey);
     int daysToAdd = (dayIndex - (now.weekday - 1) + 7) % 7;
     var activityDate = DateTime(now.year, now.month, now.day + daysToAdd,
         activity.startTime.hour, activity.startTime.minute);

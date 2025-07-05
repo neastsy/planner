@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_colorpicker/flutter_colorpicker.dart';
 import 'package:gunluk_planlayici/models/activity_model.dart';
 import 'package:gunluk_planlayici/l10n/app_localizations.dart';
+import '../utils/constants.dart';
 
 class AddActivitySheet extends StatefulWidget {
   final Activity? activityToEdit;
@@ -192,7 +193,6 @@ class _AddActivitySheetState extends State<AddActivitySheet>
   Widget build(BuildContext context) {
     final bool isEditing = widget.activityToEdit != null;
     final l10n = AppLocalizations.of(context)!;
-    const int noteMaxLength = 200;
     final isCustomColorSelected = !_availableColors.contains(_selectedColor);
 
     return SingleChildScrollView(
@@ -222,7 +222,7 @@ class _AddActivitySheetState extends State<AddActivitySheet>
               const SizedBox(height: 20),
               TextFormField(
                 controller: _activityNameController,
-                maxLength: 30,
+                maxLength: AppConstants.activityNameMaxLength,
                 decoration: InputDecoration(
                     labelText: l10n.activityName,
                     border: const OutlineInputBorder()),
@@ -366,9 +366,10 @@ class _AddActivitySheetState extends State<AddActivitySheet>
                   textCapitalization: TextCapitalization.sentences,
                   onChanged: (value) {
                     setState(() {});
-                    if (value.length > noteMaxLength) {
+                    if (value.length > AppConstants.activityNoteMaxLength) {
                       _animationController.forward(from: 0.0);
-                      final truncatedText = value.substring(0, noteMaxLength);
+                      final truncatedText = value.substring(
+                          0, AppConstants.activityNoteMaxLength);
                       _noteController.value = TextEditingValue(
                         text: truncatedText,
                         selection: TextSelection.fromPosition(
@@ -388,7 +389,7 @@ class _AddActivitySheetState extends State<AddActivitySheet>
                         Theme.of(context).textTheme.bodySmall?.copyWith(
                               color: Theme.of(context).colorScheme.error,
                             );
-                    const max = noteMaxLength;
+                    const max = AppConstants.activityNoteMaxLength;
                     if (isFocused || currentLength > 0) {
                       return Text(
                         '$currentLength / $max',

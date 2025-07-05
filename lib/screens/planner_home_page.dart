@@ -12,6 +12,7 @@ import '../widgets/add_activity_sheet.dart';
 import '../widgets/circular_planner_painter.dart';
 import '../widgets/theme_switcher.dart';
 import '../services/notification_service.dart';
+import '../utils/constants.dart';
 
 class PlannerHomePage extends StatefulWidget {
   const PlannerHomePage({super.key});
@@ -21,15 +22,7 @@ class PlannerHomePage extends StatefulWidget {
 }
 
 class _PlannerHomePageState extends State<PlannerHomePage> {
-  final List<String> hiveKeys = const [
-    'PZT',
-    'SAL',
-    'ÇAR',
-    'PER',
-    'CUM',
-    'CMT',
-    'PAZ'
-  ];
+  final List<String> hiveKeys = AppConstants.dayKeys;
   Timer? _timer;
   String _currentTime = '...';
   late List<String> _days;

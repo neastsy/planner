@@ -1,20 +1,15 @@
 import 'package:hive_flutter/hive_flutter.dart';
 import '../models/activity_model.dart';
+import '../utils/constants.dart';
 
 class ActivityRepository {
   final Box<Map> _activitiesBox;
   ActivityRepository(this._activitiesBox);
-  static const String _activitiesKey = 'daily_activities';
+  static const String _activitiesKey = AppConstants.dailyActivitiesKey;
 
   Map<String, List<Activity>> loadActivities() {
     final Map<String, List<Activity>> dailyActivities = {
-      'PZT': [],
-      'SAL': [],
-      'ÇAR': [],
-      'PER': [],
-      'CUM': [],
-      'CMT': [],
-      'PAZ': []
+      for (var dayKey in AppConstants.dayKeys) dayKey: <Activity>[]
     };
 
     final dynamic savedData = _activitiesBox.get(_activitiesKey);
