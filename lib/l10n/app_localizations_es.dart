@@ -172,4 +172,14 @@ class AppLocalizationsEs extends AppLocalizations {
   String notificationBody(String activityName, String time) {
     return 'Tu actividad \'$activityName\' está programada para comenzar a las $time.';
   }
+
+  @override
+  String dayCopied(Object fromDay, Object toDay) {
+    return 'Copiado de $fromDay a $toDay.';
+  }
+
+  @override
+  String allDeleted(Object dayName) {
+    return 'Todas las actividades de $dayName han sido eliminadas.';
+  }
 }

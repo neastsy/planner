@@ -83,5 +83,9 @@
       "activityName": {"type": "String"},
       "time": {"type": "String"}
     }
-  }
+  },
+  "dayCopied": "Скопировано с {fromDay} на {toDay}.",
+  "@dayCopied": { "placeholders": { "fromDay": {}, "toDay": {} } },
+  "allDeleted": "Все занятия на {dayName} были удалены.",
+  "@allDeleted": { "placeholders": { "dayName": {} } }
 }

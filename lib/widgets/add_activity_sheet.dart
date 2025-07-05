@@ -226,8 +226,9 @@ class _AddActivitySheetState extends State<AddActivitySheet>
                 decoration: InputDecoration(
                     labelText: l10n.activityName,
                     border: const OutlineInputBorder()),
-                validator: (v) =>
-                    (v == null || v.isEmpty) ? l10n.activityNameHint : null,
+                validator: (v) => (v == null || v.trim().isEmpty)
+                    ? l10n.activityNameHint
+                    : null,
               ),
               const SizedBox(height: 20),
               Row(children: [

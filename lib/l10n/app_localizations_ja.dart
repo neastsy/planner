@@ -168,4 +168,14 @@ class AppLocalizationsJa extends AppLocalizations {
   String notificationBody(String activityName, String time) {
     return 'アクティビティ「$activityName」は$timeに開始予定です。';
   }
+
+  @override
+  String dayCopied(Object fromDay, Object toDay) {
+    return '$fromDayから$toDayにコピーしました。';
+  }
+
+  @override
+  String allDeleted(Object dayName) {
+    return '$dayNameのすべてのアクティビティが削除されました。';
+  }
 }

@@ -170,4 +170,14 @@ class AppLocalizationsTr extends AppLocalizations {
   String notificationBody(String activityName, String time) {
     return '\'$activityName\' aktiviteniz saat $time\'da başlayacak.';
   }
+
+  @override
+  String dayCopied(Object fromDay, Object toDay) {
+    return '$fromDay gününden $toDay gününe kopyalandı.';
+  }
+
+  @override
+  String allDeleted(Object dayName) {
+    return '$dayName gününe ait tüm aktiviteler silindi.';
+  }
 }

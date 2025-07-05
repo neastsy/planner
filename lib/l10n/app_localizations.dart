@@ -417,6 +417,18 @@ abstract class AppLocalizations {
   /// In tr, this message translates to:
   /// **'\'{activityName}\' aktiviteniz saat {time}\'da başlayacak.'**
   String notificationBody(String activityName, String time);
+
+  /// No description provided for @dayCopied.
+  ///
+  /// In tr, this message translates to:
+  /// **'{fromDay} gününden {toDay} gününe kopyalandı.'**
+  String dayCopied(Object fromDay, Object toDay);
+
+  /// No description provided for @allDeleted.
+  ///
+  /// In tr, this message translates to:
+  /// **'{dayName} gününe ait tüm aktiviteler silindi.'**
+  String allDeleted(Object dayName);
 }
 
 class _AppLocalizationsDelegate

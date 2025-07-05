@@ -342,6 +342,16 @@ class _PlannerHomePageState extends State<PlannerHomePage> {
                         fromDay: sourceDayKey,
                         toDay: targetDayKey,
                       );
+
+                      if (context.mounted) {
+                        final targetDayLabel =
+                            _days[hiveKeys.indexOf(targetDayKey)];
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                              content: Text(l10n.dayCopied(
+                                  sourceDayLabel, targetDayLabel))),
+                        );
+                      }
                     }
                     if (dialogContext.mounted) {
                       Navigator.of(dialogContext).pop();
@@ -380,6 +390,11 @@ class _PlannerHomePageState extends State<PlannerHomePage> {
               activityProvider
                   .clearAllActivitiesForDay(activityProvider.selectedDay);
               Navigator.of(ctx).pop();
+              if (context.mounted) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(content: Text(l10n.allDeleted(dayLabel))),
+                );
+              }
             },
             child: Text(l10n.delete),
           ),

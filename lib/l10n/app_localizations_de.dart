@@ -172,4 +172,14 @@ class AppLocalizationsDe extends AppLocalizations {
   String notificationBody(String activityName, String time) {
     return 'Ihre Aktivität \'$activityName\' beginnt um $time Uhr.';
   }
+
+  @override
+  String dayCopied(Object fromDay, Object toDay) {
+    return 'Kopiert von $fromDay nach $toDay.';
+  }
+
+  @override
+  String allDeleted(Object dayName) {
+    return 'Alle Aktivitäten für $dayName wurden gelöscht.';
+  }
 }

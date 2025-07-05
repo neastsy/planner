@@ -84,5 +84,9 @@
       "activityName": {"type": "String"},
       "time": {"type": "String"}
     }
-  }
+  },
+  "dayCopied": "{fromDay} gününden {toDay} gününe kopyalandı.",
+  "@dayCopied": { "placeholders": { "fromDay": {}, "toDay": {} } },
+  "allDeleted": "{dayName} gününe ait tüm aktiviteler silindi.",
+  "@allDeleted": { "placeholders": { "dayName": {} } }
 }

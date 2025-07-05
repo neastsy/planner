@@ -168,4 +168,14 @@ class AppLocalizationsZh extends AppLocalizations {
   String notificationBody(String activityName, String time) {
     return '您的活动“$activityName”计划于$time开始。';
   }
+
+  @override
+  String dayCopied(Object fromDay, Object toDay) {
+    return '已从$fromDay复制到$toDay。';
+  }
+
+  @override
+  String allDeleted(Object dayName) {
+    return '已删除$dayName的所有活动。';
+  }
 }

@@ -83,5 +83,9 @@
       "activityName": {"type": "String"},
       "time": {"type": "String"}
     }
-  }
+  },
+  "dayCopied": "Kopiert von {fromDay} nach {toDay}.",
+  "@dayCopied": { "placeholders": { "fromDay": {}, "toDay": {} } },
+  "allDeleted": "Alle Aktivitäten für {dayName} wurden gelöscht.",
+  "@allDeleted": { "placeholders": { "dayName": {} } }
 }

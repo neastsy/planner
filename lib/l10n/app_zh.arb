@@ -83,5 +83,9 @@
       "activityName": {"type": "String"},
       "time": {"type": "String"}
     }
-  }
+  },
+  "dayCopied": "已从{fromDay}复制到{toDay}。",
+  "@dayCopied": { "placeholders": { "fromDay": {}, "toDay": {} } },
+  "allDeleted": "已删除{dayName}的所有活动。",
+  "@allDeleted": { "placeholders": { "dayName": {} } }
 }

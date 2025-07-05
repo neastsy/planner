@@ -171,4 +171,14 @@ class AppLocalizationsRu extends AppLocalizations {
   String notificationBody(String activityName, String time) {
     return 'Ваше занятие \'$activityName\' запланировано на $time.';
   }
+
+  @override
+  String dayCopied(Object fromDay, Object toDay) {
+    return 'Скопировано с $fromDay на $toDay.';
+  }
+
+  @override
+  String allDeleted(Object dayName) {
+    return 'Все занятия на $dayName были удалены.';
+  }
 }

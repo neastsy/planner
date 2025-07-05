@@ -170,4 +170,14 @@ class AppLocalizationsEn extends AppLocalizations {
   String notificationBody(String activityName, String time) {
     return 'Your activity \'$activityName\' is scheduled to start at $time.';
   }
+
+  @override
+  String dayCopied(Object fromDay, Object toDay) {
+    return 'Copied from $fromDay to $toDay.';
+  }
+
+  @override
+  String allDeleted(Object dayName) {
+    return 'All activities for $dayName have been deleted.';
+  }
 }

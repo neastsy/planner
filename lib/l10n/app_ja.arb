@@ -83,5 +83,9 @@
       "activityName": {"type": "String"},
       "time": {"type": "String"}
     }
-  }
+  },
+  "dayCopied": "{fromDay}から{toDay}にコピーしました。",
+  "@dayCopied": { "placeholders": { "fromDay": {}, "toDay": {} } },
+  "allDeleted": "{dayName}のすべてのアクティビティが削除されました。",
+  "@allDeleted": { "placeholders": { "dayName": {} } }
 }

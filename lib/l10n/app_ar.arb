@@ -83,5 +83,9 @@
       "activityName": {"type": "String"},
       "time": {"type": "String"}
     }
-  }
+  },
+  "dayCopied": "تم النسخ من {fromDay} إلى {toDay}.",
+  "@dayCopied": { "placeholders": { "fromDay": {}, "toDay": {} } },
+  "allDeleted": "تم حذف جميع الأنشطة ليوم {dayName}.",
+  "@allDeleted": { "placeholders": { "dayName": {} } }
 }

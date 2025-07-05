@@ -170,4 +170,14 @@ class AppLocalizationsAr extends AppLocalizations {
   String notificationBody(String activityName, String time) {
     return 'من المقرر أن يبدأ نشاطك \'$activityName\' في الساعة $time.';
   }
+
+  @override
+  String dayCopied(Object fromDay, Object toDay) {
+    return 'تم النسخ من $fromDay إلى $toDay.';
+  }
+
+  @override
+  String allDeleted(Object dayName) {
+    return 'تم حذف جميع الأنشطة ليوم $dayName.';
+  }
 }
