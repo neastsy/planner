@@ -17,6 +17,7 @@ import 'l10n/app_localizations.dart';
 import 'models/activity_model.dart';
 import 'screens/planner_home_page.dart';
 import 'providers/activity_provider.dart';
+import 'providers/settings_provider.dart';
 import 'repositories/activity_repository.dart';
 
 Future<void> main() async {
@@ -38,10 +39,17 @@ Future<void> main() async {
     await Hive.openBox<Map>(AppConstants.activitiesBoxName);
 
     runApp(
-      ChangeNotifierProvider(
-        create: (context) => ActivityProvider(
-          ActivityRepository(Hive.box<Map>(AppConstants.activitiesBoxName)),
-        ),
+      MultiProvider(
+        providers: [
+          ChangeNotifierProvider(
+            create: (context) => ActivityProvider(
+              ActivityRepository(Hive.box<Map>(AppConstants.activitiesBoxName)),
+            ),
+          ),
+          ChangeNotifierProvider(
+            create: (context) => SettingsProvider(),
+          ),
+        ],
         child: const MyApp(),
       ),
     );
@@ -51,41 +59,13 @@ Future<void> main() async {
   }
 }
 
-class MyApp extends StatefulWidget {
+class MyApp extends StatelessWidget {
   const MyApp({super.key});
-
-  static void setLocale(BuildContext context, Locale newLocale) {
-    _MyAppState? state = context.findAncestorStateOfType<_MyAppState>();
-    state?.setLocale(newLocale);
-  }
-
-  static void setThemeMode(BuildContext context, ThemeMode newMode) {
-    _MyAppState? state = context.findAncestorStateOfType<_MyAppState>();
-    state?.setThemeMode(newMode);
-  }
-
-  @override
-  State<MyApp> createState() => _MyAppState();
-}
-
-class _MyAppState extends State<MyApp> {
-  Locale? _locale;
-  ThemeMode _themeMode = ThemeMode.dark;
-
-  void setLocale(Locale locale) {
-    setState(() {
-      _locale = locale;
-    });
-  }
-
-  void setThemeMode(ThemeMode mode) {
-    setState(() {
-      _themeMode = mode;
-    });
-  }
 
   @override
   Widget build(BuildContext context) {
+    // Ayarları SettingsProvider'dan dinliyoruz.
+    final settingsProvider = context.watch<SettingsProvider>();
     // Açık Tema Renkleri
     const Color lightBackgroundColor = Color(0xFFFAFAFA);
     const Color lightDialogColor = Color(0xFFFFFFFF);
@@ -100,8 +80,9 @@ class _MyAppState extends State<MyApp> {
       onGenerateTitle: (context) {
         return AppLocalizations.of(context)!.appTitle;
       },
-      themeMode: _themeMode,
-      locale: _locale,
+      // YENİ: Değerler Provider'dan alınıyor
+      themeMode: settingsProvider.themeMode,
+      locale: settingsProvider.locale,
       localizationsDelegates: const [
         AppLocalizations.delegate,
         GlobalMaterialLocalizations.delegate,

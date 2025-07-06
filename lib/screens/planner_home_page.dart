@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import '../l10n/app_localizations.dart';
-import '../main.dart';
+import '../providers/settings_provider.dart';
 import '../models/activity_model.dart';
 import '../models/language_model.dart';
 import '../providers/activity_provider.dart';
@@ -183,9 +183,10 @@ class _PlannerHomePageState extends State<PlannerHomePage> {
     showDialog(
       context: context,
       builder: (BuildContext dialogContext) {
-        final currentThemeMode = Theme.of(context).brightness == Brightness.dark
-            ? ThemeMode.dark
-            : ThemeMode.light;
+        // YENİ: Provider'ı burada sadece okuyoruz, dinlemiyoruz.
+        final settingsProvider =
+            Provider.of<SettingsProvider>(context, listen: false);
+
         return AlertDialog(
           title: Text(l10n.settings),
           content: Column(
@@ -198,10 +199,12 @@ class _PlannerHomePageState extends State<PlannerHomePage> {
                   Text(l10n.theme,
                       style: const TextStyle(fontWeight: FontWeight.bold)),
                   ThemeSwitcher(
-                    isDarkMode: currentThemeMode == ThemeMode.dark,
+                    // YENİ: Mevcut tema bilgisi provider'dan alınıyor.
+                    isDarkMode: settingsProvider.themeMode == ThemeMode.dark,
                     onToggle: (isDark) {
                       final newMode = isDark ? ThemeMode.dark : ThemeMode.light;
-                      MyApp.setThemeMode(context, newMode);
+                      // YENİ: Ayarı değiştirmek için provider metodu çağırılıyor.
+                      settingsProvider.changeTheme(newMode);
                     },
                   ),
                 ],
@@ -213,8 +216,10 @@ class _PlannerHomePageState extends State<PlannerHomePage> {
               DropdownButtonFormField<Language>(
                 value: Language.languageList().firstWhere(
                   (lang) =>
+                      // YENİ: Mevcut dil bilgisi provider'dan veya Localizations'dan alınıyor.
                       lang.code ==
-                      (Localizations.localeOf(context).languageCode),
+                      (settingsProvider.locale?.languageCode ??
+                          Localizations.localeOf(context).languageCode),
                   orElse: () => Language.languageList().first,
                 ),
                 decoration: InputDecoration(
@@ -230,7 +235,8 @@ class _PlannerHomePageState extends State<PlannerHomePage> {
                 }).toList(),
                 onChanged: (Language? newLanguage) {
                   if (newLanguage != null) {
-                    MyApp.setLocale(context, Locale(newLanguage.code, ''));
+                    // YENİ: Dili değiştirmek için provider metodu çağırılıyor.
+                    settingsProvider.changeLocale(Locale(newLanguage.code, ''));
                     Navigator.of(dialogContext).pop();
                   }
                 },
