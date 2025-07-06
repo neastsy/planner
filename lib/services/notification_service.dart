@@ -22,7 +22,7 @@ class NotificationService {
 
     // 2. Android için başlatma ayarları
     const AndroidInitializationSettings androidSettings =
-        AndroidInitializationSettings('@drawable/ic_notification');
+        AndroidInitializationSettings('@mipmap/launcher_icon');
 
     // 3. iOS için başlatma ayarları
     const DarwinInitializationSettings iosSettings =
