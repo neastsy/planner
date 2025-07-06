@@ -178,4 +178,24 @@ class AppLocalizationsJa extends AppLocalizations {
   String allDeleted(Object dayName) {
     return '$dayNameのすべてのアクティビティが削除されました。';
   }
+
+  @override
+  String get copyMode => 'コピーモード';
+
+  @override
+  String get copyModeMerge => '既存のアクティビティと統合';
+
+  @override
+  String get copyModeOverwrite => '既存のアクティビティを上書き';
+
+  @override
+  String get overwriteConfirmationTitle => '上書きの確認';
+
+  @override
+  String overwriteConfirmationContent(Object dayName) {
+    return 'これにより、\'$dayName\'の既存のすべてのアクティビティが削除され、置き換えられます。よろしいですか？';
+  }
+
+  @override
+  String get overwrite => '上書き';
 }

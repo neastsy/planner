@@ -180,4 +180,24 @@ class AppLocalizationsTr extends AppLocalizations {
   String allDeleted(Object dayName) {
     return '$dayName gününe ait tüm aktiviteler silindi.';
   }
+
+  @override
+  String get copyMode => 'Kopyalama Modu';
+
+  @override
+  String get copyModeMerge => 'Mevcut aktivitelere ekle (Birleştir)';
+
+  @override
+  String get copyModeOverwrite => 'Mevcut aktivitelerin üzerine yaz (Değiştir)';
+
+  @override
+  String get overwriteConfirmationTitle => 'Üzerine Yazmayı Onayla';
+
+  @override
+  String overwriteConfirmationContent(Object dayName) {
+    return 'Bu işlem, \'$dayName\' günündeki tüm mevcut aktiviteleri silecek ve yenileriyle değiştirecektir. Emin misiniz?';
+  }
+
+  @override
+  String get overwrite => 'Üzerine Yaz';
 }

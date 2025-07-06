@@ -87,5 +87,12 @@
   "dayCopied": "{fromDay}から{toDay}にコピーしました。",
   "@dayCopied": { "placeholders": { "fromDay": {}, "toDay": {} } },
   "allDeleted": "{dayName}のすべてのアクティビティが削除されました。",
-  "@allDeleted": { "placeholders": { "dayName": {} } }
+  "@allDeleted": { "placeholders": { "dayName": {} } },
+  "copyMode": "コピーモード",
+  "copyModeMerge": "既存のアクティビティと統合",
+  "copyModeOverwrite": "既存のアクティビティを上書き",
+  "overwriteConfirmationTitle": "上書きの確認",
+  "overwriteConfirmationContent": "これにより、'{dayName}'の既存のすべてのアクティビティが削除され、置き換えられます。よろしいですか？",
+  "@overwriteConfirmationContent": { "placeholders": { "dayName": {} } },
+  "overwrite": "上書き"
 }

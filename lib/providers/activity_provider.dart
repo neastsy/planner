@@ -8,6 +8,11 @@ import 'package:timezone/timezone.dart' as tz;
 import 'package:gunluk_planlayici/l10n/app_localizations.dart';
 import '../utils/constants.dart';
 
+enum CopyMode {
+  merge, // Mevcut aktivitelere ekle
+  overwrite, // Mevcut aktiviteleri sil ve üzerine yaz
+}
+
 class ActivityProvider with ChangeNotifier {
   final ActivityRepository _activityRepository;
   final NotificationService _notificationService = NotificationService();
@@ -95,13 +100,28 @@ class ActivityProvider with ChangeNotifier {
     return _dailyActivities[dayKey]?.isEmpty ?? true;
   }
 
-  void forceCopyDayActivities(
-      {required String fromDay, required String toDay}) {
+  void copyDayActivities({
+    required String fromDay,
+    required String toDay,
+    required CopyMode mode,
+  }) {
     final List<Activity> sourceActivities =
         List.from(_dailyActivities[fromDay] ?? []);
     if (sourceActivities.isEmpty) return;
-    final List<Activity> targetActivities =
-        List.from(_dailyActivities[toDay] ?? []);
+
+    // Hedef günün aktivitelerini alıyoruz.
+    // 'mode'a göre ya mevcut listeyi alacağız ya da boş bir liste oluşturacağız.
+    final List<Activity> targetActivities = mode == CopyMode.overwrite
+        ? []
+        : List.from(_dailyActivities[toDay] ?? []);
+
+    // Hedef günün eski bildirimlerini iptal et (sadece üzerine yazma modunda)
+    if (mode == CopyMode.overwrite) {
+      final activitiesToClear = _dailyActivities[toDay] ?? [];
+      for (final activity in activitiesToClear) {
+        _cancelNotificationForActivity(activity);
+      }
+    }
 
     final List<Activity> copiedActivities = sourceActivities.map((activity) {
       final newActivity = Activity(

@@ -87,5 +87,12 @@
   "dayCopied": "已从{fromDay}复制到{toDay}。",
   "@dayCopied": { "placeholders": { "fromDay": {}, "toDay": {} } },
   "allDeleted": "已删除{dayName}的所有活动。",
-  "@allDeleted": { "placeholders": { "dayName": {} } }
+  "@allDeleted": { "placeholders": { "dayName": {} } },
+  "copyMode": "复制模式",
+  "copyModeMerge": "与现有活动合并",
+  "copyModeOverwrite": "覆盖现有活动",
+  "overwriteConfirmationTitle": "确认覆盖",
+  "overwriteConfirmationContent": "这将删除“{dayName}”上所有现有的活动并替换它们。您确定吗？",
+  "@overwriteConfirmationContent": { "placeholders": { "dayName": {} } },
+  "overwrite": "覆盖"
 }

@@ -87,5 +87,12 @@
   "dayCopied": "Скопировано с {fromDay} на {toDay}.",
   "@dayCopied": { "placeholders": { "fromDay": {}, "toDay": {} } },
   "allDeleted": "Все занятия на {dayName} были удалены.",
-  "@allDeleted": { "placeholders": { "dayName": {} } }
+  "@allDeleted": { "placeholders": { "dayName": {} } },
+  "copyMode": "Режим копирования",
+  "copyModeMerge": "Объединить с существующими активностями",
+  "copyModeOverwrite": "Перезаписать существующие активности",
+  "overwriteConfirmationTitle": "Подтвердите перезапись",
+  "overwriteConfirmationContent": "Это удалит все существующие активности в '{dayName}' и заменит их. Вы уверены?",
+  "@overwriteConfirmationContent": { "placeholders": { "dayName": {} } },
+  "overwrite": "Перезаписать"
 }

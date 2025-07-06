@@ -88,5 +88,12 @@
   "dayCopied": "Copied from {fromDay} to {toDay}.",
   "@dayCopied": { "placeholders": { "fromDay": {}, "toDay": {} } },
   "allDeleted": "All activities for {dayName} have been deleted.",
-  "@allDeleted": { "placeholders": { "dayName": {} } }
+  "@allDeleted": { "placeholders": { "dayName": {} } },
+  "copyMode": "Copy Mode",
+  "copyModeMerge": "Merge with existing activities",
+  "copyModeOverwrite": "Overwrite existing activities",
+  "overwriteConfirmationTitle": "Confirm Overwrite",
+  "overwriteConfirmationContent": "This will delete all existing activities on '{dayName}' and replace them. Are you sure?",
+  "@overwriteConfirmationContent": { "placeholders": { "dayName": {} } },
+  "overwrite": "Overwrite"
 }

@@ -88,5 +88,12 @@
   "dayCopied": "{fromDay} gününden {toDay} gününe kopyalandı.",
   "@dayCopied": { "placeholders": { "fromDay": {}, "toDay": {} } },
   "allDeleted": "{dayName} gününe ait tüm aktiviteler silindi.",
-  "@allDeleted": { "placeholders": { "dayName": {} } }
+  "@allDeleted": { "placeholders": { "dayName": {} } },
+  "copyMode": "Kopyalama Modu",
+  "copyModeMerge": "Mevcut aktivitelere ekle (Birleştir)",
+  "copyModeOverwrite": "Mevcut aktivitelerin üzerine yaz (Değiştir)",
+  "overwriteConfirmationTitle": "Üzerine Yazmayı Onayla",
+  "overwriteConfirmationContent": "Bu işlem, '{dayName}' günündeki tüm mevcut aktiviteleri silecek ve yenileriyle değiştirecektir. Emin misiniz?",
+  "@overwriteConfirmationContent": { "placeholders": { "dayName": {} } },
+  "overwrite": "Üzerine Yaz"
 }

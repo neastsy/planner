@@ -87,5 +87,12 @@
   "dayCopied": "تم النسخ من {fromDay} إلى {toDay}.",
   "@dayCopied": { "placeholders": { "fromDay": {}, "toDay": {} } },
   "allDeleted": "تم حذف جميع الأنشطة ليوم {dayName}.",
-  "@allDeleted": { "placeholders": { "dayName": {} } }
+  "@allDeleted": { "placeholders": { "dayName": {} } },
+  "copyMode": "وضع النسخ",
+  "copyModeMerge": "دمج مع الأنشطة الحالية",
+  "copyModeOverwrite": "الكتابة فوق الأنشطة الحالية",
+  "overwriteConfirmationTitle": "تأكيد الكتابة فوق",
+  "overwriteConfirmationContent": "سيؤدي هذا إلى حذف جميع الأنشطة الحالية في '{dayName}' واستبدالها. هل أنت متأكد؟",
+  "@overwriteConfirmationContent": { "placeholders": { "dayName": {} } },
+  "overwrite": "الكتابة فوق"
 }

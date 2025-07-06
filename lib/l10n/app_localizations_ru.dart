@@ -181,4 +181,24 @@ class AppLocalizationsRu extends AppLocalizations {
   String allDeleted(Object dayName) {
     return 'Все занятия на $dayName были удалены.';
   }
+
+  @override
+  String get copyMode => 'Режим копирования';
+
+  @override
+  String get copyModeMerge => 'Объединить с существующими активностями';
+
+  @override
+  String get copyModeOverwrite => 'Перезаписать существующие активности';
+
+  @override
+  String get overwriteConfirmationTitle => 'Подтвердите перезапись';
+
+  @override
+  String overwriteConfirmationContent(Object dayName) {
+    return 'Это удалит все существующие активности в \'$dayName\' и заменит их. Вы уверены?';
+  }
+
+  @override
+  String get overwrite => 'Перезаписать';
 }

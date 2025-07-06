@@ -182,4 +182,24 @@ class AppLocalizationsEs extends AppLocalizations {
   String allDeleted(Object dayName) {
     return 'Todas las actividades de $dayName han sido eliminadas.';
   }
+
+  @override
+  String get copyMode => 'Modo de copia';
+
+  @override
+  String get copyModeMerge => 'Combinar con actividades existentes';
+
+  @override
+  String get copyModeOverwrite => 'Sobrescribir actividades existentes';
+
+  @override
+  String get overwriteConfirmationTitle => 'Confirmar Sobrescritura';
+
+  @override
+  String overwriteConfirmationContent(Object dayName) {
+    return 'Esto eliminará todas las actividades existentes en \'$dayName\' y las reemplazará. ¿Está seguro?';
+  }
+
+  @override
+  String get overwrite => 'Sobrescribir';
 }

@@ -180,4 +180,24 @@ class AppLocalizationsAr extends AppLocalizations {
   String allDeleted(Object dayName) {
     return 'تم حذف جميع الأنشطة ليوم $dayName.';
   }
+
+  @override
+  String get copyMode => 'وضع النسخ';
+
+  @override
+  String get copyModeMerge => 'دمج مع الأنشطة الحالية';
+
+  @override
+  String get copyModeOverwrite => 'الكتابة فوق الأنشطة الحالية';
+
+  @override
+  String get overwriteConfirmationTitle => 'تأكيد الكتابة فوق';
+
+  @override
+  String overwriteConfirmationContent(Object dayName) {
+    return 'سيؤدي هذا إلى حذف جميع الأنشطة الحالية في \'$dayName\' واستبدالها. هل أنت متأكد؟';
+  }
+
+  @override
+  String get overwrite => 'الكتابة فوق';
 }

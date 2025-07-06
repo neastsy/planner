@@ -178,4 +178,24 @@ class AppLocalizationsZh extends AppLocalizations {
   String allDeleted(Object dayName) {
     return '已删除$dayName的所有活动。';
   }
+
+  @override
+  String get copyMode => '复制模式';
+
+  @override
+  String get copyModeMerge => '与现有活动合并';
+
+  @override
+  String get copyModeOverwrite => '覆盖现有活动';
+
+  @override
+  String get overwriteConfirmationTitle => '确认覆盖';
+
+  @override
+  String overwriteConfirmationContent(Object dayName) {
+    return '这将删除“$dayName”上所有现有的活动并替换它们。您确定吗？';
+  }
+
+  @override
+  String get overwrite => '覆盖';
 }

@@ -4,10 +4,10 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import '../l10n/app_localizations.dart';
-import '../providers/settings_provider.dart';
 import '../models/activity_model.dart';
 import '../models/language_model.dart';
 import '../providers/activity_provider.dart';
+import '../providers/settings_provider.dart';
 import '../widgets/add_activity_sheet.dart';
 import '../widgets/circular_planner_painter.dart';
 import '../widgets/theme_switcher.dart';
@@ -248,17 +248,17 @@ class _PlannerHomePageState extends State<PlannerHomePage> {
     );
   }
 
-  Future<bool?> _showOverwriteConfirmationDialog(BuildContext context,
+  Future<bool?> _showFinalOverwriteConfirmationDialog(BuildContext context,
       {required String toDay}) async {
     final l10n = AppLocalizations.of(context)!;
-
     final String targetDayLabel = _days[hiveKeys.indexOf(toDay)];
 
     return showDialog<bool>(
       context: context,
       builder: (ctx) => AlertDialog(
-        title: Text(l10n.targetDayNotEmptyTitle),
-        content: Text(l10n.targetDayNotEmptyContent(targetDayLabel)),
+        title: Text(l10n.overwriteConfirmationTitle), // Yeni metin
+        content: Text(
+            l10n.overwriteConfirmationContent(targetDayLabel)), // Yeni metin
         actions: [
           TextButton(
             onPressed: () => Navigator.of(ctx).pop(false),
@@ -267,7 +267,7 @@ class _PlannerHomePageState extends State<PlannerHomePage> {
           TextButton(
             style: TextButton.styleFrom(foregroundColor: Colors.red.shade400),
             onPressed: () => Navigator.of(ctx).pop(true),
-            child: Text(l10n.copy),
+            child: Text(l10n.overwrite), // Yeni metin
           ),
         ],
       ),
@@ -285,6 +285,8 @@ class _PlannerHomePageState extends State<PlannerHomePage> {
     final List<String> availableDays = List.from(hiveKeys)
       ..remove(sourceDayKey);
     String targetDayKey = availableDays.first;
+
+    CopyMode selectedMode = CopyMode.merge;
 
     showDialog(
       context: context,
@@ -319,6 +321,34 @@ class _PlannerHomePageState extends State<PlannerHomePage> {
                       }
                     },
                   ),
+                  const SizedBox(height: 20),
+                  // YENİ: Kopyalama modu seçenekleri
+                  Text(
+                    l10n.copyMode, // Bu metni .arb dosyalarına ekleyeceğiz
+                    style: Theme.of(context).textTheme.titleSmall,
+                  ),
+                  RadioListTile<CopyMode>(
+                    title: Text(l10n
+                        .copyModeMerge), // Bu metni .arb dosyalarına ekleyeceğiz
+                    value: CopyMode.merge,
+                    groupValue: selectedMode,
+                    onChanged: (CopyMode? value) {
+                      setDialogState(() {
+                        selectedMode = value!;
+                      });
+                    },
+                  ),
+                  RadioListTile<CopyMode>(
+                    title: Text(l10n
+                        .copyModeOverwrite), // Bu metni .arb dosyalarına ekleyeceğiz
+                    value: CopyMode.overwrite,
+                    groupValue: selectedMode,
+                    onChanged: (CopyMode? value) {
+                      setDialogState(() {
+                        selectedMode = value!;
+                      });
+                    },
+                  ),
                 ],
               ),
               actions: [
@@ -327,33 +357,55 @@ class _PlannerHomePageState extends State<PlannerHomePage> {
                   child: Text(l10n.cancel),
                 ),
                 TextButton(
+                  // YENİ VE BASİTLEŞTİRİLMİŞ MANTIK
                   onPressed: () async {
-                    bool? shouldCopy;
-                    if (activityProvider.isDayEmpty(targetDayKey)) {
-                      shouldCopy = true;
-                    } else {
-                      shouldCopy = await _showOverwriteConfirmationDialog(
-                          context,
-                          toDay: targetDayKey);
-                    }
-                    if (shouldCopy ?? false) {
-                      activityProvider.forceCopyDayActivities(
+                    // Eğer mod "Birleştir" ise, direkt kopyala.
+                    if (selectedMode == CopyMode.merge) {
+                      activityProvider.copyDayActivities(
                         fromDay: sourceDayKey,
                         toDay: targetDayKey,
+                        mode: CopyMode.merge,
                       );
-
-                      if (context.mounted) {
-                        final targetDayLabel =
-                            _days[hiveKeys.indexOf(targetDayKey)];
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(
-                              content: Text(l10n.dayCopied(
-                                  sourceDayLabel, targetDayLabel))),
+                    }
+                    // Eğer mod "Üzerine Yaz" ise...
+                    else if (selectedMode == CopyMode.overwrite) {
+                      bool canOverwrite = true;
+                      // ...ve hedef gün boş değilse, son onayı iste.
+                      if (!activityProvider.isDayEmpty(targetDayKey)) {
+                        canOverwrite =
+                            await _showFinalOverwriteConfirmationDialog(context,
+                                    toDay: targetDayKey) ??
+                                false;
+                      }
+                      // Onay verildiyse veya hedef gün zaten boşsa kopyala.
+                      if (canOverwrite) {
+                        activityProvider.copyDayActivities(
+                          fromDay: sourceDayKey,
+                          toDay: targetDayKey,
+                          mode: CopyMode.overwrite,
                         );
+                      } else {
+                        // Onay verilmediyse hiçbir şey yapma ve diyaloğu kapatma.
+                        return;
                       }
                     }
+
+                    // Kopyalama işlemi yapıldıysa (veya yapılmadıysa bile) diyaloğu kapat.
                     if (dialogContext.mounted) {
                       Navigator.of(dialogContext).pop();
+                    }
+
+                    // Başarılı kopyalama sonrası SnackBar gösterimi
+                    // (Bu kısım isteğe bağlı olarak sadece başarılı kopyalama sonrası gösterilebilir
+                    // ancak şimdilik basit tutalım)
+                    if (context.mounted) {
+                      final targetDayLabel =
+                          _days[hiveKeys.indexOf(targetDayKey)];
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                            content: Text(l10n.dayCopied(
+                                sourceDayLabel, targetDayLabel))),
+                      );
                     }
                   },
                   child: Text(l10n.copy),

@@ -429,6 +429,42 @@ abstract class AppLocalizations {
   /// In tr, this message translates to:
   /// **'{dayName} gününe ait tüm aktiviteler silindi.'**
   String allDeleted(Object dayName);
+
+  /// No description provided for @copyMode.
+  ///
+  /// In tr, this message translates to:
+  /// **'Kopyalama Modu'**
+  String get copyMode;
+
+  /// No description provided for @copyModeMerge.
+  ///
+  /// In tr, this message translates to:
+  /// **'Mevcut aktivitelere ekle (Birleştir)'**
+  String get copyModeMerge;
+
+  /// No description provided for @copyModeOverwrite.
+  ///
+  /// In tr, this message translates to:
+  /// **'Mevcut aktivitelerin üzerine yaz (Değiştir)'**
+  String get copyModeOverwrite;
+
+  /// No description provided for @overwriteConfirmationTitle.
+  ///
+  /// In tr, this message translates to:
+  /// **'Üzerine Yazmayı Onayla'**
+  String get overwriteConfirmationTitle;
+
+  /// No description provided for @overwriteConfirmationContent.
+  ///
+  /// In tr, this message translates to:
+  /// **'Bu işlem, \'{dayName}\' günündeki tüm mevcut aktiviteleri silecek ve yenileriyle değiştirecektir. Emin misiniz?'**
+  String overwriteConfirmationContent(Object dayName);
+
+  /// No description provided for @overwrite.
+  ///
+  /// In tr, this message translates to:
+  /// **'Üzerine Yaz'**
+  String get overwrite;
 }
 
 class _AppLocalizationsDelegate

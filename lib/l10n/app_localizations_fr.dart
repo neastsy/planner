@@ -181,4 +181,24 @@ class AppLocalizationsFr extends AppLocalizations {
   String allDeleted(Object dayName) {
     return 'Toutes les activités pour $dayName ont été supprimées.';
   }
+
+  @override
+  String get copyMode => 'Mode de copie';
+
+  @override
+  String get copyModeMerge => 'Fusionner avec les activités existantes';
+
+  @override
+  String get copyModeOverwrite => 'Écraser les activités existantes';
+
+  @override
+  String get overwriteConfirmationTitle => 'Confirmer l\'écrasement';
+
+  @override
+  String overwriteConfirmationContent(Object dayName) {
+    return 'Ceci supprimera toutes les activités existantes le \'$dayName\' et les remplacera. Êtes-vous sûr ?';
+  }
+
+  @override
+  String get overwrite => 'Écraser';
 }
