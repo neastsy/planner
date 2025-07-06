@@ -198,7 +198,8 @@ class _AddActivitySheetState extends State<AddActivitySheet>
     return SingleChildScrollView(
       child: Container(
         padding: EdgeInsets.only(
-            bottom: MediaQuery.of(context).viewInsets.bottom,
+            bottom: MediaQuery.of(context).viewInsets.bottom +
+                MediaQuery.of(context).padding.bottom,
             left: 24,
             right: 24,
             top: 24),
