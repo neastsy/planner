@@ -94,5 +94,17 @@
   "overwriteConfirmationTitle": "确认覆盖",
   "overwriteConfirmationContent": "这将删除“{dayName}”上所有现有的活动并替换它们。您确定吗？",
   "@overwriteConfirmationContent": { "placeholders": { "dayName": {} } },
-  "overwrite": "覆盖"
+  "overwrite": "覆盖",
+  "pendingNotificationsTitle": "待处理的通知",
+  "noPendingNotifications": "没有待处理的通知。",
+  "noTitle": "无标题",
+  "noBody": "无内容",
+  "cancelAll": "全部取消",
+  "close": "关闭",
+  "allNotificationsCancelled": "所有待处理的通知已被取消。",
+  "viewPendingNotifications": "查看待处理的通知",
+  "unknown": "未知",
+  "activityTime": "活动时间",
+  "notificationType": "通知类型",
+  "scheduledFor": "计划于"
 }

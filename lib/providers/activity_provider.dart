@@ -43,6 +43,7 @@ class ActivityProvider with ChangeNotifier {
   void _loadActivities() {
     _dailyActivities = _activityRepository.loadActivities();
     _sortAllActivities();
+    _syncNotificationsOnLoad();
     notifyListeners();
   }
 
@@ -169,18 +170,18 @@ class ActivityProvider with ChangeNotifier {
     final now = DateTime.now();
     final dayIndex = AppConstants.dayKeys.indexOf(dayKey);
     int daysToAdd = (dayIndex - (now.weekday - 1) + 7) % 7;
+
     var activityDate = DateTime(now.year, now.month, now.day + daysToAdd,
         activity.startTime.hour, activity.startTime.minute);
-    if (activityDate.isBefore(now) && daysToAdd > 0) {
-      activityDate = activityDate.add(const Duration(days: 7));
-    }
-    final scheduledTime = activityDate
-        .subtract(Duration(minutes: activity.notificationMinutesBefore!));
-    if (scheduledTime.isBefore(now)) {
-      return;
-    }
 
-    // 3. Bildirimi YENİ, ÇEVRİLMİŞ metinlerle planla
+    var scheduledTime = activityDate
+        .subtract(Duration(minutes: activity.notificationMinutesBefore!));
+
+    if (scheduledTime.isBefore(now)) {
+      activityDate = activityDate.add(const Duration(days: 7));
+      scheduledTime = activityDate
+          .subtract(Duration(minutes: activity.notificationMinutesBefore!));
+    }
     _notificationService.scheduleNotification(
       id: activity.id.hashCode,
       title: activity.name,
@@ -189,11 +190,90 @@ class ActivityProvider with ChangeNotifier {
         _formatTime(activity.startTime),
       ),
       scheduledTime: scheduledTime,
+      payload: activity.notificationMinutesBefore.toString(),
     );
   }
 
   void _cancelNotificationForActivity(Activity activity) {
     _notificationService.cancelNotification(activity.id.hashCode);
+  }
+
+  Future<void> _syncNotificationsOnLoad() async {
+    final pendingNotifications =
+        await _notificationService.getPendingNotifications();
+    // Hızlı arama için bekleyen bildirimleri bir haritaya dönüştürelim (id -> payload)
+    final pendingMap = {for (var p in pendingNotifications) p.id: p.payload};
+
+    bool needsSave = false;
+    final Map<String, List<Activity>> updatedDailyActivities = {};
+
+    _dailyActivities.forEach((dayKey, activities) {
+      final List<Activity> updatedActivities = [];
+      for (var activity in activities) {
+        final notificationId = activity.id.hashCode;
+        final payload = pendingMap[notificationId];
+
+        int? realNotificationMinutes;
+        if (payload != null) {
+          realNotificationMinutes = int.tryParse(payload);
+        }
+
+        // Eğer veritabanındaki bilgi ile gerçekteki bilgi farklıysa, gerçeği kabul et.
+        if (activity.notificationMinutesBefore != realNotificationMinutes) {
+          updatedActivities.add(Activity(
+            id: activity.id,
+            name: activity.name,
+            startTime: activity.startTime,
+            endTime: activity.endTime,
+            color: activity.color,
+            note: activity.note,
+            notificationMinutesBefore:
+                realNotificationMinutes, // Düzeltilmiş değeri ata
+          ));
+          needsSave = true;
+        } else {
+          updatedActivities.add(activity);
+        }
+      }
+      updatedDailyActivities[dayKey] = updatedActivities;
+    });
+
+    // Eğer en az bir aktivite güncellendiyse, state'i güncelle ve kaydet.
+    if (needsSave) {
+      _dailyActivities = updatedDailyActivities;
+      _saveActivities();
+      notifyListeners();
+    }
+  }
+
+  void clearAllNotificationsAndUpdateActivities() {
+    _notificationService.cancelAllNotifications();
+
+    final Map<String, List<Activity>> updatedDailyActivities = {};
+    _dailyActivities.forEach((dayKey, activities) {
+      final List<Activity> updatedActivities = [];
+      for (var activity in activities) {
+        // Eğer aktivitenin bir bildirim ayarı varsa, onu temizle.
+        if (activity.notificationMinutesBefore != null) {
+          updatedActivities.add(Activity(
+            id: activity.id,
+            name: activity.name,
+            startTime: activity.startTime,
+            endTime: activity.endTime,
+            color: activity.color,
+            note: activity.note,
+            notificationMinutesBefore: null, // Bildirimi temizle
+          ));
+        } else {
+          updatedActivities.add(activity);
+        }
+      }
+      updatedDailyActivities[dayKey] = updatedActivities;
+    });
+
+    _dailyActivities = updatedDailyActivities;
+    _saveActivities();
+    notifyListeners(); // Arayüzün güncellenmesi için en önemli kısım
   }
 
   String _formatTime(TimeOfDay time) =>

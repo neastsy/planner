@@ -202,4 +202,41 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get overwrite => 'Sobrescribir';
+
+  @override
+  String get pendingNotificationsTitle => 'Notificaciones Pendientes';
+
+  @override
+  String get noPendingNotifications => 'No hay notificaciones pendientes.';
+
+  @override
+  String get noTitle => 'Sin Título';
+
+  @override
+  String get noBody => 'Sin Cuerpo';
+
+  @override
+  String get cancelAll => 'Cancelar Todas';
+
+  @override
+  String get close => 'Cerrar';
+
+  @override
+  String get allNotificationsCancelled =>
+      'Todas las notificaciones pendientes han sido canceladas.';
+
+  @override
+  String get viewPendingNotifications => 'Ver Notificaciones Pendientes';
+
+  @override
+  String get unknown => 'Desconocido';
+
+  @override
+  String get activityTime => 'Hora de la Actividad';
+
+  @override
+  String get notificationType => 'Tipo de Notificación';
+
+  @override
+  String get scheduledFor => 'Programado para';
 }

@@ -201,4 +201,42 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get overwrite => 'Écraser';
+
+  @override
+  String get pendingNotificationsTitle => 'Notifications en attente';
+
+  @override
+  String get noPendingNotifications =>
+      'Il n\'y a aucune notification en attente.';
+
+  @override
+  String get noTitle => 'Sans Titre';
+
+  @override
+  String get noBody => 'Sans Corps';
+
+  @override
+  String get cancelAll => 'Tout annuler';
+
+  @override
+  String get close => 'Fermer';
+
+  @override
+  String get allNotificationsCancelled =>
+      'Toutes les notifications en attente ont été annulées.';
+
+  @override
+  String get viewPendingNotifications => 'Voir les notifications en attente';
+
+  @override
+  String get unknown => 'Inconnu';
+
+  @override
+  String get activityTime => 'Heure de l\'activité';
+
+  @override
+  String get notificationType => 'Type de notification';
+
+  @override
+  String get scheduledFor => 'Prévu pour';
 }

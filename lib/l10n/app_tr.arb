@@ -95,5 +95,17 @@
   "overwriteConfirmationTitle": "Üzerine Yazmayı Onayla",
   "overwriteConfirmationContent": "Bu işlem, '{dayName}' günündeki tüm mevcut aktiviteleri silecek ve yenileriyle değiştirecektir. Emin misiniz?",
   "@overwriteConfirmationContent": { "placeholders": { "dayName": {} } },
-  "overwrite": "Üzerine Yaz"
+  "overwrite": "Üzerine Yaz",
+  "pendingNotificationsTitle": "Bekleyen Bildirimler",
+  "noPendingNotifications": "Bekleyen bildirim bulunmuyor.",
+  "noTitle": "Başlık Yok",
+  "noBody": "İçerik Yok",
+  "cancelAll": "Tümünü İptal Et",
+  "close": "Kapat",
+  "allNotificationsCancelled": "Tüm bekleyen bildirimler iptal edildi.",
+  "viewPendingNotifications": "Bekleyen Bildirimleri Görüntüle",
+  "unknown": "Bilinmiyor",
+  "activityTime": "Aktivite Saati",
+  "notificationType": "Bildirim Türü",
+  "scheduledFor": "Zamanlandı"
 }

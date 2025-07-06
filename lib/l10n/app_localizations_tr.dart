@@ -200,4 +200,41 @@ class AppLocalizationsTr extends AppLocalizations {
 
   @override
   String get overwrite => 'Üzerine Yaz';
+
+  @override
+  String get pendingNotificationsTitle => 'Bekleyen Bildirimler';
+
+  @override
+  String get noPendingNotifications => 'Bekleyen bildirim bulunmuyor.';
+
+  @override
+  String get noTitle => 'Başlık Yok';
+
+  @override
+  String get noBody => 'İçerik Yok';
+
+  @override
+  String get cancelAll => 'Tümünü İptal Et';
+
+  @override
+  String get close => 'Kapat';
+
+  @override
+  String get allNotificationsCancelled =>
+      'Tüm bekleyen bildirimler iptal edildi.';
+
+  @override
+  String get viewPendingNotifications => 'Bekleyen Bildirimleri Görüntüle';
+
+  @override
+  String get unknown => 'Bilinmiyor';
+
+  @override
+  String get activityTime => 'Aktivite Saati';
+
+  @override
+  String get notificationType => 'Bildirim Türü';
+
+  @override
+  String get scheduledFor => 'Zamanlandı';
 }

@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 
 import '../l10n/app_localizations.dart';
 import '../models/activity_model.dart';
@@ -240,6 +241,24 @@ class _PlannerHomePageState extends State<PlannerHomePage> {
                     Navigator.of(dialogContext).pop();
                   }
                 },
+              ),
+              const Divider(),
+              TextButton.icon(
+                icon: const Icon(Icons.notifications_on_outlined),
+                label: Text(l10n.viewPendingNotifications),
+                onPressed: () {
+                  // Önce Ayarlar diyaloğunu kapat
+                  Navigator.of(dialogContext).pop();
+                  // Sonra bekleyen bildirimler diyaloğunu aç (Artık context göndermiyoruz)
+                  _showPendingNotificationsDialog();
+                },
+                style: TextButton.styleFrom(
+                  padding: const EdgeInsets.symmetric(vertical: 12.0),
+                  // Bu satırı ekleyerek düğmenin tüm genişliği kaplamasını sağlayabiliriz
+                  minimumSize: const Size.fromHeight(40),
+                  // Hizalamayı sola yaslamak için
+                  alignment: Alignment.centerLeft,
+                ),
               ),
             ],
           ),
@@ -501,6 +520,199 @@ class _PlannerHomePageState extends State<PlannerHomePage> {
         color = Colors.grey;
     }
     return Icon(icon, color: color);
+  }
+
+  void _showPendingNotificationsDialog() async {
+    final notificationService = NotificationService();
+    final activityProvider =
+        Provider.of<ActivityProvider>(context, listen: false);
+
+    final List<PendingNotificationRequest> pendingNotifications =
+        await notificationService.getPendingNotifications();
+
+    if (!mounted) return;
+
+    final l10n = AppLocalizations.of(context)!;
+
+    showDialog(
+      context: context,
+      builder: (BuildContext dialogContext) {
+        return AlertDialog(
+          title: Text(l10n.pendingNotificationsTitle),
+          content: SizedBox(
+            width: double.maxFinite,
+            child: pendingNotifications.isEmpty
+                ? Center(child: Text(l10n.noPendingNotifications))
+                : ListView.builder(
+                    shrinkWrap: true,
+                    itemCount: pendingNotifications.length,
+                    itemBuilder: (context, index) {
+                      final request = pendingNotifications[index];
+                      Activity? foundActivity;
+                      String? foundDayKey;
+
+                      for (var dayKey
+                          in activityProvider.dailyActivities.keys) {
+                        final activity = activityProvider
+                            .dailyActivities[dayKey]
+                            ?.firstWhere((act) => act.id.hashCode == request.id,
+                                orElse: () => Activity(
+                                    name: '',
+                                    startTime: TimeOfDay(hour: 0, minute: 0),
+                                    endTime: TimeOfDay(hour: 0, minute: 0),
+                                    color: Colors.transparent));
+
+                        if (activity != null && activity.name.isNotEmpty) {
+                          foundActivity = activity;
+                          foundDayKey = dayKey;
+                          break;
+                        }
+                      }
+
+                      final String title =
+                          foundActivity?.name ?? request.title ?? l10n.noTitle;
+                      final String dayLabel = foundDayKey != null
+                          ? _days[hiveKeys.indexOf(foundDayKey)]
+                          : '??';
+
+                      String notificationType;
+                      DateTime? scheduledDateTime;
+
+                      if (foundActivity != null &&
+                          foundActivity.notificationMinutesBefore != null) {
+                        switch (foundActivity.notificationMinutesBefore) {
+                          case 0:
+                            notificationType = l10n.notifyOnTime;
+                            break;
+                          case 5:
+                            notificationType = l10n.notify5MinBefore;
+                            break;
+                          case 15:
+                            notificationType = l10n.notify15MinBefore;
+                            break;
+                          default:
+                            notificationType = '';
+                        }
+
+                        final now = DateTime.now();
+                        final dayIndex =
+                            AppConstants.dayKeys.indexOf(foundDayKey!);
+                        int daysToAdd = (dayIndex - (now.weekday - 1) + 7) % 7;
+                        var activityDate = DateTime(
+                            now.year,
+                            now.month,
+                            now.day + daysToAdd,
+                            foundActivity.startTime.hour,
+                            foundActivity.startTime.minute);
+                        if (activityDate.isBefore(now)) {
+                          activityDate =
+                              activityDate.add(const Duration(days: 7));
+                        }
+                        scheduledDateTime = activityDate.subtract(Duration(
+                            minutes: foundActivity.notificationMinutesBefore!));
+                      } else {
+                        notificationType = l10n.unknown;
+                      }
+
+                      return Card(
+                        margin: const EdgeInsets.symmetric(vertical: 6),
+                        child: Padding(
+                          padding: const EdgeInsets.all(12.0),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(title,
+                                  style: Theme.of(context)
+                                      .textTheme
+                                      .titleMedium
+                                      ?.copyWith(fontWeight: FontWeight.bold)),
+                              const SizedBox(height: 8),
+                              Row(
+                                children: [
+                                  const Icon(Icons.calendar_today,
+                                      size: 16, color: Colors.grey),
+                                  const SizedBox(width: 8),
+                                  // YENİ: Expanded ile sarmalandı
+                                  Expanded(
+                                    child: Text(
+                                        '$dayLabel - ${l10n.activityTime}: ${_formatTime(foundActivity!.startTime)}',
+                                        style: Theme.of(context)
+                                            .textTheme
+                                            .bodyMedium),
+                                  ),
+                                ],
+                              ),
+                              const SizedBox(height: 4),
+                              Row(
+                                children: [
+                                  const Icon(
+                                      Icons.notifications_active_outlined,
+                                      size: 16,
+                                      color: Colors.grey),
+                                  const SizedBox(width: 8),
+                                  // YENİ: Expanded ile sarmalandı
+                                  Expanded(
+                                    child: Text(
+                                        '${l10n.notificationType}: $notificationType',
+                                        style: Theme.of(context)
+                                            .textTheme
+                                            .bodyMedium),
+                                  ),
+                                ],
+                              ),
+                              if (scheduledDateTime != null)
+                                Padding(
+                                  padding: const EdgeInsets.only(top: 4.0),
+                                  child: Row(
+                                    children: [
+                                      const Icon(Icons.alarm,
+                                          size: 16, color: Colors.grey),
+                                      const SizedBox(width: 8),
+                                      // YENİ: Expanded ile sarmalandı
+                                      Expanded(
+                                        child: Text(
+                                            '${l10n.scheduledFor}: ${MaterialLocalizations.of(context).formatFullDate(scheduledDateTime)} - ${_formatTime(TimeOfDay.fromDateTime(scheduledDateTime))}',
+                                            style: Theme.of(context)
+                                                .textTheme
+                                                .bodyMedium),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                            ],
+                          ),
+                        ),
+                      );
+                    },
+                  ),
+          ),
+          actions: <Widget>[
+            if (pendingNotifications.isNotEmpty)
+              TextButton(
+                style:
+                    TextButton.styleFrom(foregroundColor: Colors.red.shade400),
+                child: Text(l10n.cancelAll),
+                onPressed: () {
+                  // YENİ: Provider üzerinden işlemi yapıyoruz
+                  Provider.of<ActivityProvider>(context, listen: false)
+                      .clearAllNotificationsAndUpdateActivities();
+                  Navigator.of(dialogContext).pop();
+                  if (!mounted) return;
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(content: Text(l10n.allNotificationsCancelled)),
+                  );
+                },
+              ),
+            TextButton(
+              child: Text(l10n.close),
+              onPressed: () {
+                Navigator.of(dialogContext).pop();
+              },
+            ),
+          ],
+        );
+      },
+    );
   }
 
   @override

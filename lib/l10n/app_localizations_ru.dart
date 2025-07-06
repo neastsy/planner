@@ -201,4 +201,41 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get overwrite => 'Перезаписать';
+
+  @override
+  String get pendingNotificationsTitle => 'Ожидающие уведомления';
+
+  @override
+  String get noPendingNotifications => 'Нет ожидающих уведомлений.';
+
+  @override
+  String get noTitle => 'Без названия';
+
+  @override
+  String get noBody => 'Нет содержимого';
+
+  @override
+  String get cancelAll => 'Отменить все';
+
+  @override
+  String get close => 'Закрыть';
+
+  @override
+  String get allNotificationsCancelled =>
+      'Все ожидающие уведомления были отменены.';
+
+  @override
+  String get viewPendingNotifications => 'Просмотреть ожидающие уведомления';
+
+  @override
+  String get unknown => 'Неизвестно';
+
+  @override
+  String get activityTime => 'Время активности';
+
+  @override
+  String get notificationType => 'Тип уведомления';
+
+  @override
+  String get scheduledFor => 'Запланировано на';
 }

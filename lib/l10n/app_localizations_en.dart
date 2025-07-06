@@ -200,4 +200,41 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get overwrite => 'Overwrite';
+
+  @override
+  String get pendingNotificationsTitle => 'Pending Notifications';
+
+  @override
+  String get noPendingNotifications => 'There are no pending notifications.';
+
+  @override
+  String get noTitle => 'No Title';
+
+  @override
+  String get noBody => 'No Body';
+
+  @override
+  String get cancelAll => 'Cancel All';
+
+  @override
+  String get close => 'Close';
+
+  @override
+  String get allNotificationsCancelled =>
+      'All pending notifications have been cancelled.';
+
+  @override
+  String get viewPendingNotifications => 'View Pending Notifications';
+
+  @override
+  String get unknown => 'Unknown';
+
+  @override
+  String get activityTime => 'Activity Time';
+
+  @override
+  String get notificationType => 'Notification Type';
+
+  @override
+  String get scheduledFor => 'Scheduled for';
 }

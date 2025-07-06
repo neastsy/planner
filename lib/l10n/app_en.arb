@@ -95,5 +95,17 @@
   "overwriteConfirmationTitle": "Confirm Overwrite",
   "overwriteConfirmationContent": "This will delete all existing activities on '{dayName}' and replace them. Are you sure?",
   "@overwriteConfirmationContent": { "placeholders": { "dayName": {} } },
-  "overwrite": "Overwrite"
+  "overwrite": "Overwrite",
+  "pendingNotificationsTitle": "Pending Notifications",
+  "noPendingNotifications": "There are no pending notifications.",
+  "noTitle": "No Title",
+  "noBody": "No Body",
+  "cancelAll": "Cancel All",
+  "close": "Close",
+  "allNotificationsCancelled": "All pending notifications have been cancelled.",
+  "viewPendingNotifications": "View Pending Notifications",
+  "unknown": "Unknown",
+  "activityTime": "Activity Time",
+  "notificationType": "Notification Type",
+  "scheduledFor": "Scheduled for"
 }

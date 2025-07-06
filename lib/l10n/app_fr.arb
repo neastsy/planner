@@ -94,5 +94,17 @@
   "overwriteConfirmationTitle": "Confirmer l'écrasement",
   "overwriteConfirmationContent": "Ceci supprimera toutes les activités existantes le '{dayName}' et les remplacera. Êtes-vous sûr ?",
   "@overwriteConfirmationContent": { "placeholders": { "dayName": {} } },
-  "overwrite": "Écraser"
+  "overwrite": "Écraser",
+  "pendingNotificationsTitle": "Notifications en attente",
+  "noPendingNotifications": "Il n'y a aucune notification en attente.",
+  "noTitle": "Sans Titre",
+  "noBody": "Sans Corps",
+  "cancelAll": "Tout annuler",
+  "close": "Fermer",
+  "allNotificationsCancelled": "Toutes les notifications en attente ont été annulées.",
+  "viewPendingNotifications": "Voir les notifications en attente",
+  "unknown": "Inconnu",
+  "activityTime": "Heure de l'activité",
+  "notificationType": "Type de notification",
+  "scheduledFor": "Prévu pour"
 }

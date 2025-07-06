@@ -94,5 +94,17 @@
   "overwriteConfirmationTitle": "Überschreiben bestätigen",
   "overwriteConfirmationContent": "Dadurch werden alle vorhandenen Aktivitäten am '{dayName}' gelöscht und ersetzt. Sind Sie sicher?",
   "@overwriteConfirmationContent": { "placeholders": { "dayName": {} } },
-  "overwrite": "Überschreiben"
+  "overwrite": "Überschreiben",
+  "pendingNotificationsTitle": "Ausstehende Benachrichtigungen",
+  "noPendingNotifications": "Es gibt keine ausstehenden Benachrichtigungen.",
+  "noTitle": "Kein Titel",
+  "noBody": "Kein Inhalt",
+  "cancelAll": "Alle abbrechen",
+  "close": "Schließen",
+  "allNotificationsCancelled": "Alle ausstehenden Benachrichtigungen wurden abgebrochen.",
+  "viewPendingNotifications": "Ausstehende Benachrichtigungen anzeigen",
+  "unknown": "Unbekannt",
+  "activityTime": "Aktivitätszeit",
+  "notificationType": "Benachrichtigungstyp",
+  "scheduledFor": "Geplant für"
 }

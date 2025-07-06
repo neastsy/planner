@@ -94,5 +94,17 @@
   "overwriteConfirmationTitle": "تأكيد الكتابة فوق",
   "overwriteConfirmationContent": "سيؤدي هذا إلى حذف جميع الأنشطة الحالية في '{dayName}' واستبدالها. هل أنت متأكد؟",
   "@overwriteConfirmationContent": { "placeholders": { "dayName": {} } },
-  "overwrite": "الكتابة فوق"
+  "overwrite": "الكتابة فوق",
+  "pendingNotificationsTitle": "الإشعارات المعلقة",
+  "noPendingNotifications": "لا توجد إشعارات معلقة.",
+  "noTitle": "بدون عنوان",
+  "noBody": "بدون محتوى",
+  "cancelAll": "إلغاء الكل",
+  "close": "إغلاق",
+  "allNotificationsCancelled": "تم إلغاء جميع الإشعارات المعلقة.",
+  "viewPendingNotifications": "عرض الإشعارات المعلقة",
+  "unknown": "غير معروف",
+  "activityTime": "وقت النشاط",
+  "notificationType": "نوع الإشعار",
+  "scheduledFor": "مجدول لـ"
 }

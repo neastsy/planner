@@ -465,6 +465,78 @@ abstract class AppLocalizations {
   /// In tr, this message translates to:
   /// **'Üzerine Yaz'**
   String get overwrite;
+
+  /// No description provided for @pendingNotificationsTitle.
+  ///
+  /// In tr, this message translates to:
+  /// **'Bekleyen Bildirimler'**
+  String get pendingNotificationsTitle;
+
+  /// No description provided for @noPendingNotifications.
+  ///
+  /// In tr, this message translates to:
+  /// **'Bekleyen bildirim bulunmuyor.'**
+  String get noPendingNotifications;
+
+  /// No description provided for @noTitle.
+  ///
+  /// In tr, this message translates to:
+  /// **'Başlık Yok'**
+  String get noTitle;
+
+  /// No description provided for @noBody.
+  ///
+  /// In tr, this message translates to:
+  /// **'İçerik Yok'**
+  String get noBody;
+
+  /// No description provided for @cancelAll.
+  ///
+  /// In tr, this message translates to:
+  /// **'Tümünü İptal Et'**
+  String get cancelAll;
+
+  /// No description provided for @close.
+  ///
+  /// In tr, this message translates to:
+  /// **'Kapat'**
+  String get close;
+
+  /// No description provided for @allNotificationsCancelled.
+  ///
+  /// In tr, this message translates to:
+  /// **'Tüm bekleyen bildirimler iptal edildi.'**
+  String get allNotificationsCancelled;
+
+  /// No description provided for @viewPendingNotifications.
+  ///
+  /// In tr, this message translates to:
+  /// **'Bekleyen Bildirimleri Görüntüle'**
+  String get viewPendingNotifications;
+
+  /// No description provided for @unknown.
+  ///
+  /// In tr, this message translates to:
+  /// **'Bilinmiyor'**
+  String get unknown;
+
+  /// No description provided for @activityTime.
+  ///
+  /// In tr, this message translates to:
+  /// **'Aktivite Saati'**
+  String get activityTime;
+
+  /// No description provided for @notificationType.
+  ///
+  /// In tr, this message translates to:
+  /// **'Bildirim Türü'**
+  String get notificationType;
+
+  /// No description provided for @scheduledFor.
+  ///
+  /// In tr, this message translates to:
+  /// **'Zamanlandı'**
+  String get scheduledFor;
 }
 
 class _AppLocalizationsDelegate

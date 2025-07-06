@@ -58,6 +58,7 @@ class NotificationService {
     required String title,
     required String body,
     required DateTime scheduledTime,
+    String? payload,
   }) async {
     // Android için bildirim detayları
     const AndroidNotificationDetails androidDetails =
@@ -83,9 +84,9 @@ class NotificationService {
       id,
       title,
       body,
-      tz.TZDateTime.from(
-          scheduledTime, tz.local), // Cihazın saat dilimine göre ayarla
+      tz.TZDateTime.from(scheduledTime, tz.local),
       notificationDetails,
+      payload: payload,
       androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,
       uiLocalNotificationDateInterpretation:
           UILocalNotificationDateInterpretation.absoluteTime,
@@ -100,5 +101,11 @@ class NotificationService {
   // Tüm bildirimleri iptal etme metodu
   Future<void> cancelAllNotifications() async {
     await _notificationsPlugin.cancelAll();
+  }
+
+  Future<List<PendingNotificationRequest>> getPendingNotifications() async {
+    final List<PendingNotificationRequest> pendingNotificationRequests =
+        await _notificationsPlugin.pendingNotificationRequests();
+    return pendingNotificationRequests;
   }
 }

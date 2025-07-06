@@ -198,4 +198,40 @@ class AppLocalizationsJa extends AppLocalizations {
 
   @override
   String get overwrite => '上書き';
+
+  @override
+  String get pendingNotificationsTitle => '保留中の通知';
+
+  @override
+  String get noPendingNotifications => '保留中の通知はありません。';
+
+  @override
+  String get noTitle => 'タイトルなし';
+
+  @override
+  String get noBody => '内容なし';
+
+  @override
+  String get cancelAll => 'すべてキャンセル';
+
+  @override
+  String get close => '閉じる';
+
+  @override
+  String get allNotificationsCancelled => '保留中のすべての通知がキャンセルされました。';
+
+  @override
+  String get viewPendingNotifications => '保留中の通知を表示';
+
+  @override
+  String get unknown => '不明';
+
+  @override
+  String get activityTime => 'アクティビティ時間';
+
+  @override
+  String get notificationType => '通知タイプ';
+
+  @override
+  String get scheduledFor => '予定時刻';
 }

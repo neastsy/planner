@@ -200,4 +200,40 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get overwrite => 'الكتابة فوق';
+
+  @override
+  String get pendingNotificationsTitle => 'الإشعارات المعلقة';
+
+  @override
+  String get noPendingNotifications => 'لا توجد إشعارات معلقة.';
+
+  @override
+  String get noTitle => 'بدون عنوان';
+
+  @override
+  String get noBody => 'بدون محتوى';
+
+  @override
+  String get cancelAll => 'إلغاء الكل';
+
+  @override
+  String get close => 'إغلاق';
+
+  @override
+  String get allNotificationsCancelled => 'تم إلغاء جميع الإشعارات المعلقة.';
+
+  @override
+  String get viewPendingNotifications => 'عرض الإشعارات المعلقة';
+
+  @override
+  String get unknown => 'غير معروف';
+
+  @override
+  String get activityTime => 'وقت النشاط';
+
+  @override
+  String get notificationType => 'نوع الإشعار';
+
+  @override
+  String get scheduledFor => 'مجدول لـ';
 }

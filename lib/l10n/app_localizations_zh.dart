@@ -198,4 +198,40 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get overwrite => '覆盖';
+
+  @override
+  String get pendingNotificationsTitle => '待处理的通知';
+
+  @override
+  String get noPendingNotifications => '没有待处理的通知。';
+
+  @override
+  String get noTitle => '无标题';
+
+  @override
+  String get noBody => '无内容';
+
+  @override
+  String get cancelAll => '全部取消';
+
+  @override
+  String get close => '关闭';
+
+  @override
+  String get allNotificationsCancelled => '所有待处理的通知已被取消。';
+
+  @override
+  String get viewPendingNotifications => '查看待处理的通知';
+
+  @override
+  String get unknown => '未知';
+
+  @override
+  String get activityTime => '活动时间';
+
+  @override
+  String get notificationType => '通知类型';
+
+  @override
+  String get scheduledFor => '计划于';
 }

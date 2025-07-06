@@ -94,5 +94,17 @@
   "overwriteConfirmationTitle": "上書きの確認",
   "overwriteConfirmationContent": "これにより、'{dayName}'の既存のすべてのアクティビティが削除され、置き換えられます。よろしいですか？",
   "@overwriteConfirmationContent": { "placeholders": { "dayName": {} } },
-  "overwrite": "上書き"
+  "overwrite": "上書き",
+  "pendingNotificationsTitle": "保留中の通知",
+  "noPendingNotifications": "保留中の通知はありません。",
+  "noTitle": "タイトルなし",
+  "noBody": "内容なし",
+  "cancelAll": "すべてキャンセル",
+  "close": "閉じる",
+  "allNotificationsCancelled": "保留中のすべての通知がキャンセルされました。",
+  "viewPendingNotifications": "保留中の通知を表示",
+  "unknown": "不明",
+  "activityTime": "アクティビティ時間",
+  "notificationType": "通知タイプ",
+  "scheduledFor": "予定時刻"
 }

@@ -202,4 +202,43 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get overwrite => 'Überschreiben';
+
+  @override
+  String get pendingNotificationsTitle => 'Ausstehende Benachrichtigungen';
+
+  @override
+  String get noPendingNotifications =>
+      'Es gibt keine ausstehenden Benachrichtigungen.';
+
+  @override
+  String get noTitle => 'Kein Titel';
+
+  @override
+  String get noBody => 'Kein Inhalt';
+
+  @override
+  String get cancelAll => 'Alle abbrechen';
+
+  @override
+  String get close => 'Schließen';
+
+  @override
+  String get allNotificationsCancelled =>
+      'Alle ausstehenden Benachrichtigungen wurden abgebrochen.';
+
+  @override
+  String get viewPendingNotifications =>
+      'Ausstehende Benachrichtigungen anzeigen';
+
+  @override
+  String get unknown => 'Unbekannt';
+
+  @override
+  String get activityTime => 'Aktivitätszeit';
+
+  @override
+  String get notificationType => 'Benachrichtigungstyp';
+
+  @override
+  String get scheduledFor => 'Geplant für';
 }

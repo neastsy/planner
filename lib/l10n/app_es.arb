@@ -94,5 +94,17 @@
   "overwriteConfirmationTitle": "Confirmar Sobrescritura",
   "overwriteConfirmationContent": "Esto eliminará todas las actividades existentes en '{dayName}' y las reemplazará. ¿Está seguro?",
   "@overwriteConfirmationContent": { "placeholders": { "dayName": {} } },
-  "overwrite": "Sobrescribir"
+  "overwrite": "Sobrescribir",
+  "pendingNotificationsTitle": "Notificaciones Pendientes",
+  "noPendingNotifications": "No hay notificaciones pendientes.",
+  "noTitle": "Sin Título",
+  "noBody": "Sin Cuerpo",
+  "cancelAll": "Cancelar Todas",
+  "close": "Cerrar",
+  "allNotificationsCancelled": "Todas las notificaciones pendientes han sido canceladas.",
+  "viewPendingNotifications": "Ver Notificaciones Pendientes",
+  "unknown": "Desconocido",
+  "activityTime": "Hora de la Actividad",
+  "notificationType": "Tipo de Notificación",
+  "scheduledFor": "Programado para"
 }

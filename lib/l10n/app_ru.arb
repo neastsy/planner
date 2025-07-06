@@ -94,5 +94,17 @@
   "overwriteConfirmationTitle": "Подтвердите перезапись",
   "overwriteConfirmationContent": "Это удалит все существующие активности в '{dayName}' и заменит их. Вы уверены?",
   "@overwriteConfirmationContent": { "placeholders": { "dayName": {} } },
-  "overwrite": "Перезаписать"
+  "overwrite": "Перезаписать",
+  "pendingNotificationsTitle": "Ожидающие уведомления",
+  "noPendingNotifications": "Нет ожидающих уведомлений.",
+  "noTitle": "Без названия",
+  "noBody": "Нет содержимого",
+  "cancelAll": "Отменить все",
+  "close": "Закрыть",
+  "allNotificationsCancelled": "Все ожидающие уведомления были отменены.",
+  "viewPendingNotifications": "Просмотреть ожидающие уведомления",
+  "unknown": "Неизвестно",
+  "activityTime": "Время активности",
+  "notificationType": "Тип уведомления",
+  "scheduledFor": "Запланировано на"
 }
