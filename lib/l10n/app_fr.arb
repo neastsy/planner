@@ -28,7 +28,6 @@
   "overlappingActivityContent": "Il y a une autre activité dans cette plage horaire. Voulez-vous continuer quand même ?",
   "continueAction": "Continuer",
   "errorSelectAllTimes": "Veuillez sélectionner toutes les heures.",
-  "errorStartEndTimeSame": "L'heure de début et de fin ne peuvent pas être identiques.",
   "timePickerSet": "DÉFINIR",
   "timePickerSelect": "SÉLECTIONNER L'HEURE",
   "selectLanguage": "Choisir la langue",

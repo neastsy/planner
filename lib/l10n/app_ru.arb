@@ -28,7 +28,6 @@
   "overlappingActivityContent": "В этом временном промежутке есть другая активность. Все равно продолжить?",
   "continueAction": "Продолжить",
   "errorSelectAllTimes": "Пожалуйста, выберите все временные рамки.",
-  "errorStartEndTimeSame": "Время начала и окончания не могут совпадать.",
   "timePickerSet": "УСТАНОВИТЬ",
   "timePickerSelect": "ВЫБЕРИТЕ ВРЕМЯ",
   "selectLanguage": "Выберите язык",

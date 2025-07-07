@@ -28,7 +28,6 @@
   "overlappingActivityContent": "In diesem Zeitraum gibt es eine andere Aktivität. Möchten Sie trotzdem fortfahren?",
   "continueAction": "Fortfahren",
   "errorSelectAllTimes": "Bitte wählen Sie alle Zeiten aus.",
-  "errorStartEndTimeSame": "Start- und Endzeit dürfen nicht identisch sein.",
   "timePickerSet": "EINSTELLEN",
   "timePickerSelect": "ZEIT WÄHLEN",
   "selectLanguage": "Sprache auswählen",

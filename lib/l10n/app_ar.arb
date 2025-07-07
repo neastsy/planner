@@ -28,7 +28,6 @@
   "overlappingActivityContent": "يوجد نشاط آخر في هذا النطاق الزمني. هل تريد المتابعة على أي حال؟",
   "continueAction": "متابعة",
   "errorSelectAllTimes": "الرجاء تحديد جميع الأوقات.",
-  "errorStartEndTimeSame": "لا يمكن أن يكون وقت البدء والانتهاء متماثلين.",
   "timePickerSet": "تعيين",
   "timePickerSelect": "حدد الوقت",
   "selectLanguage": "اختار اللغة",

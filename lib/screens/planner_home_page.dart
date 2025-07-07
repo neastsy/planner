@@ -543,8 +543,7 @@ class _PlannerHomePageState extends State<PlannerHomePage> {
 
   void _showPendingNotificationsDialog() async {
     final notificationService = NotificationService();
-    final activityProvider =
-        Provider.of<ActivityProvider>(context, listen: false);
+    final activityProvider = context.read<ActivityProvider>();
 
     final List<PendingNotificationRequest> pendingNotifications =
         await notificationService.getPendingNotifications();
@@ -553,6 +552,66 @@ class _PlannerHomePageState extends State<PlannerHomePage> {
 
     final l10n = AppLocalizations.of(context)!;
 
+    // YENİ: Sıralama için bildirimleri ve hesaplanan zamanlarını tutacak bir liste oluşturalım.
+    final List<Map<String, dynamic>> sortedNotifications = [];
+
+    for (var request in pendingNotifications) {
+      Activity? foundActivity;
+      String? foundDayKey;
+
+      // İlgili aktiviteyi bulma mantığı (değişiklik yok)
+      for (var dayKey in activityProvider.dailyActivities.keys) {
+        final activity = activityProvider.dailyActivities[dayKey]?.firstWhere(
+            (act) => act.id.hashCode == request.id,
+            orElse: () => Activity(
+                name: '',
+                startTime: TimeOfDay(hour: 0, minute: 0),
+                endTime: TimeOfDay(hour: 0, minute: 0),
+                color: Colors.transparent));
+        if (activity != null && activity.name.isNotEmpty) {
+          foundActivity = activity;
+          foundDayKey = dayKey;
+          break;
+        }
+      }
+
+      DateTime? scheduledDateTime;
+      if (foundActivity != null &&
+          foundActivity.notificationMinutesBefore != null &&
+          foundDayKey != null) {
+        // Zaman hesaplama mantığı (değişiklik yok)
+        final now = DateTime.now();
+        final dayIndex = AppConstants.dayKeys.indexOf(foundDayKey);
+        int daysToAdd = (dayIndex - (now.weekday - 1) + 7) % 7;
+        var activityDate = DateTime(now.year, now.month, now.day + daysToAdd,
+            foundActivity.startTime.hour, foundActivity.startTime.minute);
+        if (activityDate.isBefore(now)) {
+          activityDate = activityDate.add(const Duration(days: 7));
+        }
+        scheduledDateTime = activityDate.subtract(
+            Duration(minutes: foundActivity.notificationMinutesBefore!));
+      }
+
+      // YENİ: Orijinal request'i ve hesaplanan zamanı bir haritaya ekleyelim.
+      sortedNotifications.add({
+        'request': request,
+        'scheduledTime': scheduledDateTime,
+        'activity': foundActivity,
+        'dayKey': foundDayKey,
+      });
+    }
+
+    // YENİ: Listeyi 'scheduledTime'a göre sıralayalım (en yakından en uzağa).
+    // Null zamanlar en sona gitsin.
+    sortedNotifications.sort((a, b) {
+      final aTime = a['scheduledTime'] as DateTime?;
+      final bTime = b['scheduledTime'] as DateTime?;
+      if (aTime == null && bTime == null) return 0;
+      if (aTime == null) return 1;
+      if (bTime == null) return -1;
+      return aTime.compareTo(bTime);
+    });
+
     showDialog(
       context: context,
       builder: (BuildContext dialogContext) {
@@ -560,34 +619,24 @@ class _PlannerHomePageState extends State<PlannerHomePage> {
           title: Text(l10n.pendingNotificationsTitle),
           content: SizedBox(
             width: double.maxFinite,
-            child: pendingNotifications.isEmpty
+            child: sortedNotifications.isEmpty
                 ? Center(child: Text(l10n.noPendingNotifications))
                 : ListView.builder(
                     shrinkWrap: true,
-                    itemCount: pendingNotifications.length,
+                    // YENİ: Sıralanmış listeyi kullanıyoruz.
+                    itemCount: sortedNotifications.length,
                     itemBuilder: (context, index) {
-                      final request = pendingNotifications[index];
-                      Activity? foundActivity;
-                      String? foundDayKey;
+                      // YENİ: Sıralanmış listeden verileri alıyoruz.
+                      final item = sortedNotifications[index];
+                      final request =
+                          item['request'] as PendingNotificationRequest;
+                      final foundActivity = item['activity'] as Activity?;
+                      final foundDayKey = item['dayKey'] as String?;
+                      final scheduledDateTime =
+                          item['scheduledTime'] as DateTime?;
 
-                      for (var dayKey
-                          in activityProvider.dailyActivities.keys) {
-                        final activity = activityProvider
-                            .dailyActivities[dayKey]
-                            ?.firstWhere((act) => act.id.hashCode == request.id,
-                                orElse: () => Activity(
-                                    name: '',
-                                    startTime: TimeOfDay(hour: 0, minute: 0),
-                                    endTime: TimeOfDay(hour: 0, minute: 0),
-                                    color: Colors.transparent));
-
-                        if (activity != null && activity.name.isNotEmpty) {
-                          foundActivity = activity;
-                          foundDayKey = dayKey;
-                          break;
-                        }
-                      }
-
+                      // Geri kalan UI mantığı büyük ölçüde aynı kalıyor, sadece verileri
+                      // 'item' haritasından alıyor.
                       final String title =
                           foundActivity?.name ?? request.title ?? l10n.noTitle;
                       final String dayLabel = foundDayKey != null
@@ -595,8 +644,6 @@ class _PlannerHomePageState extends State<PlannerHomePage> {
                           : '??';
 
                       String notificationType;
-                      DateTime? scheduledDateTime;
-
                       if (foundActivity != null &&
                           foundActivity.notificationMinutesBefore != null) {
                         switch (foundActivity.notificationMinutesBefore) {
@@ -612,28 +659,12 @@ class _PlannerHomePageState extends State<PlannerHomePage> {
                           default:
                             notificationType = '';
                         }
-
-                        final now = DateTime.now();
-                        final dayIndex =
-                            AppConstants.dayKeys.indexOf(foundDayKey!);
-                        int daysToAdd = (dayIndex - (now.weekday - 1) + 7) % 7;
-                        var activityDate = DateTime(
-                            now.year,
-                            now.month,
-                            now.day + daysToAdd,
-                            foundActivity.startTime.hour,
-                            foundActivity.startTime.minute);
-                        if (activityDate.isBefore(now)) {
-                          activityDate =
-                              activityDate.add(const Duration(days: 7));
-                        }
-                        scheduledDateTime = activityDate.subtract(Duration(
-                            minutes: foundActivity.notificationMinutesBefore!));
                       } else {
                         notificationType = l10n.unknown;
                       }
 
                       return Card(
+                        // ... (Card'ın içeriği ve UI'ı öncekiyle aynı)
                         margin: const EdgeInsets.symmetric(vertical: 6),
                         child: Padding(
                           padding: const EdgeInsets.all(12.0),
@@ -651,7 +682,6 @@ class _PlannerHomePageState extends State<PlannerHomePage> {
                                   const Icon(Icons.calendar_today,
                                       size: 16, color: Colors.grey),
                                   const SizedBox(width: 8),
-                                  // YENİ: Expanded ile sarmalandı
                                   Expanded(
                                     child: Text(
                                         '$dayLabel - ${l10n.activityTime}: ${_formatTime(foundActivity!.startTime)}',
@@ -669,7 +699,6 @@ class _PlannerHomePageState extends State<PlannerHomePage> {
                                       size: 16,
                                       color: Colors.grey),
                                   const SizedBox(width: 8),
-                                  // YENİ: Expanded ile sarmalandı
                                   Expanded(
                                     child: Text(
                                         '${l10n.notificationType}: $notificationType',
@@ -687,7 +716,6 @@ class _PlannerHomePageState extends State<PlannerHomePage> {
                                       const Icon(Icons.alarm,
                                           size: 16, color: Colors.grey),
                                       const SizedBox(width: 8),
-                                      // YENİ: Expanded ile sarmalandı
                                       Expanded(
                                         child: Text(
                                             '${l10n.scheduledFor}: ${MaterialLocalizations.of(context).formatFullDate(scheduledDateTime)} - ${_formatTime(TimeOfDay.fromDateTime(scheduledDateTime))}',

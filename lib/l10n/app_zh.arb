@@ -28,7 +28,6 @@
   "overlappingActivityContent": "此时间段内已有其他活动。是否仍要继续？",
   "continueAction": "继续",
   "errorSelectAllTimes": "请选择所有时间。",
-  "errorStartEndTimeSame": "开始时间和结束时间不能相同。",
   "timePickerSet": "设置",
   "timePickerSelect": "选择时间",
   "selectLanguage": "选择语言",

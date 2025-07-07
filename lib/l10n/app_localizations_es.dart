@@ -96,10 +96,6 @@ class AppLocalizationsEs extends AppLocalizations {
   String get errorSelectAllTimes => 'Por favor, seleccione todas las horas.';
 
   @override
-  String get errorStartEndTimeSame =>
-      'La hora de inicio y fin no pueden ser la misma.';
-
-  @override
   String get timePickerSet => 'ACEPTAR';
 
   @override

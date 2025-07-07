@@ -95,9 +95,6 @@ class AppLocalizationsTr extends AppLocalizations {
   String get errorSelectAllTimes => 'Lütfen tüm saatleri seçin.';
 
   @override
-  String get errorStartEndTimeSame => 'Başlangıç ve bitiş saati aynı olamaz.';
-
-  @override
   String get timePickerSet => 'AYARLA';
 
   @override

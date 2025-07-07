@@ -93,9 +93,6 @@ class AppLocalizationsJa extends AppLocalizations {
   String get errorSelectAllTimes => 'すべての時間を選択してください。';
 
   @override
-  String get errorStartEndTimeSame => '開始時間と終了時間を同じにすることはできません。';
-
-  @override
   String get timePickerSet => '設定';
 
   @override

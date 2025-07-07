@@ -95,10 +95,6 @@ class AppLocalizationsRu extends AppLocalizations {
   String get errorSelectAllTimes => 'Пожалуйста, выберите все временные рамки.';
 
   @override
-  String get errorStartEndTimeSame =>
-      'Время начала и окончания не могут совпадать.';
-
-  @override
   String get timePickerSet => 'УСТАНОВИТЬ';
 
   @override

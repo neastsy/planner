@@ -1,6 +1,5 @@
 {
     "@@locale": "tr",
-
     "appTitle": "Aktivite Planlayıcı",
     "days_PZT": "PZT",
     "days_SAL": "SAL",
@@ -29,7 +28,6 @@
     "overlappingActivityContent": "Bu saat aralığında başka bir aktivite var. Yine de devam edilsin mi?",
     "continueAction": "Devam Et",
     "errorSelectAllTimes": "Lütfen tüm saatleri seçin.",
-    "errorStartEndTimeSame": "Başlangıç ve bitiş saati aynı olamaz.",
     "timePickerSet": "AYARLA",
     "timePickerSelect": "SAATİ SEÇİN",
     "selectLanguage": "Dili Seçin",

@@ -29,7 +29,6 @@
   "overlappingActivityContent": "There is another activity in this time range. Do you want to proceed anyway?",
   "continueAction": "Continue",
   "errorSelectAllTimes": "Please select all times.",
-  "errorStartEndTimeSame": "Start and end time cannot be the same.",
   "timePickerSet": "SET",
   "timePickerSelect": "SELECT TIME",
   "selectLanguage": "Select Language",

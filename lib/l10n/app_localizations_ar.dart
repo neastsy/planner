@@ -94,10 +94,6 @@ class AppLocalizationsAr extends AppLocalizations {
   String get errorSelectAllTimes => 'الرجاء تحديد جميع الأوقات.';
 
   @override
-  String get errorStartEndTimeSame =>
-      'لا يمكن أن يكون وقت البدء والانتهاء متماثلين.';
-
-  @override
   String get timePickerSet => 'تعيين';
 
   @override

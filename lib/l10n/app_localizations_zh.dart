@@ -93,9 +93,6 @@ class AppLocalizationsZh extends AppLocalizations {
   String get errorSelectAllTimes => '请选择所有时间。';
 
   @override
-  String get errorStartEndTimeSame => '开始时间和结束时间不能相同。';
-
-  @override
   String get timePickerSet => '设置';
 
   @override

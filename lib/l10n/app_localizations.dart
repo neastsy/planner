@@ -280,12 +280,6 @@ abstract class AppLocalizations {
   /// **'Lütfen tüm saatleri seçin.'**
   String get errorSelectAllTimes;
 
-  /// No description provided for @errorStartEndTimeSame.
-  ///
-  /// In tr, this message translates to:
-  /// **'Başlangıç ve bitiş saati aynı olamaz.'**
-  String get errorStartEndTimeSame;
-
   /// No description provided for @timePickerSet.
   ///
   /// In tr, this message translates to:
