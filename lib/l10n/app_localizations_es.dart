@@ -295,4 +295,10 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get selectTemplate => 'Seleccionar una Plantilla';
+
+  @override
+  String get tagsLabel => 'Etiquetas (separadas por comas)';
+
+  @override
+  String get tagsHint => 'ej. trabajo, deporte, personal';
 }

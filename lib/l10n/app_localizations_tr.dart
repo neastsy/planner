@@ -291,4 +291,10 @@ class AppLocalizationsTr extends AppLocalizations {
 
   @override
   String get selectTemplate => 'Bir Şablon Seçin';
+
+  @override
+  String get tagsLabel => 'Etiketler (virgülle ayrılmış)';
+
+  @override
+  String get tagsHint => 'örn. iş, spor, kişisel';
 }

@@ -293,4 +293,10 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get selectTemplate => 'Выберите шаблон';
+
+  @override
+  String get tagsLabel => 'Теги (через запятую)';
+
+  @override
+  String get tagsHint => 'напр. работа, спорт, личное';
 }

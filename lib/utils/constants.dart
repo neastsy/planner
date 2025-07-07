@@ -13,6 +13,7 @@ class AppConstants {
   // Karakter sınırları (AddActivitySheet'te kullanılıyor)
   static const int activityNameMaxLength = 30;
   static const int activityNoteMaxLength = 200;
+  static const int activityTagsMaxLength = 100;
 
   // Veritabanı sabitleri (main.dart ve ActivityRepository'de kullanılıyor)
   static const String activitiesBoxName = 'activitiesBox';

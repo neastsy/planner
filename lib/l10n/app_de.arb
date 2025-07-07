@@ -124,5 +124,7 @@
   "durationMaxHint": "Die Dauer darf 1440 Minuten (24 Stunden) nicht überschreiten.",
   "addFromTemplate": "Aus Vorlage",
   "noTemplatesToUse": "Keine Vorlagen verfügbar. Bitte erstellen Sie eine in den Einstellungen.",
-  "selectTemplate": "Vorlage auswählen"
+  "selectTemplate": "Vorlage auswählen",
+  "tagsLabel": "Tags (kommagetrennt)",
+  "tagsHint": "z.B. Arbeit, Sport, Persönliches"  
 }

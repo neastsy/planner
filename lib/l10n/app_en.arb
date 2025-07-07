@@ -125,5 +125,7 @@
   "durationMaxHint": "Duration cannot exceed 1440 minutes (24 hours).",
   "addFromTemplate": "From Template",
   "noTemplatesToUse": "No templates available. Please create one in the settings.",
-  "selectTemplate": "Select a Template"  
+  "selectTemplate": "Select a Template",
+  "tagsLabel": "Tags (comma-separated)",
+  "tagsHint": "e.g. work, sport, personal"
 }

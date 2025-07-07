@@ -286,4 +286,10 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get selectTemplate => '选择一个模板';
+
+  @override
+  String get tagsLabel => '标签（用逗号分隔）';
+
+  @override
+  String get tagsHint => '例如：工作, 运动, 个人';
 }

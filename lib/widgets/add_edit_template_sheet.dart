@@ -17,6 +17,7 @@ class _AddEditTemplateSheetState extends State<AddEditTemplateSheet> {
   final _templateNameController = TextEditingController();
   final _noteController = TextEditingController();
   final _durationController = TextEditingController();
+  final _tagsController = TextEditingController();
 
   late Color _selectedColor;
   int? _selectedNotificationMinutes;
@@ -38,6 +39,7 @@ class _AddEditTemplateSheetState extends State<AddEditTemplateSheet> {
       _durationController.text = template.durationInMinutes.toString();
       _selectedColor = template.color;
       _noteController.text = template.note ?? '';
+      _tagsController.text = template.tags.join(', ');
       _selectedNotificationMinutes = template.notificationMinutesBefore;
     } else {
       _selectedColor = Colors.blue;
@@ -50,6 +52,7 @@ class _AddEditTemplateSheetState extends State<AddEditTemplateSheet> {
   void dispose() {
     _templateNameController.dispose();
     _noteController.dispose();
+    _tagsController.dispose();
     _durationController.dispose();
     super.dispose();
   }
@@ -99,6 +102,15 @@ class _AddEditTemplateSheetState extends State<AddEditTemplateSheet> {
       return;
     }
 
+    final tagsText = _tagsController.text.trim();
+    final List<String> tags = tagsText.isEmpty
+        ? []
+        : tagsText
+            .split(',')
+            .map((tag) => tag.trim())
+            .where((tag) => tag.isNotEmpty)
+            .toList();
+
     final template = ActivityTemplate(
       id: widget.templateToEdit?.id,
       name: _templateNameController.text,
@@ -108,8 +120,7 @@ class _AddEditTemplateSheetState extends State<AddEditTemplateSheet> {
           ? null
           : _noteController.text.trim(),
       notificationMinutesBefore: _selectedNotificationMinutes,
-      // Etiketler şimdilik boş, gelecekte eklenecek
-      tags: widget.templateToEdit?.tags ?? [],
+      tags: tags,
     );
     Navigator.pop(context, template);
   }
@@ -255,6 +266,16 @@ class _AddEditTemplateSheetState extends State<AddEditTemplateSheet> {
                   DropdownMenuItem<int?>(
                       value: 15, child: Text(l10n.notify15MinBefore)),
                 ],
+              ),
+              const SizedBox(height: 20),
+              TextFormField(
+                controller: _tagsController,
+                maxLength: AppConstants.activityTagsMaxLength,
+                decoration: InputDecoration(
+                  labelText: l10n.tagsLabel,
+                  hintText: l10n.tagsHint,
+                  border: const OutlineInputBorder(),
+                ),
               ),
               const SizedBox(height: 20),
               TextFormField(

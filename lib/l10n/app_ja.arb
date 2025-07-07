@@ -124,5 +124,7 @@
   "durationMaxHint": "期間は1440分（24時間）を超えることはできません。",
   "addFromTemplate": "テンプレートから",
   "noTemplatesToUse": "利用可能なテンプレートがありません。設定で作成してください。",
-  "selectTemplate": "テンプレートを選択"    
+  "selectTemplate": "テンプレートを選択",
+  "tagsLabel": "タグ（カンマ区切り）",
+  "tagsHint": "例：仕事、スポーツ、個人"      
 }

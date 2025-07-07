@@ -1072,6 +1072,50 @@ class _PlannerHomePageState extends State<PlannerHomePage> {
                                   overflow: TextOverflow.ellipsis,
                                 ),
                               ),
+                            if (activity.tags.isNotEmpty)
+                              Padding(
+                                padding: const EdgeInsets.only(top: 6.0),
+                                child: Wrap(
+                                  spacing: 6.0,
+                                  runSpacing: 4.0,
+                                  children: [
+                                    // YENİ: Listenin sadece ilk 2 elemanını alıp Chip'e dönüştür
+                                    ...activity.tags.take(2).map((tag) => Chip(
+                                          label: Text('#$tag'),
+                                          labelStyle: TextStyle(
+                                              fontSize: 12,
+                                              color: Theme.of(context)
+                                                  .colorScheme
+                                                  .onSecondaryContainer),
+                                          backgroundColor: Theme.of(context)
+                                              .colorScheme
+                                              .secondaryContainer,
+                                          materialTapTargetSize:
+                                              MaterialTapTargetSize.shrinkWrap,
+                                          padding: const EdgeInsets.symmetric(
+                                              horizontal: 6, vertical: 0),
+                                        )),
+                                    // YENİ: Eğer 2'den fazla etiket varsa, bir "daha fazla" göstergesi ekle
+                                    if (activity.tags.length > 2)
+                                      Chip(
+                                        label: Text(
+                                            '+${activity.tags.length - 2}'),
+                                        labelStyle: TextStyle(
+                                            fontSize: 12,
+                                            color: Theme.of(context)
+                                                .colorScheme
+                                                .onSurfaceVariant),
+                                        backgroundColor: Theme.of(context)
+                                            .colorScheme
+                                            .surfaceContainerHighest,
+                                        materialTapTargetSize:
+                                            MaterialTapTargetSize.shrinkWrap,
+                                        padding: const EdgeInsets.symmetric(
+                                            horizontal: 6, vertical: 0),
+                                      ),
+                                  ],
+                                ),
+                              ),
                           ],
                         ),
                         trailing: Row(

@@ -291,4 +291,10 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get selectTemplate => 'Select a Template';
+
+  @override
+  String get tagsLabel => 'Tags (comma-separated)';
+
+  @override
+  String get tagsHint => 'e.g. work, sport, personal';
 }

@@ -124,5 +124,7 @@
   "durationMaxHint": "Süre 1440 dakikayı (24 saat) geçemez.",
   "addFromTemplate": "Şablondan Ekle",
   "noTemplatesToUse": "Kullanılacak şablon yok. Lütfen ayarlardan bir tane oluşturun.",
-  "selectTemplate": "Bir Şablon Seçin"  
+  "selectTemplate": "Bir Şablon Seçin",
+  "tagsLabel": "Etiketler (virgülle ayrılmış)",
+  "tagsHint": "örn. iş, spor, kişisel"  
 }

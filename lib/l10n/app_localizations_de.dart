@@ -296,4 +296,10 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get selectTemplate => 'Vorlage auswählen';
+
+  @override
+  String get tagsLabel => 'Tags (kommagetrennt)';
+
+  @override
+  String get tagsHint => 'z.B. Arbeit, Sport, Persönliches';
 }

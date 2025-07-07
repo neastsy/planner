@@ -124,5 +124,7 @@
   "durationMaxHint": "持续时间不能超过1440分钟（24小时）。",
   "addFromTemplate": "从模板添加",
   "noTemplatesToUse": "没有可用的模板。请在设置中创建一个。",
-  "selectTemplate": "选择一个模板"    
+  "selectTemplate": "选择一个模板",
+  "tagsLabel": "标签（用逗号分隔）",
+  "tagsHint": "例如：工作, 运动, 个人"      
 }

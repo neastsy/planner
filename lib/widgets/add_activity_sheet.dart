@@ -17,6 +17,7 @@ class _AddActivitySheetState extends State<AddActivitySheet>
   final _formKey = GlobalKey<FormState>();
   final _activityNameController = TextEditingController();
   final _noteController = TextEditingController();
+  final _tagsController = TextEditingController();
   late AnimationController _animationController;
   late Animation<double> _shakeAnimation;
   TimeOfDay? _startTime;
@@ -54,6 +55,7 @@ class _AddActivitySheetState extends State<AddActivitySheet>
       _endTime = activity.endTime;
       _selectedColor = activity.color;
       _noteController.text = activity.note ?? '';
+      _tagsController.text = activity.tags.join(', ');
       _selectedNotificationMinutes = activity.notificationMinutesBefore;
     } else {
       _selectedColor = _availableColors[0];
@@ -65,6 +67,7 @@ class _AddActivitySheetState extends State<AddActivitySheet>
   void dispose() {
     _activityNameController.dispose();
     _noteController.dispose();
+    _tagsController.dispose();
     _animationController.dispose();
     super.dispose();
   }
@@ -167,6 +170,15 @@ class _AddActivitySheetState extends State<AddActivitySheet>
       return;
     }
 
+    final tagsText = _tagsController.text.trim();
+    final List<String> tags = tagsText.isEmpty
+        ? []
+        : tagsText
+            .split(',')
+            .map((tag) => tag.trim())
+            .where((tag) => tag.isNotEmpty)
+            .toList();
+
     final activity = Activity(
       id: widget.activityToEdit?.id,
       name: _activityNameController.text,
@@ -177,6 +189,7 @@ class _AddActivitySheetState extends State<AddActivitySheet>
           ? null
           : _noteController.text.trim(),
       notificationMinutesBefore: _selectedNotificationMinutes,
+      tags: tags, // YENİ: İşlenmiş etiket listesini ata
     );
     Navigator.pop(context, activity);
   }
@@ -338,6 +351,16 @@ class _AddActivitySheetState extends State<AddActivitySheet>
                     child: Text(l10n.notify15MinBefore),
                   ),
                 ],
+              ),
+              const SizedBox(height: 20),
+              TextFormField(
+                controller: _tagsController,
+                maxLength: AppConstants.activityTagsMaxLength,
+                decoration: InputDecoration(
+                  labelText: l10n.tagsLabel,
+                  hintText: l10n.tagsHint,
+                  border: const OutlineInputBorder(),
+                ),
               ),
               const SizedBox(height: 20),
               AnimatedBuilder(

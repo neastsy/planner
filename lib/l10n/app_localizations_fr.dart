@@ -294,4 +294,10 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get selectTemplate => 'Sélectionner un Modèle';
+
+  @override
+  String get tagsLabel => 'Étiquettes (séparées par des virgules)';
+
+  @override
+  String get tagsHint => 'ex. travail, sport, personnel';
 }

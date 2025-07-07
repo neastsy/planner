@@ -286,4 +286,10 @@ class AppLocalizationsJa extends AppLocalizations {
 
   @override
   String get selectTemplate => 'テンプレートを選択';
+
+  @override
+  String get tagsLabel => 'タグ（カンマ区切り）';
+
+  @override
+  String get tagsHint => '例：仕事、スポーツ、個人';
 }

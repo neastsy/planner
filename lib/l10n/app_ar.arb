@@ -124,5 +124,7 @@
   "durationMaxHint": "لا يمكن أن تتجاوز المدة 1440 دقيقة (24 ساعة).",
   "addFromTemplate": "من قالب",
   "noTemplatesToUse": "لا توجد قوالب متاحة. الرجاء إنشاء واحد في الإعدادات.",
-  "selectTemplate": "اختر قالبًا"  
+  "selectTemplate": "اختر قالبًا",
+  "tagsLabel": "العلامات (مفصولة بفاصلة)",
+  "tagsHint": "مثال: عمل، رياضة، شخصي"    
 }

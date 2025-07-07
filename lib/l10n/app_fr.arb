@@ -124,5 +124,7 @@
   "durationMaxHint": "La durée ne peut pas dépasser 1440 minutes (24 heures).",
   "addFromTemplate": "Depuis Modèle",
   "noTemplatesToUse": "Aucun modèle disponible. Veuillez en créer un dans les paramètres.",
-  "selectTemplate": "Sélectionner un Modèle"    
+  "selectTemplate": "Sélectionner un Modèle",
+  "tagsLabel": "Étiquettes (séparées par des virgules)",
+  "tagsHint": "ex. travail, sport, personnel"  
 }

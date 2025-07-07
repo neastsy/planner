@@ -289,4 +289,10 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get selectTemplate => 'اختر قالبًا';
+
+  @override
+  String get tagsLabel => 'العلامات (مفصولة بفاصلة)';
+
+  @override
+  String get tagsHint => 'مثال: عمل، رياضة، شخصي';
 }
