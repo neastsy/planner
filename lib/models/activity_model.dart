@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
 import 'package:uuid/uuid.dart';
 
-part '../activity_model.g.dart';
+part 'activity_model.g.dart';
 
 @HiveType(typeId: 1)
 class Activity extends HiveObject {
@@ -26,6 +26,9 @@ class Activity extends HiveObject {
 
   @HiveField(6)
   final int? notificationMinutesBefore;
+
+  @HiveField(7)
+  final List<String> tags;
 
   int get durationInMinutes {
     // Eğer başlangıç ve bitiş aynıysa, bu 24 saatlik bir aktivitedir.
@@ -52,5 +55,7 @@ class Activity extends HiveObject {
     required this.color,
     this.note,
     this.notificationMinutesBefore,
-  }) : id = id ?? const Uuid().v4();
+    List<String>? tags,
+  })  : id = id ?? const Uuid().v4(),
+        tags = tags ?? [];
 }

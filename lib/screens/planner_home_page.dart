@@ -763,8 +763,6 @@ class _PlannerHomePageState extends State<PlannerHomePage> {
   }
 
   void _showUseTemplateDialog() async {
-    // TemplateProvider'a erişmek için context.read kullanmak daha verimlidir,
-    // çünkü bu metodun içinde state değişikliklerini dinlemeyeceğiz.
     final templateProvider = context.read<TemplateProvider>();
     final l10n = AppLocalizations.of(context)!;
 
@@ -833,7 +831,7 @@ class _PlannerHomePageState extends State<PlannerHomePage> {
       color: selectedTemplate.color,
       note: selectedTemplate.note,
       notificationMinutesBefore: selectedTemplate.notificationMinutesBefore,
-      // tags: selectedTemplate.tags,
+      tags: selectedTemplate.tags,
     );
 
     // Aktiviteyi ekle (çakışma kontrolüyle birlikte)

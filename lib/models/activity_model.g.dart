@@ -1,6 +1,6 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'models/activity_model.dart';
+part of 'activity_model.dart';
 
 // **************************************************************************
 // TypeAdapterGenerator
@@ -23,13 +23,15 @@ class ActivityAdapter extends TypeAdapter<Activity> {
       endTime: fields[3] as TimeOfDay,
       color: fields[4] as Color,
       note: fields[5] as String?,
+      notificationMinutesBefore: fields[6] as int?,
+      tags: (fields[7] as List?)?.cast<String>(),
     );
   }
 
   @override
   void write(BinaryWriter writer, Activity obj) {
     writer
-      ..writeByte(6)
+      ..writeByte(8)
       ..writeByte(0)
       ..write(obj.id)
       ..writeByte(1)
@@ -41,7 +43,11 @@ class ActivityAdapter extends TypeAdapter<Activity> {
       ..writeByte(4)
       ..write(obj.color)
       ..writeByte(5)
-      ..write(obj.note);
+      ..write(obj.note)
+      ..writeByte(6)
+      ..write(obj.notificationMinutesBefore)
+      ..writeByte(7)
+      ..write(obj.tags);
   }
 
   @override
