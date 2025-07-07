@@ -167,14 +167,6 @@ class _AddActivitySheetState extends State<AddActivitySheet>
       return;
     }
 
-    if (_startTime!.hour == _endTime!.hour &&
-        _startTime!.minute == _endTime!.minute) {
-      setState(() {
-        _timeError = l10n.errorStartEndTimeSame;
-      });
-      return;
-    }
-
     final activity = Activity(
       id: widget.activityToEdit?.id,
       name: _activityNameController.text,

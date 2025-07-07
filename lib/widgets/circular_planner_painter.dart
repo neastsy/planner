@@ -53,9 +53,21 @@ class CircularPlannerPainter extends CustomPainter {
     for (final activity in drawableActivities) {
       final startAngle = _timeToAngle(activity.startTime);
       final endAngle = _timeToAngle(activity.endTime);
-      final sweepAngle = (endAngle - startAngle) >= 0
-          ? endAngle - startAngle
-          : (2 * pi) + endAngle - startAngle;
+
+      // YENİ VE TAM KOD BLOĞU
+      // ******************************************************
+      double sweepAngle; // Değişkeni önce tanımlıyoruz
+
+      // Eğer aktivite 24 saat veya daha uzunsa, tam bir daire çiz.
+      if (activity.durationInMinutes >= 24 * 60) {
+        sweepAngle = 2 * pi;
+      } else {
+        // Orijinal hesaplama mantığımız
+        sweepAngle = (endAngle - startAngle) >= 0
+            ? endAngle - startAngle
+            : (2 * pi) + endAngle - startAngle;
+      }
+      // ******************************************************
 
       final activityPaint = Paint()
         ..color = activity.color
@@ -67,7 +79,7 @@ class CircularPlannerPainter extends CustomPainter {
       canvas.drawArc(
         Rect.fromCircle(center: center, radius: radius - 18.4),
         startAngle,
-        sweepAngle,
+        sweepAngle, // Artık 'sweepAngle' burada tanımlı ve kullanılabilir
         false,
         activityPaint,
       );

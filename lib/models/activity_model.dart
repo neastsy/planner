@@ -28,9 +28,17 @@ class Activity extends HiveObject {
   final int? notificationMinutesBefore;
 
   int get durationInMinutes {
+    // Eğer başlangıç ve bitiş aynıysa, bu 24 saatlik bir aktivitedir.
+    if (startTime.hour == endTime.hour && startTime.minute == endTime.minute) {
+      return 24 * 60; // 1440 dakika
+    }
+
     final startMinutes = startTime.hour * 60 + startTime.minute;
     int endMinutes = endTime.hour * 60 + endTime.minute;
-    if (endMinutes < startMinutes) {
+
+    // Eğer bitiş saati başlangıçtan önceyse, gece yarısını geçmiştir.
+    if (endMinutes <= startMinutes) {
+      // Eşitlik durumunu da kapsayacak şekilde güncelledik.
       endMinutes += 24 * 60;
     }
     return endMinutes - startMinutes;
