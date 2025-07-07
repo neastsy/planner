@@ -234,4 +234,59 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get scheduledFor => '计划于';
+
+  @override
+  String get editTemplate => '编辑模板';
+
+  @override
+  String get addTemplate => '添加新模板';
+
+  @override
+  String get templateName => '模板名称';
+
+  @override
+  String get templateNameHint => '请输入模板名称。';
+
+  @override
+  String get durationInMinutes => '持续时间（分钟）';
+
+  @override
+  String get durationHint => '请输入持续时间。';
+
+  @override
+  String get durationInvalidHint => '请输入一个有效的正数。';
+
+  @override
+  String get templateManagerTitle => '模板管理器';
+
+  @override
+  String get noTemplates => '尚未创建模板。点击“+”添加。';
+
+  @override
+  String durationLabel(Object minutes) {
+    return '持续时间：$minutes分钟';
+  }
+
+  @override
+  String get manageTemplates => '管理活动模板';
+
+  @override
+  String get deleteTemplateTitle => '删除模板';
+
+  @override
+  String deleteTemplateContent(Object templateName) {
+    return '您确定要删除模板“$templateName”吗？';
+  }
+
+  @override
+  String get durationMaxHint => '持续时间不能超过1440分钟（24小时）。';
+
+  @override
+  String get addFromTemplate => '从模板添加';
+
+  @override
+  String get noTemplatesToUse => '没有可用的模板。请在设置中创建一个。';
+
+  @override
+  String get selectTemplate => '选择一个模板';
 }

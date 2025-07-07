@@ -7,12 +7,15 @@ import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import '../l10n/app_localizations.dart';
 import '../models/activity_model.dart';
 import '../models/language_model.dart';
+import '../models/activity_template_model.dart';
 import '../providers/activity_provider.dart';
 import '../providers/settings_provider.dart';
+import '../providers/template_provider.dart';
 import '../widgets/add_activity_sheet.dart';
 import '../widgets/circular_planner_painter.dart';
 import '../widgets/theme_switcher.dart';
 import '../services/notification_service.dart';
+import '../screens/template_manager_page.dart';
 import '../utils/constants.dart';
 
 class PlannerHomePage extends StatefulWidget {
@@ -257,6 +260,22 @@ class _PlannerHomePageState extends State<PlannerHomePage> {
                   // Bu satırı ekleyerek düğmenin tüm genişliği kaplamasını sağlayabiliriz
                   minimumSize: const Size.fromHeight(40),
                   // Hizalamayı sola yaslamak için
+                  alignment: Alignment.centerLeft,
+                ),
+              ),
+              const Divider(),
+              TextButton.icon(
+                icon: const Icon(Icons.file_copy_outlined),
+                label: Text(l10n.manageTemplates), // Yeni metin
+                onPressed: () {
+                  Navigator.of(dialogContext).pop(); // Ayarlar diyaloğunu kapat
+                  Navigator.of(context).push(MaterialPageRoute(
+                    builder: (context) => const TemplateManagerPage(),
+                  ));
+                },
+                style: TextButton.styleFrom(
+                  padding: const EdgeInsets.symmetric(vertical: 12.0),
+                  minimumSize: const Size.fromHeight(40),
                   alignment: Alignment.centerLeft,
                 ),
               ),
@@ -715,6 +734,84 @@ class _PlannerHomePageState extends State<PlannerHomePage> {
     );
   }
 
+  void _showUseTemplateDialog() async {
+    // TemplateProvider'a erişmek için context.read kullanmak daha verimlidir,
+    // çünkü bu metodun içinde state değişikliklerini dinlemeyeceğiz.
+    final templateProvider = context.read<TemplateProvider>();
+    final l10n = AppLocalizations.of(context)!;
+
+    if (templateProvider.templates.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(l10n.noTemplatesToUse)), // Yeni metin
+      );
+      return;
+    }
+
+    final selectedTemplate = await showDialog<ActivityTemplate>(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text(l10n.selectTemplate), // Yeni metin
+        content: SizedBox(
+          width: double.maxFinite,
+          child: ListView.builder(
+            shrinkWrap: true,
+            itemCount: templateProvider.templates.length,
+            itemBuilder: (context, index) {
+              final template = templateProvider.templates[index];
+              return ListTile(
+                leading: Icon(Icons.circle, color: template.color),
+                title: Text(template.name),
+                onTap: () {
+                  Navigator.of(context).pop(template);
+                },
+              );
+            },
+          ),
+        ),
+      ),
+    );
+
+    if (selectedTemplate == null || !mounted) return;
+
+    // Şablon seçildikten sonra başlangıç saatini sor
+    final startTime = await showTimePicker(
+      context: context,
+      initialTime: TimeOfDay.now(),
+      cancelText: l10n.cancel.toUpperCase(),
+      confirmText: l10n.timePickerSet.toUpperCase(),
+      helpText: l10n.timePickerSelect.toUpperCase(),
+      builder: (BuildContext context, Widget? child) {
+        return MediaQuery(
+          data: MediaQuery.of(context).copyWith(alwaysUse24HourFormat: true),
+          child: child!,
+        );
+      },
+    );
+
+    if (startTime == null || !mounted) return;
+
+    // Bitiş saatini hesapla
+    final startMinutes = startTime.hour * 60 + startTime.minute;
+    final endTotalMinutes = startMinutes + selectedTemplate.durationInMinutes;
+    final endHour = (endTotalMinutes ~/ 60) % 24;
+    final endMinute = endTotalMinutes % 60;
+    final endTime = TimeOfDay(hour: endHour, minute: endMinute);
+
+    // Yeni aktiviteyi oluştur
+    final newActivity = Activity(
+      name: selectedTemplate.name,
+      startTime: startTime,
+      endTime: endTime,
+      color: selectedTemplate.color,
+      note: selectedTemplate.note,
+      notificationMinutesBefore: selectedTemplate.notificationMinutesBefore,
+      // tags: selectedTemplate.tags,
+    );
+
+    // Aktiviteyi ekle (çakışma kontrolüyle birlikte)
+    _handleActivitySubmission(context, newActivity);
+  }
+
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
@@ -816,10 +913,29 @@ class _PlannerHomePageState extends State<PlannerHomePage> {
             ),
           ),
           const SizedBox(height: 30),
-          ElevatedButton.icon(
-              onPressed: () => _addActivity(context),
-              icon: const Icon(Icons.add),
-              label: Text(l10n.addNewActivity)),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              ElevatedButton.icon(
+                  onPressed: () => _addActivity(context),
+                  icon: const Icon(Icons.add),
+                  label: Text(l10n.addNewActivity)),
+              const SizedBox(width: 16),
+              // YENİ: Şablondan ekle düğmesi
+              ElevatedButton.icon(
+                onPressed: () => _showUseTemplateDialog(),
+                icon: const Icon(Icons.file_copy_rounded),
+                label: Text(l10n.addFromTemplate), // Yeni metin
+                style: ElevatedButton.styleFrom(
+                  // İsteğe bağlı: Farklı bir renk vererek ayırt edici olmasını sağlayabiliriz.
+                  backgroundColor:
+                      Theme.of(context).colorScheme.secondaryContainer,
+                  foregroundColor:
+                      Theme.of(context).colorScheme.onSecondaryContainer,
+                ),
+              ),
+            ],
+          ),
           const SizedBox(height: 20),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,

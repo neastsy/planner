@@ -234,4 +234,59 @@ class AppLocalizationsJa extends AppLocalizations {
 
   @override
   String get scheduledFor => '予定時刻';
+
+  @override
+  String get editTemplate => 'テンプレートを編集';
+
+  @override
+  String get addTemplate => '新しいテンプレートを追加';
+
+  @override
+  String get templateName => 'テンプレート名';
+
+  @override
+  String get templateNameHint => 'テンプレート名を入力してください。';
+
+  @override
+  String get durationInMinutes => '期間（分）';
+
+  @override
+  String get durationHint => '期間を入力してください。';
+
+  @override
+  String get durationInvalidHint => '有効な正の数を入力してください。';
+
+  @override
+  String get templateManagerTitle => 'テンプレートマネージャー';
+
+  @override
+  String get noTemplates => 'テンプレートはまだ作成されていません。「+」をタップして追加してください。';
+
+  @override
+  String durationLabel(Object minutes) {
+    return '期間: $minutes分';
+  }
+
+  @override
+  String get manageTemplates => 'アクティビティテンプレートの管理';
+
+  @override
+  String get deleteTemplateTitle => 'テンプレートを削除';
+
+  @override
+  String deleteTemplateContent(Object templateName) {
+    return '本当にテンプレート「$templateName」を削除しますか？';
+  }
+
+  @override
+  String get durationMaxHint => '期間は1440分（24時間）を超えることはできません。';
+
+  @override
+  String get addFromTemplate => 'テンプレートから';
+
+  @override
+  String get noTemplatesToUse => '利用可能なテンプレートがありません。設定で作成してください。';
+
+  @override
+  String get selectTemplate => 'テンプレートを選択';
 }

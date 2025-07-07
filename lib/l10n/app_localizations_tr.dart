@@ -237,4 +237,61 @@ class AppLocalizationsTr extends AppLocalizations {
 
   @override
   String get scheduledFor => 'Zamanlandı';
+
+  @override
+  String get editTemplate => 'Şablonu Düzenle';
+
+  @override
+  String get addTemplate => 'Yeni Şablon Ekle';
+
+  @override
+  String get templateName => 'Şablon Adı';
+
+  @override
+  String get templateNameHint => 'Lütfen bir şablon adı girin.';
+
+  @override
+  String get durationInMinutes => 'Süre (dakika cinsinden)';
+
+  @override
+  String get durationHint => 'Lütfen bir süre girin.';
+
+  @override
+  String get durationInvalidHint => 'Lütfen geçerli, pozitif bir sayı girin.';
+
+  @override
+  String get templateManagerTitle => 'Şablon Yöneticisi';
+
+  @override
+  String get noTemplates =>
+      'Henüz şablon oluşturulmadı. Eklemek için \'+\' tuşuna dokunun.';
+
+  @override
+  String durationLabel(Object minutes) {
+    return 'Süre: $minutes dk';
+  }
+
+  @override
+  String get manageTemplates => 'Aktivite Şablonlarını Yönet';
+
+  @override
+  String get deleteTemplateTitle => 'Şablonu Sil';
+
+  @override
+  String deleteTemplateContent(Object templateName) {
+    return '\'$templateName\' şablonunu silmek istediğinizden emin misiniz?';
+  }
+
+  @override
+  String get durationMaxHint => 'Süre 1440 dakikayı (24 saat) geçemez.';
+
+  @override
+  String get addFromTemplate => 'Şablondan Ekle';
+
+  @override
+  String get noTemplatesToUse =>
+      'Kullanılacak şablon yok. Lütfen ayarlardan bir tane oluşturun.';
+
+  @override
+  String get selectTemplate => 'Bir Şablon Seçin';
 }

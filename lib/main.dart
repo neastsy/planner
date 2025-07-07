@@ -15,9 +15,11 @@ import 'adepters/color_adapter.dart';
 import 'adepters/time_of_day_adapter.dart';
 import 'l10n/app_localizations.dart';
 import 'models/activity_model.dart';
+import 'models/activity_template_model.dart';
 import 'screens/planner_home_page.dart';
 import 'providers/activity_provider.dart';
 import 'providers/settings_provider.dart';
+import 'providers/template_provider.dart';
 import 'repositories/activity_repository.dart';
 
 Future<void> main() async {
@@ -35,8 +37,10 @@ Future<void> main() async {
     Hive.registerAdapter(ActivityAdapter());
     Hive.registerAdapter(TimeOfDayAdapter());
     Hive.registerAdapter(ColorAdapter());
+    Hive.registerAdapter(ActivityTemplateAdapter());
 
     await Hive.openBox<Map>(AppConstants.activitiesBoxName);
+    await Hive.openBox<ActivityTemplate>('templatesBox');
 
     runApp(
       MultiProvider(
@@ -48,6 +52,12 @@ Future<void> main() async {
           ),
           ChangeNotifierProvider(
             create: (context) => SettingsProvider(),
+          ),
+          // YENİ: TemplateProvider'ı buraya ekliyoruz
+          ChangeNotifierProvider(
+            create: (context) => TemplateProvider(
+              Hive.box<ActivityTemplate>('templatesBox'),
+            ),
           ),
         ],
         child: const MyApp(),

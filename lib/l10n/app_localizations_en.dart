@@ -237,4 +237,61 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get scheduledFor => 'Scheduled for';
+
+  @override
+  String get editTemplate => 'Edit Template';
+
+  @override
+  String get addTemplate => 'Add New Template';
+
+  @override
+  String get templateName => 'Template Name';
+
+  @override
+  String get templateNameHint => 'Please enter a template name.';
+
+  @override
+  String get durationInMinutes => 'Duration (in minutes)';
+
+  @override
+  String get durationHint => 'Please enter a duration.';
+
+  @override
+  String get durationInvalidHint => 'Please enter a valid, positive number.';
+
+  @override
+  String get templateManagerTitle => 'Template Manager';
+
+  @override
+  String get noTemplates => 'No templates created yet. Tap \'+\' to add one.';
+
+  @override
+  String durationLabel(Object minutes) {
+    return 'Duration: $minutes min';
+  }
+
+  @override
+  String get manageTemplates => 'Manage Activity Templates';
+
+  @override
+  String get deleteTemplateTitle => 'Delete Template';
+
+  @override
+  String deleteTemplateContent(Object templateName) {
+    return 'Are you sure you want to delete the \'$templateName\' template?';
+  }
+
+  @override
+  String get durationMaxHint =>
+      'Duration cannot exceed 1440 minutes (24 hours).';
+
+  @override
+  String get addFromTemplate => 'From Template';
+
+  @override
+  String get noTemplatesToUse =>
+      'No templates available. Please create one in the settings.';
+
+  @override
+  String get selectTemplate => 'Select a Template';
 }

@@ -537,6 +537,108 @@ abstract class AppLocalizations {
   /// In tr, this message translates to:
   /// **'Zamanlandı'**
   String get scheduledFor;
+
+  /// No description provided for @editTemplate.
+  ///
+  /// In tr, this message translates to:
+  /// **'Şablonu Düzenle'**
+  String get editTemplate;
+
+  /// No description provided for @addTemplate.
+  ///
+  /// In tr, this message translates to:
+  /// **'Yeni Şablon Ekle'**
+  String get addTemplate;
+
+  /// No description provided for @templateName.
+  ///
+  /// In tr, this message translates to:
+  /// **'Şablon Adı'**
+  String get templateName;
+
+  /// No description provided for @templateNameHint.
+  ///
+  /// In tr, this message translates to:
+  /// **'Lütfen bir şablon adı girin.'**
+  String get templateNameHint;
+
+  /// No description provided for @durationInMinutes.
+  ///
+  /// In tr, this message translates to:
+  /// **'Süre (dakika cinsinden)'**
+  String get durationInMinutes;
+
+  /// No description provided for @durationHint.
+  ///
+  /// In tr, this message translates to:
+  /// **'Lütfen bir süre girin.'**
+  String get durationHint;
+
+  /// No description provided for @durationInvalidHint.
+  ///
+  /// In tr, this message translates to:
+  /// **'Lütfen geçerli, pozitif bir sayı girin.'**
+  String get durationInvalidHint;
+
+  /// No description provided for @templateManagerTitle.
+  ///
+  /// In tr, this message translates to:
+  /// **'Şablon Yöneticisi'**
+  String get templateManagerTitle;
+
+  /// No description provided for @noTemplates.
+  ///
+  /// In tr, this message translates to:
+  /// **'Henüz şablon oluşturulmadı. Eklemek için \'+\' tuşuna dokunun.'**
+  String get noTemplates;
+
+  /// No description provided for @durationLabel.
+  ///
+  /// In tr, this message translates to:
+  /// **'Süre: {minutes} dk'**
+  String durationLabel(Object minutes);
+
+  /// No description provided for @manageTemplates.
+  ///
+  /// In tr, this message translates to:
+  /// **'Aktivite Şablonlarını Yönet'**
+  String get manageTemplates;
+
+  /// No description provided for @deleteTemplateTitle.
+  ///
+  /// In tr, this message translates to:
+  /// **'Şablonu Sil'**
+  String get deleteTemplateTitle;
+
+  /// No description provided for @deleteTemplateContent.
+  ///
+  /// In tr, this message translates to:
+  /// **'\'{templateName}\' şablonunu silmek istediğinizden emin misiniz?'**
+  String deleteTemplateContent(Object templateName);
+
+  /// No description provided for @durationMaxHint.
+  ///
+  /// In tr, this message translates to:
+  /// **'Süre 1440 dakikayı (24 saat) geçemez.'**
+  String get durationMaxHint;
+
+  /// No description provided for @addFromTemplate.
+  ///
+  /// In tr, this message translates to:
+  /// **'Şablondan Ekle'**
+  String get addFromTemplate;
+
+  /// No description provided for @noTemplatesToUse.
+  ///
+  /// In tr, this message translates to:
+  /// **'Kullanılacak şablon yok. Lütfen ayarlardan bir tane oluşturun.'**
+  String get noTemplatesToUse;
+
+  /// No description provided for @selectTemplate.
+  ///
+  /// In tr, this message translates to:
+  /// **'Bir Şablon Seçin'**
+  String get selectTemplate;
 }
 
 class _AppLocalizationsDelegate

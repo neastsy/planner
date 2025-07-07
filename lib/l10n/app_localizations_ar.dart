@@ -236,4 +236,61 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get scheduledFor => 'مجدول لـ';
+
+  @override
+  String get editTemplate => 'تعديل القالب';
+
+  @override
+  String get addTemplate => 'إضافة قالب جديد';
+
+  @override
+  String get templateName => 'اسم القالب';
+
+  @override
+  String get templateNameHint => 'الرجاء إدخال اسم للقالب.';
+
+  @override
+  String get durationInMinutes => 'المدة (بالدقائق)';
+
+  @override
+  String get durationHint => 'الرجاء إدخال مدة.';
+
+  @override
+  String get durationInvalidHint => 'الرجاء إدخال رقم موجب صالح.';
+
+  @override
+  String get templateManagerTitle => 'مدير القوالب';
+
+  @override
+  String get noTemplates =>
+      'لم يتم إنشاء أي قوالب بعد. انقر على \'+\' للإضافة.';
+
+  @override
+  String durationLabel(Object minutes) {
+    return 'المدة: $minutes دقيقة';
+  }
+
+  @override
+  String get manageTemplates => 'إدارة قوالب الأنشطة';
+
+  @override
+  String get deleteTemplateTitle => 'حذف القالب';
+
+  @override
+  String deleteTemplateContent(Object templateName) {
+    return 'هل أنت متأكد من أنك تريد حذف القالب \'$templateName\'؟';
+  }
+
+  @override
+  String get durationMaxHint => 'لا يمكن أن تتجاوز المدة 1440 دقيقة (24 ساعة).';
+
+  @override
+  String get addFromTemplate => 'من قالب';
+
+  @override
+  String get noTemplatesToUse =>
+      'لا توجد قوالب متاحة. الرجاء إنشاء واحد في الإعدادات.';
+
+  @override
+  String get selectTemplate => 'اختر قالبًا';
 }

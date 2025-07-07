@@ -238,4 +238,63 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get scheduledFor => 'Запланировано на';
+
+  @override
+  String get editTemplate => 'Редактировать шаблон';
+
+  @override
+  String get addTemplate => 'Добавить новый шаблон';
+
+  @override
+  String get templateName => 'Название шаблона';
+
+  @override
+  String get templateNameHint => 'Пожалуйста, введите название шаблона.';
+
+  @override
+  String get durationInMinutes => 'Длительность (в минутах)';
+
+  @override
+  String get durationHint => 'Пожалуйста, введите длительность.';
+
+  @override
+  String get durationInvalidHint =>
+      'Пожалуйста, введите действительное положительное число.';
+
+  @override
+  String get templateManagerTitle => 'Менеджер шаблонов';
+
+  @override
+  String get noTemplates =>
+      'Шаблоны еще не созданы. Нажмите \'+\', чтобы добавить.';
+
+  @override
+  String durationLabel(Object minutes) {
+    return 'Длительность: $minutes мин.';
+  }
+
+  @override
+  String get manageTemplates => 'Управление шаблонами активностей';
+
+  @override
+  String get deleteTemplateTitle => 'Удалить шаблон';
+
+  @override
+  String deleteTemplateContent(Object templateName) {
+    return 'Вы уверены, что хотите удалить шаблон \'$templateName\'?';
+  }
+
+  @override
+  String get durationMaxHint =>
+      'Длительность не может превышать 1440 минут (24 часа).';
+
+  @override
+  String get addFromTemplate => 'Из шаблона';
+
+  @override
+  String get noTemplatesToUse =>
+      'Нет доступных шаблонов. Пожалуйста, создайте один в настройках.';
+
+  @override
+  String get selectTemplate => 'Выберите шаблон';
 }

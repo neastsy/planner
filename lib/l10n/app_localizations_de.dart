@@ -241,4 +241,63 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get scheduledFor => 'Geplant für';
+
+  @override
+  String get editTemplate => 'Vorlage bearbeiten';
+
+  @override
+  String get addTemplate => 'Neue Vorlage hinzufügen';
+
+  @override
+  String get templateName => 'Vorlagenname';
+
+  @override
+  String get templateNameHint => 'Bitte geben Sie einen Vorlagennamen ein.';
+
+  @override
+  String get durationInMinutes => 'Dauer (in Minuten)';
+
+  @override
+  String get durationHint => 'Bitte geben Sie eine Dauer ein.';
+
+  @override
+  String get durationInvalidHint =>
+      'Bitte geben Sie eine gültige, positive Zahl ein.';
+
+  @override
+  String get templateManagerTitle => 'Vorlagen-Manager';
+
+  @override
+  String get noTemplates =>
+      'Noch keine Vorlagen erstellt. Tippen Sie auf \'+\', um eine hinzuzufügen.';
+
+  @override
+  String durationLabel(Object minutes) {
+    return 'Dauer: $minutes Min.';
+  }
+
+  @override
+  String get manageTemplates => 'Aktivitätsvorlagen verwalten';
+
+  @override
+  String get deleteTemplateTitle => 'Vorlage löschen';
+
+  @override
+  String deleteTemplateContent(Object templateName) {
+    return 'Möchten Sie die Vorlage \'$templateName\' wirklich löschen?';
+  }
+
+  @override
+  String get durationMaxHint =>
+      'Die Dauer darf 1440 Minuten (24 Stunden) nicht überschreiten.';
+
+  @override
+  String get addFromTemplate => 'Aus Vorlage';
+
+  @override
+  String get noTemplatesToUse =>
+      'Keine Vorlagen verfügbar. Bitte erstellen Sie eine in den Einstellungen.';
+
+  @override
+  String get selectTemplate => 'Vorlage auswählen';
 }

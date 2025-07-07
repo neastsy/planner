@@ -239,4 +239,64 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get scheduledFor => 'Programado para';
+
+  @override
+  String get editTemplate => 'Editar Plantilla';
+
+  @override
+  String get addTemplate => 'Añadir Nueva Plantilla';
+
+  @override
+  String get templateName => 'Nombre de la Plantilla';
+
+  @override
+  String get templateNameHint =>
+      'Por favor, introduzca un nombre para la plantilla.';
+
+  @override
+  String get durationInMinutes => 'Duración (en minutos)';
+
+  @override
+  String get durationHint => 'Por favor, introduzca una duración.';
+
+  @override
+  String get durationInvalidHint =>
+      'Por favor, introduzca un número válido y positivo.';
+
+  @override
+  String get templateManagerTitle => 'Gestor de Plantillas';
+
+  @override
+  String get noTemplates =>
+      'Aún no se han creado plantillas. Toque \'+\' para añadir una.';
+
+  @override
+  String durationLabel(Object minutes) {
+    return 'Duración: $minutes min';
+  }
+
+  @override
+  String get manageTemplates => 'Gestionar Plantillas de Actividad';
+
+  @override
+  String get deleteTemplateTitle => 'Eliminar Plantilla';
+
+  @override
+  String deleteTemplateContent(Object templateName) {
+    return '¿Está seguro de que desea eliminar la plantilla \'$templateName\'?';
+  }
+
+  @override
+  String get durationMaxHint =>
+      'La duración no puede exceder los 1440 minutos (24 horas).';
+
+  @override
+  String get addFromTemplate => 'Desde Plantilla';
+
+  @override
+  String get noTemplatesToUse =>
+      'No hay plantillas disponibles. Por favor, cree una en los ajustes.';
+
+  @override
+  String get selectTemplate => 'Seleccionar una Plantilla';
 }

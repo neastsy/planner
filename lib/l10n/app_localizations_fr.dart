@@ -239,4 +239,63 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get scheduledFor => 'Prévu pour';
+
+  @override
+  String get editTemplate => 'Modifier le Modèle';
+
+  @override
+  String get addTemplate => 'Ajouter un Nouveau Modèle';
+
+  @override
+  String get templateName => 'Nom du Modèle';
+
+  @override
+  String get templateNameHint => 'Veuillez entrer un nom de modèle.';
+
+  @override
+  String get durationInMinutes => 'Durée (en minutes)';
+
+  @override
+  String get durationHint => 'Veuillez entrer une durée.';
+
+  @override
+  String get durationInvalidHint =>
+      'Veuillez entrer un nombre valide et positif.';
+
+  @override
+  String get templateManagerTitle => 'Gestionnaire de Modèles';
+
+  @override
+  String get noTemplates =>
+      'Aucun modèle créé pour l\'instant. Appuyez sur \'+\' pour en ajouter un.';
+
+  @override
+  String durationLabel(Object minutes) {
+    return 'Durée : $minutes min';
+  }
+
+  @override
+  String get manageTemplates => 'Gérer les Modèles d\'Activité';
+
+  @override
+  String get deleteTemplateTitle => 'Supprimer le Modèle';
+
+  @override
+  String deleteTemplateContent(Object templateName) {
+    return 'Êtes-vous sûr de vouloir supprimer le modèle \'$templateName\' ?';
+  }
+
+  @override
+  String get durationMaxHint =>
+      'La durée ne peut pas dépasser 1440 minutes (24 heures).';
+
+  @override
+  String get addFromTemplate => 'Depuis Modèle';
+
+  @override
+  String get noTemplatesToUse =>
+      'Aucun modèle disponible. Veuillez en créer un dans les paramètres.';
+
+  @override
+  String get selectTemplate => 'Sélectionner un Modèle';
 }
