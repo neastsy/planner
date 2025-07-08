@@ -133,5 +133,21 @@
   "tagDistributionTitle": "Time Distribution by Tag",
   "dailyActivityTitle": "Total Activity Time by Day",
   "noDataForStatistics": "There is no activity data to display statistics. Start planning your days!",
-  "untagged": "Untagged"
+  "untagged": "Untagged",
+  "todayIs": "Today is {dayName}",
+  "@todayIs": {
+    "placeholders": {
+      "dayName": {
+        "type": "String",
+        "example": "Friday"
+      }
+    }
+  },
+  "fullDay_monday": "Monday",
+  "fullDay_tuesday": "Tuesday",
+  "fullDay_wednesday": "Wednesday",
+  "fullDay_thursday": "Thursday",
+  "fullDay_friday": "Friday",
+  "fullDay_saturday": "Saturday",
+  "fullDay_sunday": "Sunday"
 }

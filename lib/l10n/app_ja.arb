@@ -132,5 +132,21 @@
   "tagDistributionTitle": "タグ別の時間分布",
   "dailyActivityTitle": "日別の合計アクティビティ時間",
   "noDataForStatistics": "統計を表示するアクティビティデータがありません。日々の計画を始めましょう！",
-  "untagged": "タグなし"   
+  "untagged": "タグなし",
+  "todayIs": "今日は{dayName}です",
+  "@todayIs": {
+    "placeholders": {
+      "dayName": {
+        "type": "String",
+        "example": "金曜日"
+      }
+    }
+  },
+  "fullDay_monday": "月曜日",
+  "fullDay_tuesday": "火曜日",
+  "fullDay_wednesday": "水曜日",
+  "fullDay_thursday": "木曜日",
+  "fullDay_friday": "金曜日",
+  "fullDay_saturday": "土曜日",
+  "fullDay_sunday": "日曜日"  
 }

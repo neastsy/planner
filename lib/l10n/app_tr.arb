@@ -132,5 +132,21 @@
   "tagDistributionTitle": "Etikete Göre Zaman Dağılımı",
   "dailyActivityTitle": "Güne Göre Toplam Aktivite Süresi",
   "noDataForStatistics": "İstatistik gösterecek aktivite verisi bulunmuyor. Günlerinizi planlamaya başlayın!",
-  "untagged": "Etiketsiz"
+  "untagged": "Etiketsiz",
+  "todayIs": "Bugün {dayName}",
+  "@todayIs": {
+    "placeholders": {
+      "dayName": {
+        "type": "String",
+        "example": "Cuma"
+      }
+    }
+  },
+  "fullDay_monday": "Pazartesi",
+  "fullDay_tuesday": "Salı",
+  "fullDay_wednesday": "Çarşamba",
+  "fullDay_thursday": "Perşembe",
+  "fullDay_friday": "Cuma",
+  "fullDay_saturday": "Cumartesi",
+  "fullDay_sunday": "Pazar"
 }

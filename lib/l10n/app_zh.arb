@@ -132,5 +132,21 @@
   "tagDistributionTitle": "按标签的时间分布",
   "dailyActivityTitle": "按天统计的总活动时间",
   "noDataForStatistics": "没有活动数据可用于显示统计信息。开始规划你的一天吧！",
-  "untagged": "未标记"    
+  "untagged": "未标记",
+  "todayIs": "今天是{dayName}",
+  "@todayIs": {
+    "placeholders": {
+      "dayName": {
+        "type": "String",
+        "example": "星期五"
+      }
+    }
+  },
+  "fullDay_monday": "星期一",
+  "fullDay_tuesday": "星期二",
+  "fullDay_wednesday": "星期三",
+  "fullDay_thursday": "星期四",
+  "fullDay_friday": "星期五",
+  "fullDay_saturday": "星期六",
+  "fullDay_sunday": "星期日"
 }

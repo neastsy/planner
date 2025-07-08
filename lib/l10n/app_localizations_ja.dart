@@ -310,4 +310,30 @@ class AppLocalizationsJa extends AppLocalizations {
 
   @override
   String get untagged => 'タグなし';
+
+  @override
+  String todayIs(String dayName) {
+    return '今日は$dayNameです';
+  }
+
+  @override
+  String get fullDay_monday => '月曜日';
+
+  @override
+  String get fullDay_tuesday => '火曜日';
+
+  @override
+  String get fullDay_wednesday => '水曜日';
+
+  @override
+  String get fullDay_thursday => '木曜日';
+
+  @override
+  String get fullDay_friday => '金曜日';
+
+  @override
+  String get fullDay_saturday => '土曜日';
+
+  @override
+  String get fullDay_sunday => '日曜日';
 }

@@ -132,5 +132,21 @@
   "tagDistributionTitle": "Zeitverteilung nach Tag",
   "dailyActivityTitle": "Gesamte Aktivitätszeit nach Tag",
   "noDataForStatistics": "Es liegen keine Aktivitätsdaten zur Anzeige von Statistiken vor. Fang an, deine Tage zu planen!",
-  "untagged": "Ohne Tag"
+  "untagged": "Ohne Tag",
+  "todayIs": "Heute ist {dayName}",
+  "@todayIs": {
+    "placeholders": {
+      "dayName": {
+        "type": "String",
+        "example": "Freitag"
+      }
+    }
+  },
+  "fullDay_monday": "Montag",
+  "fullDay_tuesday": "Dienstag",
+  "fullDay_wednesday": "Mittwoch",
+  "fullDay_thursday": "Donnerstag",
+  "fullDay_friday": "Freitag",
+  "fullDay_saturday": "Samstag",
+  "fullDay_sunday": "Sonntag"  
 }

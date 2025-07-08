@@ -681,6 +681,54 @@ abstract class AppLocalizations {
   /// In tr, this message translates to:
   /// **'Etiketsiz'**
   String get untagged;
+
+  /// No description provided for @todayIs.
+  ///
+  /// In tr, this message translates to:
+  /// **'Bugün {dayName}'**
+  String todayIs(String dayName);
+
+  /// No description provided for @fullDay_monday.
+  ///
+  /// In tr, this message translates to:
+  /// **'Pazartesi'**
+  String get fullDay_monday;
+
+  /// No description provided for @fullDay_tuesday.
+  ///
+  /// In tr, this message translates to:
+  /// **'Salı'**
+  String get fullDay_tuesday;
+
+  /// No description provided for @fullDay_wednesday.
+  ///
+  /// In tr, this message translates to:
+  /// **'Çarşamba'**
+  String get fullDay_wednesday;
+
+  /// No description provided for @fullDay_thursday.
+  ///
+  /// In tr, this message translates to:
+  /// **'Perşembe'**
+  String get fullDay_thursday;
+
+  /// No description provided for @fullDay_friday.
+  ///
+  /// In tr, this message translates to:
+  /// **'Cuma'**
+  String get fullDay_friday;
+
+  /// No description provided for @fullDay_saturday.
+  ///
+  /// In tr, this message translates to:
+  /// **'Cumartesi'**
+  String get fullDay_saturday;
+
+  /// No description provided for @fullDay_sunday.
+  ///
+  /// In tr, this message translates to:
+  /// **'Pazar'**
+  String get fullDay_sunday;
 }
 
 class _AppLocalizationsDelegate

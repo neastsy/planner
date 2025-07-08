@@ -132,5 +132,21 @@
   "tagDistributionTitle": "Распределение времени по тегам",
   "dailyActivityTitle": "Общее время активности по дням",
   "noDataForStatistics": "Нет данных об активности для отображения статистики. Начните планировать свои дни!",
-  "untagged": "Без тега"   
+  "untagged": "Без тега",
+  "todayIs": "Сегодня {dayName}",
+  "@todayIs": {
+    "placeholders": {
+      "dayName": {
+        "type": "String",
+        "example": "Пятница"
+      }
+    }
+  },
+  "fullDay_monday": "Понедельник",
+  "fullDay_tuesday": "Вторник",
+  "fullDay_wednesday": "Среда",
+  "fullDay_thursday": "Четверг",
+  "fullDay_friday": "Пятница",
+  "fullDay_saturday": "Суббота",
+  "fullDay_sunday": "Воскресенье"
 }

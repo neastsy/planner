@@ -319,4 +319,30 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get untagged => 'Non étiqueté';
+
+  @override
+  String todayIs(String dayName) {
+    return 'Aujourd\'hui, c\'est $dayName';
+  }
+
+  @override
+  String get fullDay_monday => 'Lundi';
+
+  @override
+  String get fullDay_tuesday => 'Mardi';
+
+  @override
+  String get fullDay_wednesday => 'Mercredi';
+
+  @override
+  String get fullDay_thursday => 'Jeudi';
+
+  @override
+  String get fullDay_friday => 'Vendredi';
+
+  @override
+  String get fullDay_saturday => 'Samedi';
+
+  @override
+  String get fullDay_sunday => 'Dimanche';
 }

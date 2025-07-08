@@ -132,5 +132,21 @@
   "tagDistributionTitle": "Répartition du temps par étiquette",
   "dailyActivityTitle": "Temps total d'activité par jour",
   "noDataForStatistics": "Aucune donnée d'activité pour afficher les statistiques. Commencez à planifier vos journées !",
-  "untagged": "Non étiqueté"
+  "untagged": "Non étiqueté",
+  "todayIs": "Aujourd'hui, c'est {dayName}",
+  "@todayIs": {
+    "placeholders": {
+      "dayName": {
+        "type": "String",
+        "example": "Vendredi"
+      }
+    }
+  },
+  "fullDay_monday": "Lundi",
+  "fullDay_tuesday": "Mardi",
+  "fullDay_wednesday": "Mercredi",
+  "fullDay_thursday": "Jeudi",
+  "fullDay_friday": "Vendredi",
+  "fullDay_saturday": "Samedi",
+  "fullDay_sunday": "Dimanche"
 }

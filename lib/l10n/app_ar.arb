@@ -132,5 +132,21 @@
   "tagDistributionTitle": "توزيع الوقت حسب الوسم",
   "dailyActivityTitle": "إجمالي وقت النشاط حسب اليوم",
   "noDataForStatistics": "لا توجد بيانات نشاط لعرض الإحصائيات. ابدأ بتخطيط أيامك!",
-  "untagged": "غير موسوم"  
+  "untagged": "غير موسوم",
+  "todayIs": "اليوم هو {dayName}",
+  "@todayIs": {
+    "placeholders": {
+      "dayName": {
+         "type": "String",
+        "example": "الجمعة"
+      }
+    }
+  },
+  "fullDay_monday": "الاثنين",
+  "fullDay_tuesday": "الثلاثاء",
+  "fullDay_wednesday": "الأربعاء",
+  "fullDay_thursday": "الخميس",
+  "fullDay_friday": "الجمعة",
+  "fullDay_saturday": "السبت",
+  "fullDay_sunday": "الأحد"
 }

@@ -318,4 +318,30 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get untagged => 'Без тега';
+
+  @override
+  String todayIs(String dayName) {
+    return 'Сегодня $dayName';
+  }
+
+  @override
+  String get fullDay_monday => 'Понедельник';
+
+  @override
+  String get fullDay_tuesday => 'Вторник';
+
+  @override
+  String get fullDay_wednesday => 'Среда';
+
+  @override
+  String get fullDay_thursday => 'Четверг';
+
+  @override
+  String get fullDay_friday => 'Пятница';
+
+  @override
+  String get fullDay_saturday => 'Суббота';
+
+  @override
+  String get fullDay_sunday => 'Воскресенье';
 }

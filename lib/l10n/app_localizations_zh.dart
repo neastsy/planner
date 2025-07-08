@@ -310,4 +310,30 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get untagged => '未标记';
+
+  @override
+  String todayIs(String dayName) {
+    return '今天是$dayName';
+  }
+
+  @override
+  String get fullDay_monday => '星期一';
+
+  @override
+  String get fullDay_tuesday => '星期二';
+
+  @override
+  String get fullDay_wednesday => '星期三';
+
+  @override
+  String get fullDay_thursday => '星期四';
+
+  @override
+  String get fullDay_friday => '星期五';
+
+  @override
+  String get fullDay_saturday => '星期六';
+
+  @override
+  String get fullDay_sunday => '星期日';
 }

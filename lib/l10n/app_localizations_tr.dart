@@ -316,4 +316,30 @@ class AppLocalizationsTr extends AppLocalizations {
 
   @override
   String get untagged => 'Etiketsiz';
+
+  @override
+  String todayIs(String dayName) {
+    return 'Bugün $dayName';
+  }
+
+  @override
+  String get fullDay_monday => 'Pazartesi';
+
+  @override
+  String get fullDay_tuesday => 'Salı';
+
+  @override
+  String get fullDay_wednesday => 'Çarşamba';
+
+  @override
+  String get fullDay_thursday => 'Perşembe';
+
+  @override
+  String get fullDay_friday => 'Cuma';
+
+  @override
+  String get fullDay_saturday => 'Cumartesi';
+
+  @override
+  String get fullDay_sunday => 'Pazar';
 }

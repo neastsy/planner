@@ -68,6 +68,30 @@ class _PlannerHomePageState extends State<PlannerHomePage> {
     }
   }
 
+  String _getLocalizedTodayName(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+    final weekday = DateTime.now().weekday;
+
+    switch (weekday) {
+      case DateTime.monday:
+        return l10n.fullDay_monday;
+      case DateTime.tuesday:
+        return l10n.fullDay_tuesday;
+      case DateTime.wednesday:
+        return l10n.fullDay_wednesday;
+      case DateTime.thursday:
+        return l10n.fullDay_thursday;
+      case DateTime.friday:
+        return l10n.fullDay_friday;
+      case DateTime.saturday:
+        return l10n.fullDay_saturday;
+      case DateTime.sunday:
+        return l10n.fullDay_sunday;
+      default:
+        return '';
+    }
+  }
+
   String _formatTime(TimeOfDay time) =>
       "${time.hour.toString().padLeft(2, '0')}:${time.minute.toString().padLeft(2, '0')}";
 
@@ -939,13 +963,34 @@ class _PlannerHomePageState extends State<PlannerHomePage> {
               );
             },
             child: Center(
-              child: Text(
-                _currentTime,
-                style: TextStyle(
-                  color: clockColor,
-                  fontSize: 48,
-                  fontWeight: FontWeight.bold,
-                ),
+              // YENİ: Saati ve gün adını dikeyde hizalamak için Column kullanıyoruz.
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  // Saat metni
+                  Text(
+                    _currentTime,
+                    style: TextStyle(
+                      color: clockColor,
+                      fontSize: 48,
+                      fontWeight: FontWeight.bold,
+                      // Harfler arasındaki boşluğu azaltarak daha kompakt bir görünüm sağlar.
+                      letterSpacing: -1.0,
+                    ),
+                  ),
+                  // Gün adı metni
+                  Text(
+                    // Daha önce eklediğimiz yardımcı metodu burada kullanıyoruz.
+                    _getLocalizedTodayName(context).toUpperCase(),
+                    style: TextStyle(
+                      color: clockColor?.withOpacity(0.7),
+                      fontSize: 20,
+                      fontWeight: FontWeight.bold,
+                      // Harfler arasındaki boşluğu artırarak daha estetik bir görünüm sağlar.
+                      letterSpacing: 2.0,
+                    ),
+                  ),
+                ],
               ),
             ),
           ),

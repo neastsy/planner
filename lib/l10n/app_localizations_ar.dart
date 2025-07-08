@@ -314,4 +314,30 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get untagged => 'غير موسوم';
+
+  @override
+  String todayIs(String dayName) {
+    return 'اليوم هو $dayName';
+  }
+
+  @override
+  String get fullDay_monday => 'الاثنين';
+
+  @override
+  String get fullDay_tuesday => 'الثلاثاء';
+
+  @override
+  String get fullDay_wednesday => 'الأربعاء';
+
+  @override
+  String get fullDay_thursday => 'الخميس';
+
+  @override
+  String get fullDay_friday => 'الجمعة';
+
+  @override
+  String get fullDay_saturday => 'السبت';
+
+  @override
+  String get fullDay_sunday => 'الأحد';
 }
