@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -547,6 +548,108 @@ class _PlannerHomePageState extends State<PlannerHomePage> {
     return Icon(icon, color: color);
   }
 
+  void _handlePlannerTap(
+      TapDownDetails details, List<Activity> activities, Size size) {
+    if (activities.isEmpty) return;
+
+    final center = Offset(size.width / 2, size.height / 2);
+    final tapPosition = details.localPosition;
+
+    // 1. Dokunma mesafesini hesapla
+    final distance = (tapPosition - center).distance;
+    const tolerance = 4.0;
+    final outerRadius = (size.width / 2) - 18.4 + (35.0 / 2) + tolerance;
+    final innerRadius = (size.width / 2) - 18.4 - (35.0 / 2) - tolerance;
+
+    if (distance < innerRadius || distance > outerRadius) {
+      return;
+    }
+
+    // 2. Dokunma açısını hesapla ve normalize et
+    var tapAngle =
+        atan2(tapPosition.dy - center.dy, tapPosition.dx - center.dx) +
+            (pi / 2);
+    if (tapAngle < 0) {
+      tapAngle += 2 * pi;
+    }
+
+    // 3. YENİ MANTIK: Dokunulan noktayı kapsayan tüm aday aktiviteleri bul
+    final List<Activity> tappedCandidates = [];
+
+    for (final activity in activities) {
+      final startAngle =
+          ((activity.startTime.hour + activity.startTime.minute / 60) / 24) *
+              2 *
+              pi;
+      final endAngle =
+          ((activity.endTime.hour + activity.endTime.minute / 60) / 24) *
+              2 *
+              pi;
+
+      bool isTapped = false;
+
+      if (startAngle <= endAngle) {
+        // Normal aktivite
+        if (tapAngle >= startAngle && tapAngle <= endAngle) {
+          isTapped = true;
+        }
+      } else {
+        // Gece yarısını geçen aktivite
+        if (tapAngle >= startAngle || tapAngle <= endAngle) {
+          isTapped = true;
+        }
+      }
+
+      if (activity.durationInMinutes >= 24 * 60) {
+        isTapped = true;
+      }
+
+      if (isTapped) {
+        tappedCandidates.add(activity);
+      }
+    }
+
+    // 4. Adaylar arasından en üsttekini seç ve SnackBar göster
+    if (tappedCandidates.isNotEmpty) {
+      // YENİ: İki aşamalı sıralama mantığı
+      tappedCandidates.sort((a, b) {
+        // 1. Önce süreye göre karşılaştır.
+        final durationComparison =
+            a.durationInMinutes.compareTo(b.durationInMinutes);
+        // Eğer süreler farklıysa, bu karşılaştırmayı kullan.
+        if (durationComparison != 0) {
+          return durationComparison;
+        }
+        // 2. Eğer süreler aynıysa, başlangıç saatine göre tersten karşılaştır.
+        // (Daha geç başlayan, daha üstte çizilir).
+        final aStartMinutes = a.startTime.hour * 60 + a.startTime.minute;
+        final bStartMinutes = b.startTime.hour * 60 + b.startTime.minute;
+        return bStartMinutes.compareTo(aStartMinutes);
+      });
+
+      // Sıralanmış listenin ilk elemanı, her zaman görsel olarak en üsttekidir.
+      final Activity topmostActivity = tappedCandidates.first;
+
+      ScaffoldMessenger.of(context).hideCurrentSnackBar();
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(
+            topmostActivity.name,
+            textAlign: TextAlign.center,
+            style: const TextStyle(fontWeight: FontWeight.bold),
+          ),
+          duration: const Duration(seconds: 2),
+          backgroundColor: topmostActivity.color.withAlpha((255 * 0.9).round()),
+          behavior: SnackBarBehavior.floating,
+          margin: const EdgeInsets.symmetric(horizontal: 50, vertical: 20),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(24),
+          ),
+        ),
+      );
+    }
+  }
+
   void _showPendingNotificationsDialog() async {
     final notificationService = NotificationService();
     final activityProvider = context.read<ActivityProvider>();
@@ -931,33 +1034,39 @@ class _PlannerHomePageState extends State<PlannerHomePage> {
                       SizedBox(
                         width: 300,
                         height: 300,
-                        child: CustomPaint(
-                          painter: CircularPlannerPainter(
-                            activities: activities,
-                            textColor:
-                                Theme.of(context).textTheme.bodySmall!.color!,
-                            circleColor: Theme.of(context).dividerColor,
-                          ),
-                          child: Center(
-                            child: Column(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                Text(_currentTime,
-                                    style: TextStyle(
-                                        color: clockColor,
-                                        fontSize: 48,
-                                        fontWeight: FontWeight.bold,
-                                        letterSpacing: -1.0)),
-                                Text(
-                                    _getLocalizedTodayName(context)
-                                        .toUpperCase(),
-                                    style: TextStyle(
-                                        color: clockColor
-                                            ?.withAlpha((255 * 0.8).round()),
-                                        fontSize: 20,
-                                        fontWeight: FontWeight.bold,
-                                        letterSpacing: 2.0)),
-                              ],
+                        child: GestureDetector(
+                          onTapDown: (details) {
+                            const size = Size(300, 300);
+                            _handlePlannerTap(details, activities, size);
+                          },
+                          child: CustomPaint(
+                            painter: CircularPlannerPainter(
+                              activities: activities,
+                              textColor:
+                                  Theme.of(context).textTheme.bodySmall!.color!,
+                              circleColor: Theme.of(context).dividerColor,
+                            ),
+                            child: Center(
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Text(_currentTime,
+                                      style: TextStyle(
+                                          color: clockColor,
+                                          fontSize: 48,
+                                          fontWeight: FontWeight.bold,
+                                          letterSpacing: -1.0)),
+                                  Text(
+                                      _getLocalizedTodayName(context)
+                                          .toUpperCase(),
+                                      style: TextStyle(
+                                          color: clockColor
+                                              ?.withAlpha((255 * 0.8).round()),
+                                          fontSize: 20,
+                                          fontWeight: FontWeight.bold,
+                                          letterSpacing: 2.0)),
+                                ],
+                              ),
                             ),
                           ),
                         ),
