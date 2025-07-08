@@ -40,8 +40,9 @@ class _PlannerHomePageState extends State<PlannerHomePage>
     super.initState();
     WidgetsBinding.instance.addObserver(this);
     NotificationService().requestPermissions();
-    final initialDayIndex = DateTime.now().weekday - 1;
-    _pageController = PageController(initialPage: initialDayIndex);
+    final todayIndex = DateTime.now().weekday - 1;
+    final startingPage = (1000 * 7) + todayIndex;
+    _pageController = PageController(initialPage: startingPage);
 
     _updateTime();
     _timer = Timer.periodic(const Duration(seconds: 1), (_) => _updateTime());
@@ -980,57 +981,75 @@ class _PlannerHomePageState extends State<PlannerHomePage>
       ),
       body: Column(
         children: [
-          SizedBox(
-            height: 50,
-            child: ListView.builder(
-              scrollDirection: Axis.horizontal,
-              itemCount: _days.length,
-              itemBuilder: (context, index) {
+          // YENİ: Gün butonları için Row kullanıyoruz
+          Padding(
+            padding: const EdgeInsets.symmetric(vertical: 8.0),
+            child: Row(
+              // Butonları yatayda yaymak için children listesini kullanıyoruz
+              children: List.generate(7, (index) {
                 final dayLabel = _days[index];
                 final dayKey = hiveKeys[index];
                 final isSelected = dayKey == activityProvider.selectedDay;
-                return Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 4.0),
-                  child: TextButton(
-                    style: TextButton.styleFrom(
-                      backgroundColor:
-                          isSelected ? Colors.blueAccent : Colors.transparent,
-                      shape: RoundedRectangleBorder(
+
+                // Her butonu Expanded ile sarmalıyoruz
+                return Expanded(
+                  child: Padding(
+                    // Butonlar arasına biraz boşluk koyalım
+                    padding: const EdgeInsets.symmetric(horizontal: 2.0),
+                    child: TextButton(
+                      style: TextButton.styleFrom(
+                        backgroundColor:
+                            isSelected ? Colors.blueAccent : Colors.transparent,
+                        shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(20),
                           side: isSelected
                               ? BorderSide.none
                               : BorderSide(
-                                  color: Theme.of(context).dividerColor)),
-                    ),
-                    // GÜNCELLENDİ: Butona basıldığında PageView'a animasyonsuz atla
-                    onPressed: () {
-                      activityProvider.changeDay(dayKey);
-                      _pageController.jumpToPage(index);
-                    },
-                    child: Text(
-                      dayLabel,
-                      style: TextStyle(
-                        color: isSelected
-                            ? Colors.white
-                            : Theme.of(context).textTheme.bodySmall?.color,
-                        fontWeight:
-                            isSelected ? FontWeight.bold : FontWeight.normal,
+                                  color: Theme.of(context).dividerColor),
+                        ),
+                        // Butonun içindeki metnin sıkışmasını önlemek için
+                        // padding'i ayarlıyoruz.
+                        padding: const EdgeInsets.symmetric(vertical: 12.0),
+                      ),
+                      onPressed: () {
+                        const middleCycle = 1000;
+                        final targetPage = (middleCycle * 7) + index;
+
+                        activityProvider.changeDay(hiveKeys[index]);
+                        if (_pageController.page?.round() != targetPage) {
+                          _pageController.jumpToPage(targetPage);
+                        }
+                      },
+                      child: Text(
+                        dayLabel,
+                        style: TextStyle(
+                          color: isSelected
+                              ? Colors.white
+                              : Theme.of(context).textTheme.bodySmall?.color,
+                          fontWeight:
+                              isSelected ? FontWeight.bold : FontWeight.normal,
+                        ),
                       ),
                     ),
                   ),
                 );
-              },
+              }),
             ),
           ),
           Expanded(
             child: PageView.builder(
               controller: _pageController,
-              itemCount: hiveKeys.length,
-              onPageChanged: (index) {
-                context.read<ActivityProvider>().changeDay(hiveKeys[index]);
+              // itemCount'ı null yaparak sonsuz hale getiriyoruz.
+              itemCount: null,
+              onPageChanged: (pageIndex) {
+                // YENİ: Modulo kullanarak doğru gün index'ini bul
+                final dayIndex = pageIndex % 7;
+                context.read<ActivityProvider>().changeDay(hiveKeys[dayIndex]);
               },
               itemBuilder: (context, pageIndex) {
-                final dayKey = hiveKeys[pageIndex];
+                // YENİ: Modulo kullanarak doğru gün index'ini bul
+                final dayIndex = pageIndex % 7;
+                final dayKey = hiveKeys[dayIndex];
                 final activities =
                     activityProvider.dailyActivities[dayKey] ?? [];
 
