@@ -149,5 +149,6 @@
   "fullDay_friday": "Vendredi",
   "fullDay_saturday": "Samedi",
   "fullDay_sunday": "Dimanche",
-  "repeatNotificationWeekly": "Répéter chaque semaine"
+  "repeatNotificationWeekly": "Répéter chaque semaine",
+  "recurringNotificationHint": "Se répète à l'heure de l'activité"
 }

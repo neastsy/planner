@@ -149,5 +149,6 @@
   "fullDay_friday": "星期五",
   "fullDay_saturday": "星期六",
   "fullDay_sunday": "星期日",
-  "repeatNotificationWeekly": "每周重复"
+  "repeatNotificationWeekly": "每周重复",
+  "recurringNotificationHint": "在活动时间重复"
 }

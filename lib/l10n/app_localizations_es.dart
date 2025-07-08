@@ -349,4 +349,7 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get repeatNotificationWeekly => 'Repetir semanalmente';
+
+  @override
+  String get recurringNotificationHint => 'Se repite a la hora de la actividad';
 }

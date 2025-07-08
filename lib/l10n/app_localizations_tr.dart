@@ -345,4 +345,7 @@ class AppLocalizationsTr extends AppLocalizations {
 
   @override
   String get repeatNotificationWeekly => 'Haftalık tekrarla';
+
+  @override
+  String get recurringNotificationHint => 'Aktivite saatinde tekrarlanır';
 }

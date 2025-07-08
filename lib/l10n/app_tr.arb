@@ -149,5 +149,6 @@
   "fullDay_friday": "Cuma",
   "fullDay_saturday": "Cumartesi",
   "fullDay_sunday": "Pazar",
-  "repeatNotificationWeekly": "Haftalık tekrarla"
+  "repeatNotificationWeekly": "Haftalık tekrarla",
+  "recurringNotificationHint": "Aktivite saatinde tekrarlanır"
 }

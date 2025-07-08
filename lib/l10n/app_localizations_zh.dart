@@ -339,4 +339,7 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get repeatNotificationWeekly => '每周重复';
+
+  @override
+  String get recurringNotificationHint => '在活动时间重复';
 }

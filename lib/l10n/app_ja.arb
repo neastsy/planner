@@ -149,5 +149,6 @@
   "fullDay_friday": "金曜日",
   "fullDay_saturday": "土曜日",
   "fullDay_sunday": "日曜日",
-  "repeatNotificationWeekly": "毎週繰り返す" 
+  "repeatNotificationWeekly": "毎週繰り返す",
+  "recurringNotificationHint": "アクティビティ時間に繰り返されます"
 }

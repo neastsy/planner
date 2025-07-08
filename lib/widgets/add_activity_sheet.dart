@@ -203,6 +203,7 @@ class _AddActivitySheetState extends State<AddActivitySheet>
     final bool isEditing = widget.activityToEdit != null;
     final l10n = AppLocalizations.of(context)!;
     final isCustomColorSelected = !_availableColors.contains(_selectedColor);
+    final bool isRecurringEnabled = _isRecurring;
 
     return SingleChildScrollView(
       child: Container(
@@ -327,15 +328,21 @@ class _AddActivitySheetState extends State<AddActivitySheet>
               const SizedBox(height: 10),
               DropdownButtonFormField<int?>(
                 value: _selectedNotificationMinutes,
-                onChanged: (int? newValue) {
-                  setState(() {
-                    _selectedNotificationMinutes = newValue;
-                  });
-                },
+                onChanged: isRecurringEnabled
+                    ? null
+                    : (int? newValue) {
+                        setState(() {
+                          _selectedNotificationMinutes = newValue;
+                        });
+                      },
                 decoration: InputDecoration(
                   border: const OutlineInputBorder(),
                   contentPadding:
                       const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                  // GÜNCELLENDİ: Devre dışı kaldığında kullanıcıya bilgi ver.
+                  hintText: isRecurringEnabled
+                      ? l10n.recurringNotificationHint
+                      : null,
                 ),
                 items: [
                   DropdownMenuItem<int?>(

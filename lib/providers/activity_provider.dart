@@ -9,8 +9,8 @@ import 'package:gunluk_planlayici/l10n/app_localizations.dart';
 import '../utils/constants.dart';
 
 enum CopyMode {
-  merge, // Mevcut aktivitelere ekle
-  overwrite, // Mevcut aktiviteleri sil ve üzerine yaz
+  merge,
+  overwrite,
 }
 
 class ActivityProvider with ChangeNotifier {
@@ -42,7 +42,6 @@ class ActivityProvider with ChangeNotifier {
 
   void _loadActivities() {
     _dailyActivities = _activityRepository.loadActivities();
-    // Yükleme sırasında tüm aktiviteleri bir kez sıralamak mantıklıdır.
     _dailyActivities.forEach((_, list) => _sortList(list));
     _syncNotificationsOnLoad();
     notifyListeners();
@@ -58,8 +57,8 @@ class ActivityProvider with ChangeNotifier {
     activitiesForDay.add(activity);
     _dailyActivities[_selectedDay] = activitiesForDay;
 
-    _sortList(activitiesForDay); // Sadece mevcut günün listesini sırala
-    _saveActivitiesForDay(_selectedDay); // Sadece mevcut günü kaydet
+    _sortList(activitiesForDay);
+    _saveActivitiesForDay(_selectedDay);
     _scheduleNotificationForActivity(activity, _selectedDay);
     notifyListeners();
   }
@@ -72,8 +71,8 @@ class ActivityProvider with ChangeNotifier {
     activitiesForDay[editIndex] = activity;
     _dailyActivities[_selectedDay] = activitiesForDay;
 
-    _sortList(activitiesForDay); // Sadece mevcut günün listesini sırala
-    _saveActivitiesForDay(_selectedDay); // Sadece mevcut günü kaydet
+    _sortList(activitiesForDay);
+    _saveActivitiesForDay(_selectedDay);
     _scheduleNotificationForActivity(activity, _selectedDay);
     notifyListeners();
   }
@@ -84,8 +83,7 @@ class ActivityProvider with ChangeNotifier {
     activitiesForDay.removeWhere((a) => a.id == activity.id);
     _dailyActivities[_selectedDay] = activitiesForDay;
 
-    // Sıralama zaten bozulmaz, tekrar sıralamaya gerek yok.
-    _saveActivitiesForDay(_selectedDay); // Sadece mevcut günü kaydet
+    _saveActivitiesForDay(_selectedDay);
     notifyListeners();
   }
 
@@ -130,8 +128,9 @@ class ActivityProvider with ChangeNotifier {
         endTime: activity.endTime,
         color: activity.color,
         note: activity.note,
-        tags: List<String>.from(activity.tags), // Etiketleri de kopyala
+        tags: List<String>.from(activity.tags),
         notificationMinutesBefore: activity.notificationMinutesBefore,
+        isNotificationRecurring: activity.isNotificationRecurring,
       );
       _scheduleNotificationForActivity(newActivity, toDay);
       return newActivity;
@@ -140,8 +139,8 @@ class ActivityProvider with ChangeNotifier {
     targetActivities.addAll(copiedActivities);
     _dailyActivities[toDay] = targetActivities;
 
-    _sortList(targetActivities); // Sadece hedef günün listesini sırala
-    _saveActivitiesForDay(toDay); // Sadece hedef günü kaydet
+    _sortList(targetActivities);
+    _saveActivitiesForDay(toDay);
     notifyListeners();
   }
 
@@ -152,7 +151,7 @@ class ActivityProvider with ChangeNotifier {
     }
     _dailyActivities[dayKey] = [];
 
-    _saveActivitiesForDay(dayKey); // Sadece temizlenen günü kaydet
+    _saveActivitiesForDay(dayKey);
     notifyListeners();
   }
 
@@ -163,7 +162,6 @@ class ActivityProvider with ChangeNotifier {
 
     bool needsSave = false;
 
-    // Her günü döngüye al ve gerekirse güncelle
     for (var dayKey in AppConstants.dayKeys) {
       final activities = _dailyActivities[dayKey] ?? [];
       if (activities.isEmpty) continue;
@@ -186,6 +184,7 @@ class ActivityProvider with ChangeNotifier {
             note: activity.note,
             tags: activity.tags,
             notificationMinutesBefore: realNotificationMinutes,
+            isNotificationRecurring: activity.isNotificationRecurring,
           ));
           dayNeedsSave = true;
         } else {
@@ -195,7 +194,7 @@ class ActivityProvider with ChangeNotifier {
 
       if (dayNeedsSave) {
         _dailyActivities[dayKey] = updatedActivities;
-        await _saveActivitiesForDay(dayKey); // Sadece değişen günü kaydet
+        await _saveActivitiesForDay(dayKey);
         needsSave = true;
       }
     }
@@ -217,11 +216,15 @@ class ActivityProvider with ChangeNotifier {
       for (var activity in activities) {
         if (activity.notificationMinutesBefore != null) {
           updatedActivities.add(Activity(
-            id: activity.id, name: activity.name, startTime: activity.startTime,
-            endTime: activity.endTime, color: activity.color,
+            id: activity.id,
+            name: activity.name,
+            startTime: activity.startTime,
+            endTime: activity.endTime,
+            color: activity.color,
             note: activity.note,
             tags: activity.tags,
-            notificationMinutesBefore: null, // Bildirimi temizle
+            notificationMinutesBefore: null,
+            isNotificationRecurring: false,
           ));
           dayNeedsSave = true;
         } else {
@@ -231,43 +234,59 @@ class ActivityProvider with ChangeNotifier {
 
       if (dayNeedsSave) {
         _dailyActivities[dayKey] = updatedActivities;
-        await _saveActivitiesForDay(dayKey); // Sadece değişen günü kaydet
+        await _saveActivitiesForDay(dayKey);
       }
     }
     notifyListeners();
   }
 
+  // DÜZELTİLMİŞ VE NİHAİ METOT
   Future<void> _scheduleNotificationForActivity(
       Activity activity, String dayKey) async {
-    // Bildirim süresi ayarlanmamışsa veya aktivite silinmişse hiçbir şey yapma.
+    // Bildirim ayarlanmamışsa, olası eski bildirimi iptal et ve çık.
     if (activity.notificationMinutesBefore == null) {
-      // Olası bir eski bildirimi iptal et.
       _cancelNotificationForActivity(activity);
       return;
     }
 
-    // Zamanlama ve yerelleştirme hesaplamaları aynı kalıyor.
     final String defaultLocale = Platform.localeName;
     final languageCode = defaultLocale.split('_').first;
     final locale = Locale(languageCode);
     final l10n = await AppLocalizations.delegate.load(locale);
+
     final now = DateTime.now();
     final dayIndex = AppConstants.dayKeys.indexOf(dayKey);
     int daysToAdd = (dayIndex - (now.weekday - 1) + 7) % 7;
+
     var activityDate = DateTime(now.year, now.month, now.day + daysToAdd,
         activity.startTime.hour, activity.startTime.minute);
-    var scheduledTime = activityDate
-        .subtract(Duration(minutes: activity.notificationMinutesBefore!));
+
+    DateTime scheduledTime;
+    int minutesBeforePayload;
+
+    if (activity.isNotificationRecurring) {
+      // Tekrarlı bildirimler her zaman aktivitenin gerçek saatinde planlanır.
+      scheduledTime = activityDate;
+      // Payload olarak 0 gönderiyoruz, çünkü bildirim tam zamanında.
+      minutesBeforePayload = 0;
+    } else {
+      // Tek seferlik bildirimler için "önce haber ver" süresi düşülür.
+      scheduledTime = activityDate
+          .subtract(Duration(minutes: activity.notificationMinutesBefore!));
+      minutesBeforePayload = activity.notificationMinutesBefore!;
+    }
+
     if (scheduledTime.isBefore(now)) {
       scheduledTime = scheduledTime.add(const Duration(days: 7));
     }
+
     _notificationService.scheduleNotification(
       id: activity.id.hashCode,
       title: activity.name,
       body:
           l10n.notificationBody(activity.name, _formatTime(activity.startTime)),
       scheduledTime: scheduledTime,
-      payload: activity.notificationMinutesBefore.toString(),
+      payload: minutesBeforePayload.toString(),
       isRecurring: activity.isNotificationRecurring,
     );
   }

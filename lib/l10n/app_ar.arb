@@ -149,5 +149,6 @@
   "fullDay_friday": "الجمعة",
   "fullDay_saturday": "السبت",
   "fullDay_sunday": "الأحد",
-  "repeatNotificationWeekly": "التكرار أسبوعيًا"
+  "repeatNotificationWeekly": "التكرار أسبوعيًا",
+  "recurringNotificationHint": "يتكرر في وقت النشاط"
 }

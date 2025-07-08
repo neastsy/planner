@@ -347,4 +347,7 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get repeatNotificationWeekly => 'Повторять еженедельно';
+
+  @override
+  String get recurringNotificationHint => 'Повторяется во время активности';
 }

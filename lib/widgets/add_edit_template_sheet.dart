@@ -134,7 +134,7 @@ class _AddEditTemplateSheetState extends State<AddEditTemplateSheet> {
   Widget build(BuildContext context) {
     final bool isEditing = widget.templateToEdit != null;
     final l10n = AppLocalizations.of(context)!;
-
+    final bool isRecurringEnabled = _isRecurring;
     final isCustomColorSelected = !_availableColors.contains(_selectedColor);
 
     return SingleChildScrollView(
@@ -254,12 +254,21 @@ class _AddEditTemplateSheetState extends State<AddEditTemplateSheet> {
               const SizedBox(height: 10),
               DropdownButtonFormField<int?>(
                 value: _selectedNotificationMinutes,
-                onChanged: (int? newValue) =>
-                    setState(() => _selectedNotificationMinutes = newValue),
-                decoration: const InputDecoration(
-                  border: OutlineInputBorder(),
+                onChanged: isRecurringEnabled
+                    ? null
+                    : (int? newValue) {
+                        setState(() {
+                          _selectedNotificationMinutes = newValue;
+                        });
+                      },
+                decoration: InputDecoration(
+                  border: const OutlineInputBorder(),
                   contentPadding:
-                      EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                      const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                  // GÜNCELLENDİ: Devre dışı kaldığında kullanıcıya bilgi ver.
+                  hintText: isRecurringEnabled
+                      ? l10n.recurringNotificationHint
+                      : null,
                 ),
                 items: [
                   DropdownMenuItem<int?>(

@@ -735,6 +735,12 @@ abstract class AppLocalizations {
   /// In tr, this message translates to:
   /// **'Haftalık tekrarla'**
   String get repeatNotificationWeekly;
+
+  /// No description provided for @recurringNotificationHint.
+  ///
+  /// In tr, this message translates to:
+  /// **'Aktivite saatinde tekrarlanır'**
+  String get recurringNotificationHint;
 }
 
 class _AppLocalizationsDelegate

@@ -150,5 +150,6 @@
   "fullDay_friday": "Friday",
   "fullDay_saturday": "Saturday",
   "fullDay_sunday": "Sunday",
-  "repeatNotificationWeekly": "Repeat weekly"
+  "repeatNotificationWeekly": "Repeat weekly",
+  "recurringNotificationHint": "Repeats at activity time"
 }

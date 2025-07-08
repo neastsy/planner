@@ -339,4 +339,7 @@ class AppLocalizationsJa extends AppLocalizations {
 
   @override
   String get repeatNotificationWeekly => '毎週繰り返す';
+
+  @override
+  String get recurringNotificationHint => 'アクティビティ時間に繰り返されます';
 }
