@@ -1047,131 +1047,124 @@ class _PlannerHomePageState extends State<PlannerHomePage>
                 context.read<ActivityProvider>().changeDay(hiveKeys[dayIndex]);
               },
               itemBuilder: (context, pageIndex) {
-                // YENİ: Modulo kullanarak doğru gün index'ini bul
-                final dayIndex = pageIndex % 7;
-                final dayKey = hiveKeys[dayIndex];
+                final dayKey = hiveKeys[pageIndex % 7];
                 final activities =
                     activityProvider.dailyActivities[dayKey] ?? [];
 
-                return SingleChildScrollView(
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                    child: Column(
-                      children: [
-                        const SizedBox(height: 16),
-                        SizedBox(
-                          width: 300,
-                          height: 300,
-                          child: GestureDetector(
-                            onTapDown: (details) {
-                              const size = Size(300, 300);
-                              _handlePlannerTap(details, activities, size);
-                            },
-                            child: CustomPaint(
-                              painter: CircularPlannerPainter(
-                                activities: activities,
-                                textColor: Theme.of(context)
-                                    .textTheme
-                                    .bodySmall!
-                                    .color!,
-                                circleColor: Theme.of(context).dividerColor,
-                              ),
-                              child: Center(
-                                child: Column(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: [
-                                    Text(_currentTime,
-                                        style: TextStyle(
-                                            color: clockColor,
-                                            fontSize: 48,
-                                            fontWeight: FontWeight.bold,
-                                            letterSpacing: -1.0)),
-                                    Text(
-                                        _getLocalizedTodayName(context)
-                                            .toUpperCase(),
-                                        style: TextStyle(
-                                            color: clockColor?.withAlpha(
-                                                (255 * 0.8).round()),
-                                            fontSize: 20,
-                                            fontWeight: FontWeight.bold,
-                                            letterSpacing: 2.0)),
-                                  ],
-                                ),
+                // YENİ YAPI: SingleChildScrollView yerine Column kullanıyoruz.
+                return Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                  child: Column(
+                    // Ana sütunun tüm alanı kaplamasını sağlıyoruz.
+                    children: [
+                      // Bu üst kısımlar sabit kalacak, kaydırılmayacak.
+                      const SizedBox(height: 16),
+                      SizedBox(
+                        width: 300,
+                        height: 300,
+                        child: GestureDetector(
+                          onTapDown: (details) {
+                            const size = Size(300, 300);
+                            _handlePlannerTap(details, activities, size);
+                          },
+                          child: CustomPaint(
+                            painter: CircularPlannerPainter(
+                              activities: activities,
+                              textColor:
+                                  Theme.of(context).textTheme.bodySmall!.color!,
+                              circleColor: Theme.of(context).dividerColor,
+                            ),
+                            child: Center(
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Text(_currentTime,
+                                      style: TextStyle(
+                                          color: clockColor,
+                                          fontSize: 48,
+                                          fontWeight: FontWeight.bold,
+                                          letterSpacing: -1.0)),
+                                  Text(
+                                      _getLocalizedTodayName(context)
+                                          .toUpperCase(),
+                                      style: TextStyle(
+                                          color: clockColor
+                                              ?.withAlpha((255 * 0.8).round()),
+                                          fontSize: 20,
+                                          fontWeight: FontWeight.bold,
+                                          letterSpacing: 2.0)),
+                                ],
                               ),
                             ),
                           ),
                         ),
-                        const SizedBox(height: 30),
-                        Wrap(
-                          alignment: WrapAlignment.center,
-                          spacing: 16.0,
-                          runSpacing: 8.0,
-                          children: [
-                            ElevatedButton.icon(
-                                onPressed: () => _addActivity(context),
-                                icon: const Icon(Icons.add),
-                                label: Text(l10n.addNewActivity)),
-                            ElevatedButton.icon(
-                                onPressed: () => _showUseTemplateDialog(),
-                                icon: const Icon(Icons.file_copy_rounded),
-                                label: Text(l10n.addFromTemplate),
-                                style: ElevatedButton.styleFrom(
-                                    backgroundColor: Theme.of(context)
-                                        .colorScheme
-                                        .secondaryContainer,
-                                    foregroundColor: Theme.of(context)
-                                        .colorScheme
-                                        .onSecondaryContainer)),
-                          ],
-                        ),
-                        const SizedBox(height: 20),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: [
-                            Text(l10n.activityList,
-                                style:
-                                    Theme.of(context).textTheme.headlineSmall),
-                            if (activities.isNotEmpty)
-                              Row(
-                                mainAxisSize: MainAxisSize.min,
-                                children: [
-                                  IconButton(
-                                      icon: const Icon(Icons.copy_all_outlined),
-                                      tooltip: l10n.copyDay,
-                                      onPressed: () =>
-                                          _showCopyDayDialog(context)),
-                                  IconButton(
-                                      icon: Icon(Icons.delete_sweep_outlined,
-                                          color: Colors.red.shade400),
-                                      tooltip: l10n.deleteAll,
-                                      onPressed: () =>
-                                          _showClearAllConfirmationDialog(
-                                              context)),
-                                ],
-                              ),
-                          ],
-                        ),
-                        const SizedBox(height: 10),
-                        activities.isEmpty
+                      ),
+                      const SizedBox(height: 30),
+                      Wrap(
+                        alignment: WrapAlignment.center,
+                        spacing: 16.0,
+                        runSpacing: 8.0,
+                        children: [
+                          ElevatedButton.icon(
+                              onPressed: () => _addActivity(context),
+                              icon: const Icon(Icons.add),
+                              label: Text(l10n.addNewActivity)),
+                          ElevatedButton.icon(
+                              onPressed: () => _showUseTemplateDialog(),
+                              icon: const Icon(Icons.file_copy_rounded),
+                              label: Text(l10n.addFromTemplate),
+                              style: ElevatedButton.styleFrom(
+                                  backgroundColor: Theme.of(context)
+                                      .colorScheme
+                                      .secondaryContainer,
+                                  foregroundColor: Theme.of(context)
+                                      .colorScheme
+                                      .onSecondaryContainer)),
+                        ],
+                      ),
+                      const SizedBox(height: 20),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          Text(l10n.activityList,
+                              style: Theme.of(context).textTheme.headlineSmall),
+                          if (activities.isNotEmpty)
+                            Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                IconButton(
+                                    icon: const Icon(Icons.copy_all_outlined),
+                                    tooltip: l10n.copyDay,
+                                    onPressed: () =>
+                                        _showCopyDayDialog(context)),
+                                IconButton(
+                                    icon: Icon(Icons.delete_sweep_outlined,
+                                        color: Colors.red.shade400),
+                                    tooltip: l10n.deleteAll,
+                                    onPressed: () =>
+                                        _showClearAllConfirmationDialog(
+                                            context)),
+                              ],
+                            ),
+                        ],
+                      ),
+                      const SizedBox(height: 10),
+
+                      // YENİ: ListView'ı Expanded ile sarmalıyoruz.
+                      // Bu, listenin kalan tüm dikey alanı doldurmasını sağlar.
+                      Expanded(
+                        child: activities.isEmpty
                             ? Center(
-                                child: Padding(
-                                  // Boş durum için de biraz boşluk bırakalım
-                                  padding: const EdgeInsets.symmetric(
-                                      vertical: 48.0),
-                                  child: Text(l10n.noActivityToday,
-                                      style: TextStyle(
-                                          color: Theme.of(context)
-                                              .textTheme
-                                              .bodySmall
-                                              ?.color,
-                                          fontSize: 16)),
-                                ),
-                              )
+                                child: Text(l10n.noActivityToday,
+                                    style: TextStyle(
+                                        color: Theme.of(context)
+                                            .textTheme
+                                            .bodySmall
+                                            ?.color,
+                                        fontSize: 16)))
                             : ListView.builder(
-                                // ÇOK ÖNEMLİ İKİ PARAMETRE
-                                shrinkWrap: true,
-                                physics: const NeverScrollableScrollPhysics(),
+                                // Artık shrinkWrap ve NeverScrollableScrollPhysics'e gerek yok.
                                 key: ValueKey<String>(dayKey),
                                 itemCount: activities.length,
                                 itemBuilder: (context, index) {
@@ -1353,8 +1346,8 @@ class _PlannerHomePageState extends State<PlannerHomePage>
                                   );
                                 },
                               ),
-                      ],
-                    ),
+                      ),
+                    ],
                   ),
                 );
               },
