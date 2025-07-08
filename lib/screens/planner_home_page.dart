@@ -654,6 +654,9 @@ class _PlannerHomePageState extends State<PlannerHomePage> {
     final notificationService = NotificationService();
     final activityProvider = context.read<ActivityProvider>();
 
+    await activityProvider.syncNotificationsOnLoad();
+
+    // Artık en güncel listeyi alabiliriz.
     final List<PendingNotificationRequest> pendingNotifications =
         await notificationService.getPendingNotifications();
 
@@ -684,19 +687,9 @@ class _PlannerHomePageState extends State<PlannerHomePage> {
       }
 
       DateTime? scheduledDateTime;
-      if (foundActivity != null &&
-          foundActivity.notificationMinutesBefore != null &&
-          foundDayKey != null) {
-        final now = DateTime.now();
-        final dayIndex = AppConstants.dayKeys.indexOf(foundDayKey);
-        int daysToAdd = (dayIndex - (now.weekday - 1) + 7) % 7;
-        var activityDate = DateTime(now.year, now.month, now.day + daysToAdd,
-            foundActivity.startTime.hour, foundActivity.startTime.minute);
-        if (activityDate.isBefore(now)) {
-          activityDate = activityDate.add(const Duration(days: 7));
-        }
-        scheduledDateTime = activityDate.subtract(
-            Duration(minutes: foundActivity.notificationMinutesBefore!));
+      if (foundActivity != null && foundDayKey != null) {
+        scheduledDateTime = activityProvider.calculateNextNotificationTime(
+            foundActivity, foundDayKey);
       }
 
       sortedNotifications.add({

@@ -1,3 +1,4 @@
+import 'dart:async'; // Timer için bu import gerekli
 import 'dart:io';
 import 'package:flutter/material.dart';
 import '../models/activity_model.dart';
@@ -19,9 +20,47 @@ class ActivityProvider with ChangeNotifier {
 
   Map<String, List<Activity>> _dailyActivities = {};
   late String _selectedDay;
+  Timer? _syncTimer; // YENİ: Senkronizasyon için Timer
 
   ActivityProvider(this._activityRepository) {
     _initialize();
+    _startPeriodicSync(); // YENİ: Periyodik senkronizasyonu başlat
+  }
+
+  DateTime? calculateNextNotificationTime(Activity activity, String dayKey) {
+    if (activity.notificationMinutesBefore == null) {
+      return null;
+    }
+
+    final now = DateTime.now();
+    final dayIndex = AppConstants.dayKeys.indexOf(dayKey);
+    int daysToAdd = (dayIndex - (now.weekday - 1) + 7) % 7;
+
+    var activityDate = DateTime(now.year, now.month, now.day + daysToAdd,
+        activity.startTime.hour, activity.startTime.minute);
+
+    var scheduledTime = activityDate
+        .subtract(Duration(minutes: activity.notificationMinutesBefore!));
+
+    while (scheduledTime.isBefore(now)) {
+      scheduledTime = scheduledTime.add(const Duration(days: 7));
+    }
+    return scheduledTime;
+  }
+
+  // YENİ: Provider yok edildiğinde Timer'ı temizlemek için dispose metodu
+  @override
+  void dispose() {
+    _syncTimer?.cancel();
+    super.dispose();
+  }
+
+  // YENİ METOT: Periyodik senkronizasyonu başlatır
+  void _startPeriodicSync() {
+    _syncTimer = Timer.periodic(const Duration(minutes: 1), (timer) {
+      syncNotificationsOnLoad(); // İsim güncellendi
+      debugPrint("Periodic notification sync completed.");
+    });
   }
 
   Map<String, List<Activity>> get dailyActivities => _dailyActivities;
@@ -43,7 +82,7 @@ class ActivityProvider with ChangeNotifier {
   void _loadActivities() {
     _dailyActivities = _activityRepository.loadActivities();
     _dailyActivities.forEach((_, list) => _sortList(list));
-    _syncNotificationsOnLoad();
+    syncNotificationsOnLoad(); // İsim güncellendi
     notifyListeners();
   }
 
@@ -155,7 +194,7 @@ class ActivityProvider with ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> _syncNotificationsOnLoad() async {
+  Future<void> syncNotificationsOnLoad() async {
     final pendingNotifications =
         await _notificationService.getPendingNotifications();
     final pendingMap = {for (var p in pendingNotifications) p.id: p.payload};
@@ -243,8 +282,9 @@ class ActivityProvider with ChangeNotifier {
   // DÜZELTİLMİŞ VE NİHAİ METOT
   Future<void> _scheduleNotificationForActivity(
       Activity activity, String dayKey) async {
-    // Bildirim ayarlanmamışsa, olası eski bildirimi iptal et ve çık.
-    if (activity.notificationMinutesBefore == null) {
+    final finalScheduledTime = calculateNextNotificationTime(activity, dayKey);
+
+    if (finalScheduledTime == null) {
       _cancelNotificationForActivity(activity);
       return;
     }
@@ -254,39 +294,13 @@ class ActivityProvider with ChangeNotifier {
     final locale = Locale(languageCode);
     final l10n = await AppLocalizations.delegate.load(locale);
 
-    final now = DateTime.now();
-    final dayIndex = AppConstants.dayKeys.indexOf(dayKey);
-    int daysToAdd = (dayIndex - (now.weekday - 1) + 7) % 7;
-
-    var activityDate = DateTime(now.year, now.month, now.day + daysToAdd,
-        activity.startTime.hour, activity.startTime.minute);
-
-    DateTime scheduledTime;
-    int minutesBeforePayload;
-
-    if (activity.isNotificationRecurring) {
-      // Tekrarlı bildirimler her zaman aktivitenin gerçek saatinde planlanır.
-      scheduledTime = activityDate;
-      // Payload olarak 0 gönderiyoruz, çünkü bildirim tam zamanında.
-      minutesBeforePayload = 0;
-    } else {
-      // Tek seferlik bildirimler için "önce haber ver" süresi düşülür.
-      scheduledTime = activityDate
-          .subtract(Duration(minutes: activity.notificationMinutesBefore!));
-      minutesBeforePayload = activity.notificationMinutesBefore!;
-    }
-
-    if (scheduledTime.isBefore(now)) {
-      scheduledTime = scheduledTime.add(const Duration(days: 7));
-    }
-
     _notificationService.scheduleNotification(
       id: activity.id.hashCode,
       title: activity.name,
       body:
           l10n.notificationBody(activity.name, _formatTime(activity.startTime)),
-      scheduledTime: scheduledTime,
-      payload: minutesBeforePayload.toString(),
+      scheduledTime: finalScheduledTime,
+      payload: activity.notificationMinutesBefore.toString(),
       isRecurring: activity.isNotificationRecurring,
     );
   }

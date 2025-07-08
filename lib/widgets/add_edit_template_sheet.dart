@@ -134,7 +134,6 @@ class _AddEditTemplateSheetState extends State<AddEditTemplateSheet> {
   Widget build(BuildContext context) {
     final bool isEditing = widget.templateToEdit != null;
     final l10n = AppLocalizations.of(context)!;
-    final bool isRecurringEnabled = _isRecurring;
     final isCustomColorSelected = !_availableColors.contains(_selectedColor);
 
     return SingleChildScrollView(
@@ -254,21 +253,19 @@ class _AddEditTemplateSheetState extends State<AddEditTemplateSheet> {
               const SizedBox(height: 10),
               DropdownButtonFormField<int?>(
                 value: _selectedNotificationMinutes,
-                onChanged: isRecurringEnabled
-                    ? null
-                    : (int? newValue) {
-                        setState(() {
-                          _selectedNotificationMinutes = newValue;
-                        });
-                      },
+                onChanged: (int? newValue) {
+                  setState(() {
+                    _selectedNotificationMinutes = newValue;
+                    // YENİ: Eğer "5/15 dk önce" seçilirse, tekrarı otomatik kapat.
+                    if (newValue != 0 && newValue != null) {
+                      _isRecurring = false;
+                    }
+                  });
+                },
                 decoration: InputDecoration(
                   border: const OutlineInputBorder(),
                   contentPadding:
                       const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-                  // GÜNCELLENDİ: Devre dışı kaldığında kullanıcıya bilgi ver.
-                  hintText: isRecurringEnabled
-                      ? l10n.recurringNotificationHint
-                      : null,
                 ),
                 items: [
                   DropdownMenuItem<int?>(
@@ -281,10 +278,9 @@ class _AddEditTemplateSheetState extends State<AddEditTemplateSheet> {
                       value: 15, child: Text(l10n.notify15MinBefore)),
                 ],
               ),
-              if (_selectedNotificationMinutes != null)
+              if (_selectedNotificationMinutes == 0)
                 SwitchListTile(
-                  title: Text(l10n
-                      .repeatNotificationWeekly), // .arb dosyasına eklenecek
+                  title: Text(l10n.repeatNotificationWeekly),
                   value: _isRecurring,
                   onChanged: (bool value) {
                     setState(() {

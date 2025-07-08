@@ -333,16 +333,15 @@ class _AddActivitySheetState extends State<AddActivitySheet>
                     : (int? newValue) {
                         setState(() {
                           _selectedNotificationMinutes = newValue;
+                          if (newValue != 0 && newValue != null) {
+                            _isRecurring = false;
+                          }
                         });
                       },
                 decoration: InputDecoration(
                   border: const OutlineInputBorder(),
                   contentPadding:
                       const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-                  // GÜNCELLENDİ: Devre dışı kaldığında kullanıcıya bilgi ver.
-                  hintText: isRecurringEnabled
-                      ? l10n.recurringNotificationHint
-                      : null,
                 ),
                 items: [
                   DropdownMenuItem<int?>(
@@ -363,10 +362,9 @@ class _AddActivitySheetState extends State<AddActivitySheet>
                   ),
                 ],
               ),
-              if (_selectedNotificationMinutes != null)
+              if (_selectedNotificationMinutes == 0)
                 SwitchListTile(
-                  title: Text(l10n
-                      .repeatNotificationWeekly), // .arb dosyasına eklenecek
+                  title: Text(l10n.repeatNotificationWeekly),
                   value: _isRecurring,
                   onChanged: (bool value) {
                     setState(() {
