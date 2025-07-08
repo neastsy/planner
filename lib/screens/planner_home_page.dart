@@ -1062,38 +1062,52 @@ class _PlannerHomePageState extends State<PlannerHomePage>
                       SizedBox(
                         width: 300,
                         height: 300,
-                        child: GestureDetector(
-                          onTapDown: (details) {
-                            const size = Size(300, 300);
-                            _handlePlannerTap(details, activities, size);
-                          },
-                          child: CustomPaint(
-                            painter: CircularPlannerPainter(
-                              activities: activities,
-                              textColor:
-                                  Theme.of(context).textTheme.bodySmall!.color!,
-                              circleColor: Theme.of(context).dividerColor,
-                            ),
-                            child: Center(
-                              child: Column(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  Text(_currentTime,
-                                      style: TextStyle(
-                                          color: clockColor,
-                                          fontSize: 48,
-                                          fontWeight: FontWeight.bold,
-                                          letterSpacing: -1.0)),
-                                  Text(
-                                      _getLocalizedTodayName(context)
-                                          .toUpperCase(),
-                                      style: TextStyle(
-                                          color: clockColor
-                                              ?.withAlpha((255 * 0.8).round()),
-                                          fontSize: 20,
-                                          fontWeight: FontWeight.bold,
-                                          letterSpacing: 2.0)),
-                                ],
+                        // YENİ: InteractiveViewer ile sarmalıyoruz
+                        child: InteractiveViewer(
+                          // Zoom yapıldığında içeriğin dışarı taşmasını engeller
+                          clipBehavior: Clip.none,
+                          minScale: 1.0,
+                          maxScale: 3.0, // 3 kat yakınlaştırma limiti
+                          // İçindeki GestureDetector'ı olduğu gibi bırakıyoruz.
+                          // Bu, hem zoom hem de dokunma özelliğinin çalışmasını sağlar.
+                          child: GestureDetector(
+                            onTapDown: (details) {
+                              const size = Size(300, 300);
+                              _handlePlannerTap(details, activities, size);
+                            },
+                            child: CustomPaint(
+                              // Painter'a sabit bir boyut vermek,
+                              // zoom sırasında oluşabilecek hataları önler.
+                              size: const Size(300, 300),
+                              painter: CircularPlannerPainter(
+                                activities: activities,
+                                textColor: Theme.of(context)
+                                    .textTheme
+                                    .bodySmall!
+                                    .color!,
+                                circleColor: Theme.of(context).dividerColor,
+                              ),
+                              child: Center(
+                                child: Column(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    Text(_currentTime,
+                                        style: TextStyle(
+                                            color: clockColor,
+                                            fontSize: 48,
+                                            fontWeight: FontWeight.bold,
+                                            letterSpacing: -1.0)),
+                                    Text(
+                                        _getLocalizedTodayName(context)
+                                            .toUpperCase(),
+                                        style: TextStyle(
+                                            color: clockColor?.withAlpha(
+                                                (255 * 0.8).round()),
+                                            fontSize: 20,
+                                            fontWeight: FontWeight.bold,
+                                            letterSpacing: 2.0)),
+                                  ],
+                                ),
                               ),
                             ),
                           ),
