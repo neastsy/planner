@@ -43,15 +43,11 @@ Future<void> main() async {
     await _runMigrations();
 
     // Kutuları Aç
-    // GÜNCELLENDİ: ActivityRepository'nin yeni yapısına uygun olarak Box<dynamic> kullanıyoruz.
     await Hive.openBox(AppConstants.activitiesBoxName);
-    // GÜNCELLENDİ: Sabit kullanarak ve doğru tiple kutuyu açıyoruz.
     await Hive.openBox<ActivityTemplate>(AppConstants.templatesBoxName);
-    // YENİ: Ayarlar için yeni kutumuzu açıyoruz.
     await Hive.openBox(AppConstants.settingsBoxName);
 
     // 3. Repository'leri Oluştur
-    // GÜNCELLENDİ: Repository'leri MultiProvider dışında oluşturmak daha temizdir.
     final activityRepository =
         ActivityRepository(Hive.box(AppConstants.activitiesBoxName));
     final templateRepository = TemplateRepository(
@@ -90,14 +86,9 @@ Future<void> _runMigrations() async {
   final prefs = await SharedPreferences.getInstance();
   int currentVersion = prefs.getInt('db_version') ?? 0;
 
-  // Bu blok, gelecekte yayınlanacak v1.0.0'dan v1.1.0'a güncelleyen
-  // bir kullanıcı için çalışacak olan sigortamızdır.
   if (currentVersion < 1) {
     debugPrint("Database is at version 0. Migrating to version 1...");
     try {
-      // Not: Bu geçişin çalışması için, eski versiyonda verinin
-      // List<Activity> olarak değil, List<dynamic> olarak saklandığını varsayıyoruz.
-      // Bu en güvenli yaklaşımdır.
       final box =
           await Hive.openBox<List<dynamic>>(AppConstants.activitiesBoxName);
 
@@ -111,12 +102,6 @@ Future<void> _runMigrations() async {
 
           List<Activity> newActivityList = [];
           for (var oldActivityData in oldActivityList) {
-            // `dynamic` veriyi yeni modele dönüştür.
-            // Bu, release modunda çökmeye neden olabilecek .id, .name gibi
-            // erişimleri engeller. Bunun yerine, verinin bir Map olduğunu varsaymak daha güvenlidir.
-            // Ancak bizim adaptörümüz zaten kayıtlı olduğu için, Hive bunu
-            // bizim için halleder ve `oldActivityData` aslında bir `Activity` nesnesidir.
-            // Sadece `isNotificationRecurring` alanı eksiktir.
             newActivityList.add(Activity(
               id: oldActivityData.id,
               name: oldActivityData.name,
@@ -127,14 +112,13 @@ Future<void> _runMigrations() async {
               notificationMinutesBefore:
                   oldActivityData.notificationMinutesBefore,
               tags: List<String>.from(oldActivityData.tags ?? []),
-              isNotificationRecurring: false, // Yeni alan için varsayılan değer
+              isNotificationRecurring: false,
             ));
           }
           newActivitiesMap[dayKey] = newActivityList;
         }
 
         await box.clear();
-        // Veriyi yeni, doğru tiple yaz.
         await box.putAll(newActivitiesMap);
       }
 
@@ -158,14 +142,14 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final settingsProvider = context.watch<SettingsProvider>();
+    final selectedTheme = settingsProvider.appTheme;
 
     // Tema renkleri
-    const Color lightBackgroundColor = Color(0xFFFAFAFA);
-    const Color lightDialogColor = Color(0xFFFFFFFF);
-    const Color lightTextColor = Colors.black87;
-    const Color darkBackgroundColor = Color(0xFF222831);
-    const Color darkDialogColor = Color(0xFF393E46);
-    const Color darkTextColor = Color(0xFFE0E0E0);
+    final Color lightBackgroundColor = selectedTheme.lightBackgroundColor;
+    final Color lightCardColor = selectedTheme.lightCardColor;
+    final Color darkBackgroundColor = selectedTheme.darkBackgroundColor;
+    final Color darkCardColor = selectedTheme.darkCardColor;
+    final Color primaryColor = selectedTheme.primaryColor;
 
     return MaterialApp(
       onGenerateTitle: (context) {
@@ -193,18 +177,14 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
           brightness: Brightness.light,
           primarySwatch: Colors.blue,
+          colorScheme: ColorScheme.fromSeed(
+              seedColor: primaryColor, brightness: Brightness.light),
+          textTheme: GoogleFonts.notoSansTextTheme(
+            Theme.of(context).textTheme,
+          ).apply(bodyColor: const Color(0xFF1f2937)),
           scaffoldBackgroundColor: lightBackgroundColor,
-          textTheme: GoogleFonts.notoSansTextTheme(Theme.of(context).textTheme)
-              .apply(bodyColor: lightTextColor, displayColor: lightTextColor),
-          // GÜNCELLENDİ: DialogTheme -> DialogThemeData
-          dialogTheme: DialogThemeData(
-            backgroundColor: lightDialogColor,
-            shape: const RoundedRectangleBorder(
-              borderRadius: BorderRadius.all(Radius.circular(16.0)),
-            ),
-          ),
           cardTheme: CardThemeData(
-            color: const Color(0xFFE8E8E8),
+            color: lightCardColor,
             elevation: 0,
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(12.0),
@@ -212,7 +192,7 @@ class MyApp extends StatelessWidget {
           ),
           elevatedButtonTheme: ElevatedButtonThemeData(
             style: ElevatedButton.styleFrom(
-              backgroundColor: Colors.blue,
+              backgroundColor: primaryColor,
               foregroundColor: Colors.white,
               padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
               shape: RoundedRectangleBorder(
@@ -228,31 +208,25 @@ class MyApp extends StatelessWidget {
                 color: Colors.black, fontSize: 20, fontWeight: FontWeight.bold),
           ),
           textButtonTheme: TextButtonThemeData(
-              style: TextButton.styleFrom(foregroundColor: Colors.blue))),
+              style: TextButton.styleFrom(foregroundColor: primaryColor))),
       darkTheme: ThemeData(
           brightness: Brightness.dark,
           primarySwatch: Colors.blue,
+          colorScheme: ColorScheme.fromSeed(
+              seedColor: primaryColor, brightness: Brightness.dark),
+          textTheme: GoogleFonts.notoSansTextTheme(
+            Theme.of(context).primaryTextTheme,
+          ).apply(bodyColor: const Color(0xFFe5e7eb)),
           scaffoldBackgroundColor: darkBackgroundColor,
-          textTheme:
-              GoogleFonts.notoSansTextTheme(Theme.of(context).primaryTextTheme)
-                  .apply(bodyColor: darkTextColor, displayColor: darkTextColor),
-          // GÜNCELLENDİ: DialogTheme -> DialogThemeData
-          dialogTheme: DialogThemeData(
-            backgroundColor: darkDialogColor,
-            shape: const RoundedRectangleBorder(
-              borderRadius: BorderRadius.all(Radius.circular(16.0)),
-            ),
-          ),
-          // GÜNCELLENDİ: CardTheme -> CardThemeData
           cardTheme: CardThemeData(
-            color: Colors.white.withAlpha((255 * 0.1).round()),
+            color: darkCardColor,
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(12.0),
             ),
           ),
           elevatedButtonTheme: ElevatedButtonThemeData(
             style: ElevatedButton.styleFrom(
-              backgroundColor: Colors.blueAccent,
+              backgroundColor: primaryColor,
               foregroundColor: Colors.white,
               padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
               shape: RoundedRectangleBorder(

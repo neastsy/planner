@@ -8,6 +8,7 @@ import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import '../l10n/app_localizations.dart';
 import '../models/activity_model.dart';
 import '../models/language_model.dart';
+import '../models/app_theme_model.dart';
 import '../models/activity_template_model.dart';
 import '../providers/activity_provider.dart';
 import '../providers/settings_provider.dart';
@@ -234,95 +235,147 @@ class _PlannerHomePageState extends State<PlannerHomePage>
     showDialog(
       context: context,
       builder: (BuildContext dialogContext) {
-        final settingsProvider =
-            Provider.of<SettingsProvider>(context, listen: false);
-
-        return AlertDialog(
-          title: Text(l10n.settings),
-          content: SingleChildScrollView(
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        return Consumer<SettingsProvider>(
+          builder: (context, settingsProvider, child) {
+            return AlertDialog(
+              title: Text(l10n.settings),
+              content: SingleChildScrollView(
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(l10n.theme,
+                    // 1. AÇIK/KOYU TEMA ANAHTARI
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text(l10n.theme,
+                            style:
+                                const TextStyle(fontWeight: FontWeight.bold)),
+                        ThemeSwitcher(
+                          isDarkMode:
+                              settingsProvider.themeMode == ThemeMode.dark,
+                          onToggle: (isDark) {
+                            final newMode =
+                                isDark ? ThemeMode.dark : ThemeMode.light;
+                            settingsProvider.changeThemeMode(newMode);
+                          },
+                        ),
+                      ],
+                    ),
+                    const Divider(),
+
+                    // 2. TEMA RENKLERİ SEÇİMİ
+                    Text("Theme Color",
                         style: const TextStyle(fontWeight: FontWeight.bold)),
-                    ThemeSwitcher(
-                      isDarkMode: settingsProvider.themeMode == ThemeMode.dark,
-                      onToggle: (isDark) {
-                        final newMode =
-                            isDark ? ThemeMode.dark : ThemeMode.light;
-                        settingsProvider.changeTheme(newMode);
+                    const SizedBox(height: 12),
+                    Wrap(
+                      spacing: 16,
+                      runSpacing: 12,
+                      children: AppTheme.themeList.map((theme) {
+                        final bool isSelected =
+                            theme.name == settingsProvider.appTheme.name;
+                        return GestureDetector(
+                          onTap: () => settingsProvider.changeAppTheme(theme),
+                          child: Container(
+                            width: 40,
+                            height: 40,
+                            decoration: BoxDecoration(
+                              color: theme.primaryColor,
+                              shape: BoxShape.circle,
+                              border: isSelected
+                                  ? Border.all(
+                                      color:
+                                          Theme.of(context).colorScheme.primary,
+                                      width: 3)
+                                  : null,
+                              boxShadow: [
+                                if (isSelected)
+                                  BoxShadow(
+                                    color: theme.primaryColor.withAlpha(128),
+                                    blurRadius: 5,
+                                    spreadRadius: 1,
+                                  )
+                              ],
+                            ),
+                          ),
+                        );
+                      }).toList(),
+                    ),
+                    const Divider(),
+
+                    // 3. DİL SEÇİMİ
+                    Text(l10n.selectLanguage,
+                        style: const TextStyle(fontWeight: FontWeight.bold)),
+                    const SizedBox(height: 8),
+                    DropdownButtonFormField<Language>(
+                      value: Language.languageList().firstWhere(
+                        (lang) =>
+                            lang.code ==
+                            (settingsProvider.locale?.languageCode ??
+                                Localizations.localeOf(context).languageCode),
+                        orElse: () => Language.languageList().first,
+                      ),
+                      decoration: InputDecoration(
+                        border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(12)),
+                        contentPadding: const EdgeInsets.symmetric(
+                            horizontal: 16, vertical: 8),
+                      ),
+                      items: Language.languageList()
+                          .map<DropdownMenuItem<Language>>((Language language) {
+                        return DropdownMenuItem<Language>(
+                            value: language, child: Text(language.name));
+                      }).toList(),
+                      onChanged: (Language? newLanguage) {
+                        if (newLanguage != null) {
+                          settingsProvider
+                              .changeLocale(Locale(newLanguage.code, ''));
+                        }
                       },
+                    ),
+                    const Divider(),
+
+                    // 4. DİĞER AYARLAR
+                    TextButton.icon(
+                      icon: const Icon(Icons.notifications_on_outlined),
+                      label: Text(l10n.viewPendingNotifications),
+                      onPressed: () {
+                        Navigator.of(dialogContext).pop();
+                        _showPendingNotificationsDialog();
+                      },
+                      style: TextButton.styleFrom(
+                        padding: const EdgeInsets.symmetric(vertical: 12.0),
+                        minimumSize: const Size.fromHeight(40),
+                        alignment: Alignment.centerLeft,
+                      ),
+                    ),
+                    const Divider(),
+                    TextButton.icon(
+                      icon: const Icon(Icons.file_copy_outlined),
+                      label: Text(l10n.manageTemplates),
+                      onPressed: () {
+                        Navigator.of(dialogContext).pop();
+                        Navigator.of(context).push(MaterialPageRoute(
+                          builder: (context) => const TemplateManagerPage(),
+                        ));
+                      },
+                      style: TextButton.styleFrom(
+                        padding: const EdgeInsets.symmetric(vertical: 12.0),
+                        minimumSize: const Size.fromHeight(40),
+                        alignment: Alignment.centerLeft,
+                      ),
                     ),
                   ],
                 ),
-                const Divider(),
-                Text(l10n.selectLanguage,
-                    style: const TextStyle(fontWeight: FontWeight.bold)),
-                const SizedBox(height: 8),
-                DropdownButtonFormField<Language>(
-                  value: Language.languageList().firstWhere(
-                    (lang) =>
-                        lang.code ==
-                        (settingsProvider.locale?.languageCode ??
-                            Localizations.localeOf(context).languageCode),
-                    orElse: () => Language.languageList().first,
-                  ),
-                  decoration: InputDecoration(
-                    border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(12)),
-                    contentPadding:
-                        const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                  ),
-                  items: Language.languageList()
-                      .map<DropdownMenuItem<Language>>((Language language) {
-                    return DropdownMenuItem<Language>(
-                        value: language, child: Text(language.name));
-                  }).toList(),
-                  onChanged: (Language? newLanguage) {
-                    if (newLanguage != null) {
-                      settingsProvider
-                          .changeLocale(Locale(newLanguage.code, ''));
-                      Navigator.of(dialogContext).pop();
-                    }
-                  },
-                ),
-                const Divider(),
-                TextButton.icon(
-                  icon: const Icon(Icons.notifications_on_outlined),
-                  label: Text(l10n.viewPendingNotifications),
-                  onPressed: () {
-                    Navigator.of(dialogContext).pop();
-                    _showPendingNotificationsDialog();
-                  },
-                  style: TextButton.styleFrom(
-                    padding: const EdgeInsets.symmetric(vertical: 12.0),
-                    minimumSize: const Size.fromHeight(40),
-                    alignment: Alignment.centerLeft,
-                  ),
-                ),
-                const Divider(),
-                TextButton.icon(
-                  icon: const Icon(Icons.file_copy_outlined),
-                  label: Text(l10n.manageTemplates),
-                  onPressed: () {
-                    Navigator.of(dialogContext).pop();
-                    Navigator.of(context).push(MaterialPageRoute(
-                      builder: (context) => const TemplateManagerPage(),
-                    ));
-                  },
-                  style: TextButton.styleFrom(
-                    padding: const EdgeInsets.symmetric(vertical: 12.0),
-                    minimumSize: const Size.fromHeight(40),
-                    alignment: Alignment.centerLeft,
-                  ),
+              ),
+              actions: [
+                TextButton(
+                  onPressed: () => Navigator.of(dialogContext).pop(),
+                  child: Text(l10n.close.toUpperCase()),
                 ),
               ],
-            ),
-          ),
+            );
+          },
         );
       },
     );

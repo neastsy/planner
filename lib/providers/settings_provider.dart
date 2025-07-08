@@ -1,13 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:hive_flutter/hive_flutter.dart';
+import 'package:gunluk_planlayici/models/app_theme_model.dart';
 
 class SettingsProvider with ChangeNotifier {
   final Box _settingsBox;
-  static const String _themeKey = 'themeMode';
+  static const String _themeModeKey = 'themeMode';
   static const String _localeKey = 'locale';
+  static const String _themeNameKey = 'themeName';
 
-  ThemeMode _themeMode = ThemeMode.dark; // Varsayılan değer
+  ThemeMode _themeMode = ThemeMode.dark;
   Locale? _locale;
+  AppTheme _appTheme = AppTheme.themeList.first;
 
   SettingsProvider(this._settingsBox) {
     _loadSettings();
@@ -16,11 +19,12 @@ class SettingsProvider with ChangeNotifier {
   // Dışarıdan erişim için getter'lar
   ThemeMode get themeMode => _themeMode;
   Locale? get locale => _locale;
+  AppTheme get appTheme => _appTheme;
 
   void _loadSettings() {
-    // Temayı yükle. Kayıtlı değer yoksa, varsayılan olarak dark temanın index'ini kullan.
-    final themeIndex =
-        _settingsBox.get(_themeKey, defaultValue: ThemeMode.dark.index) as int;
+    // Açık/Koyu modunu yükle
+    final themeIndex = _settingsBox.get(_themeModeKey,
+        defaultValue: ThemeMode.dark.index) as int;
     _themeMode = ThemeMode.values[themeIndex];
 
     // Dili yükle. Kayıtlı değer olabilir veya olmayabilir.
@@ -28,21 +32,33 @@ class SettingsProvider with ChangeNotifier {
     if (languageCode != null) {
       _locale = Locale(languageCode);
     }
+
+    final themeName = _settingsBox.get(_themeNameKey,
+        defaultValue: AppTheme.themeList.first.name) as String;
+    _appTheme = AppTheme.themeList.firstWhere((t) => t.name == themeName,
+        orElse: () => AppTheme.themeList.first);
   }
 
-  Future<void> changeTheme(ThemeMode newMode) async {
+  Future<void> changeThemeMode(ThemeMode newMode) async {
     if (_themeMode == newMode) return;
     _themeMode = newMode;
-    // Enum'ın index'ini saklamak verimlidir.
-    await _settingsBox.put(_themeKey, newMode.index);
+    // DÜZELTME: Doğru değişken adını kullanıyoruz
+    await _settingsBox.put(_themeModeKey, newMode.index);
     notifyListeners();
   }
 
-  /// GÜNCELLENDİ: Dili değiştirir, Hive'a kaydeder ve dinleyicileri bilgilendirir.
+  // Renk temasını değiştirir
+  Future<void> changeAppTheme(AppTheme newTheme) async {
+    if (_appTheme.name == newTheme.name) return;
+    _appTheme = newTheme;
+    await _settingsBox.put(_themeNameKey, newTheme.name);
+    notifyListeners();
+  }
+
+  // Dili değiştirir
   Future<void> changeLocale(Locale newLocale) async {
     if (_locale == newLocale) return;
     _locale = newLocale;
-    // Locale'in dil kodunu (örn: "en", "tr") saklamak yeterlidir.
     await _settingsBox.put(_localeKey, newLocale.languageCode);
     notifyListeners();
   }
