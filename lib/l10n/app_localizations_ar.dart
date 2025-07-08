@@ -295,4 +295,23 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get tagsHint => 'مثال: عمل، رياضة، شخصي';
+
+  @override
+  String get statisticsPageTitle => 'الإحصائيات';
+
+  @override
+  String get statisticsButtonTooltip => 'عرض الإحصائيات';
+
+  @override
+  String get tagDistributionTitle => 'توزيع الوقت حسب الوسم';
+
+  @override
+  String get dailyActivityTitle => 'إجمالي وقت النشاط حسب اليوم';
+
+  @override
+  String get noDataForStatistics =>
+      'لا توجد بيانات نشاط لعرض الإحصائيات. ابدأ بتخطيط أيامك!';
+
+  @override
+  String get untagged => 'غير موسوم';
 }

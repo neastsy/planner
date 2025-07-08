@@ -1,44 +1,66 @@
 import 'package:flutter/foundation.dart';
-import 'package:hive_flutter/hive_flutter.dart';
 import '../models/activity_template_model.dart';
+import '../repositories/template_repository.dart'; // YENİ: Repository'yi import et
 
 class TemplateProvider with ChangeNotifier {
-  final Box<ActivityTemplate> _templatesBox;
+  // GÜNCELLENDİ: Artık doğrudan Hive kutusuna değil, Repository'ye bağımlıyız.
+  final TemplateRepository _templateRepository;
   List<ActivityTemplate> _templates = [];
 
-  TemplateProvider(this._templatesBox) {
+  TemplateProvider(this._templateRepository) {
     _loadTemplates();
   }
 
-  // Dışarıdan erişim için şablon listesinin bir kopyasını döndüren getter
   List<ActivityTemplate> get templates => List.from(_templates);
 
-  // Kutudan şablonları yükleyen özel metot
+  // GÜNCELLENDİ: Yükleme işlemi Repository üzerinden yapılıyor.
   void _loadTemplates() {
-    _templates = _templatesBox.values.toList();
-    // İsteğe bağlı: Şablonları isme göre sıralayabiliriz
+    _templates = _templateRepository.loadTemplates();
+    _sortTemplates(); // Sıralama işlemini ayrı bir metoda taşıdık.
+    // notifyListeners() burada gereksiz çünkü constructor'da çağrılıyor.
+  }
+
+  // YENİ: Sıralama mantığını ayrı bir metoda taşıdık.
+  void _sortTemplates() {
     _templates
         .sort((a, b) => a.name.toLowerCase().compareTo(b.name.toLowerCase()));
+  }
+
+  // GÜNCELLENDİ: Daha verimli ekleme metodu.
+  Future<void> addTemplate(ActivityTemplate template) async {
+    // 1. Repository aracılığıyla Hive'a kaydet.
+    await _templateRepository.addTemplate(template);
+    // 2. Bellekteki listeye ekle.
+    _templates.add(template);
+    // 3. Listeyi yeniden sırala.
+    _sortTemplates();
+    // 4. Dinleyicileri bilgilendir.
     notifyListeners();
   }
 
-  // Yeni bir şablon ekleyen metot
-  Future<void> addTemplate(ActivityTemplate template) async {
-    // Hive'a eklerken, anahtar olarak template'in id'sini kullanıyoruz.
-    await _templatesBox.put(template.id, template);
-    _loadTemplates(); // Listeyi yeniden yükle ve dinleyicileri bilgilendir
-  }
-
-  // Mevcut bir şablonu güncelleyen metot
+  // GÜNCELLENDİ: Daha verimli güncelleme metodu.
   Future<void> updateTemplate(ActivityTemplate template) async {
-    // 'put' metodu, anahtar zaten varsa üzerine yazar, yoksa yeni oluşturur.
-    await _templatesBox.put(template.id, template);
-    _loadTemplates(); // Listeyi yeniden yükle ve dinleyicileri bilgilendir
+    // 1. Repository aracılığıyla Hive'ı güncelle.
+    await _templateRepository.updateTemplate(template);
+    // 2. Bellekteki listede ilgili şablonu bul ve değiştir.
+    final index = _templates.indexWhere((t) => t.id == template.id);
+    if (index != -1) {
+      _templates[index] = template;
+      // 3. Listeyi yeniden sırala (isim değişmiş olabilir).
+      _sortTemplates();
+      // 4. Dinleyicileri bilgilendir.
+      notifyListeners();
+    }
   }
 
-  // Bir şablonu silen metot
+  // GÜNCELLENDİ: Daha verimli silme metodu.
   Future<void> deleteTemplate(String templateId) async {
-    await _templatesBox.delete(templateId);
-    _loadTemplates(); // Listeyi yeniden yükle ve dinleyicileri bilgilendir
+    // 1. Repository aracılığıyla Hive'dan sil.
+    await _templateRepository.deleteTemplate(templateId);
+    // 2. Bellekteki listeden kaldır.
+    _templates.removeWhere((t) => t.id == templateId);
+    // Sıralama bozulmaz, yeniden sıralamaya gerek yok.
+    // 3. Dinleyicileri bilgilendir.
+    notifyListeners();
   }
 }

@@ -16,6 +16,7 @@ import '../widgets/circular_planner_painter.dart';
 import '../widgets/theme_switcher.dart';
 import '../services/notification_service.dart';
 import '../screens/template_manager_page.dart';
+import '../screens/statistics_page.dart';
 import '../utils/constants.dart';
 
 class PlannerHomePage extends StatefulWidget {
@@ -859,6 +860,16 @@ class _PlannerHomePageState extends State<PlannerHomePage> {
         centerTitle: true,
         actions: [
           IconButton(
+            icon: const Icon(Icons.bar_chart_outlined),
+            tooltip: l10n.statisticsButtonTooltip, // Yeni tooltip metni
+            onPressed: () {
+              Navigator.of(context).push(MaterialPageRoute(
+                builder: (context) => const StatisticsPage(),
+              ));
+            },
+          ),
+          // MEVCUT AYARLAR BUTONU
+          IconButton(
             icon: const Icon(Icons.settings_outlined),
             onPressed: () => _showSettingsDialog(context),
           ),
@@ -939,21 +950,26 @@ class _PlannerHomePageState extends State<PlannerHomePage> {
             ),
           ),
           const SizedBox(height: 30),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
+          Wrap(
+            // Butonları yatayda ortalar.
+            alignment: WrapAlignment.center,
+            // Butonlar arasındaki yatay boşluk.
+            spacing: 16.0,
+            // Butonlar alt alta geldiğinde aralarındaki dikey boşluk.
+            runSpacing: 8.0,
             children: [
               ElevatedButton.icon(
                   onPressed: () => _addActivity(context),
                   icon: const Icon(Icons.add),
                   label: Text(l10n.addNewActivity)),
-              const SizedBox(width: 16),
-              // YENİ: Şablondan ekle düğmesi
+
+              // Aradaki SizedBox'a artık gerek yok, 'spacing' hallediyor.
+
               ElevatedButton.icon(
                 onPressed: () => _showUseTemplateDialog(),
                 icon: const Icon(Icons.file_copy_rounded),
-                label: Text(l10n.addFromTemplate), // Yeni metin
+                label: Text(l10n.addFromTemplate),
                 style: ElevatedButton.styleFrom(
-                  // İsteğe bağlı: Farklı bir renk vererek ayırt edici olmasını sağlayabiliriz.
                   backgroundColor:
                       Theme.of(context).colorScheme.secondaryContainer,
                   foregroundColor:

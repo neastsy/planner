@@ -126,5 +126,11 @@
   "noTemplatesToUse": "Keine Vorlagen verfügbar. Bitte erstellen Sie eine in den Einstellungen.",
   "selectTemplate": "Vorlage auswählen",
   "tagsLabel": "Tags (kommagetrennt)",
-  "tagsHint": "z.B. Arbeit, Sport, Persönliches"  
+  "tagsHint": "z.B. Arbeit, Sport, Persönliches",
+  "statisticsPageTitle": "Statistiken",
+  "statisticsButtonTooltip": "Statistiken anzeigen",
+  "tagDistributionTitle": "Zeitverteilung nach Tag",
+  "dailyActivityTitle": "Gesamte Aktivitätszeit nach Tag",
+  "noDataForStatistics": "Es liegen keine Aktivitätsdaten zur Anzeige von Statistiken vor. Fang an, deine Tage zu planen!",
+  "untagged": "Ohne Tag"
 }

@@ -297,4 +297,23 @@ class AppLocalizationsTr extends AppLocalizations {
 
   @override
   String get tagsHint => 'örn. iş, spor, kişisel';
+
+  @override
+  String get statisticsPageTitle => 'İstatistikler';
+
+  @override
+  String get statisticsButtonTooltip => 'İstatistikleri Görüntüle';
+
+  @override
+  String get tagDistributionTitle => 'Etikete Göre Zaman Dağılımı';
+
+  @override
+  String get dailyActivityTitle => 'Güne Göre Toplam Aktivite Süresi';
+
+  @override
+  String get noDataForStatistics =>
+      'İstatistik gösterecek aktivite verisi bulunmuyor. Günlerinizi planlamaya başlayın!';
+
+  @override
+  String get untagged => 'Etiketsiz';
 }

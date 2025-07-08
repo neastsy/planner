@@ -126,5 +126,11 @@
   "noTemplatesToUse": "Kullanılacak şablon yok. Lütfen ayarlardan bir tane oluşturun.",
   "selectTemplate": "Bir Şablon Seçin",
   "tagsLabel": "Etiketler (virgülle ayrılmış)",
-  "tagsHint": "örn. iş, spor, kişisel"  
+  "tagsHint": "örn. iş, spor, kişisel"  ,
+  "statisticsPageTitle": "İstatistikler",
+  "statisticsButtonTooltip": "İstatistikleri Görüntüle",
+  "tagDistributionTitle": "Etikete Göre Zaman Dağılımı",
+  "dailyActivityTitle": "Güne Göre Toplam Aktivite Süresi",
+  "noDataForStatistics": "İstatistik gösterecek aktivite verisi bulunmuyor. Günlerinizi planlamaya başlayın!",
+  "untagged": "Etiketsiz"
 }

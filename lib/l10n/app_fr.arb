@@ -126,5 +126,11 @@
   "noTemplatesToUse": "Aucun modèle disponible. Veuillez en créer un dans les paramètres.",
   "selectTemplate": "Sélectionner un Modèle",
   "tagsLabel": "Étiquettes (séparées par des virgules)",
-  "tagsHint": "ex. travail, sport, personnel"  
+  "tagsHint": "ex. travail, sport, personnel",
+  "statisticsPageTitle": "Statistiques",
+  "statisticsButtonTooltip": "Voir les statistiques",
+  "tagDistributionTitle": "Répartition du temps par étiquette",
+  "dailyActivityTitle": "Temps total d'activité par jour",
+  "noDataForStatistics": "Aucune donnée d'activité pour afficher les statistiques. Commencez à planifier vos journées !",
+  "untagged": "Non étiqueté"
 }

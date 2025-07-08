@@ -126,5 +126,11 @@
   "noTemplatesToUse": "利用可能なテンプレートがありません。設定で作成してください。",
   "selectTemplate": "テンプレートを選択",
   "tagsLabel": "タグ（カンマ区切り）",
-  "tagsHint": "例：仕事、スポーツ、個人"      
+  "tagsHint": "例：仕事、スポーツ、個人",
+  "statisticsPageTitle": "統計",
+  "statisticsButtonTooltip": "統計を見る",
+  "tagDistributionTitle": "タグ別の時間分布",
+  "dailyActivityTitle": "日別の合計アクティビティ時間",
+  "noDataForStatistics": "統計を表示するアクティビティデータがありません。日々の計画を始めましょう！",
+  "untagged": "タグなし"   
 }

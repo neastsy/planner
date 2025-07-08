@@ -127,5 +127,11 @@
   "noTemplatesToUse": "No templates available. Please create one in the settings.",
   "selectTemplate": "Select a Template",
   "tagsLabel": "Tags (comma-separated)",
-  "tagsHint": "e.g. work, sport, personal"
+  "tagsHint": "e.g. work, sport, personal",
+  "statisticsPageTitle": "Statistics",
+  "statisticsButtonTooltip": "View Statistics",
+  "tagDistributionTitle": "Time Distribution by Tag",
+  "dailyActivityTitle": "Total Activity Time by Day",
+  "noDataForStatistics": "There is no activity data to display statistics. Start planning your days!",
+  "untagged": "Untagged"
 }

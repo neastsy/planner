@@ -292,4 +292,22 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get tagsHint => '例如：工作, 运动, 个人';
+
+  @override
+  String get statisticsPageTitle => '统计数据';
+
+  @override
+  String get statisticsButtonTooltip => '查看统计数据';
+
+  @override
+  String get tagDistributionTitle => '按标签的时间分布';
+
+  @override
+  String get dailyActivityTitle => '按天统计的总活动时间';
+
+  @override
+  String get noDataForStatistics => '没有活动数据可用于显示统计信息。开始规划你的一天吧！';
+
+  @override
+  String get untagged => '未标记';
 }

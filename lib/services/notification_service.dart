@@ -1,11 +1,10 @@
-// lib/services/notification_service.dart
-
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:flutter_timezone/flutter_timezone.dart';
 import 'package:timezone/data/latest_all.dart' as tz;
 import 'package:timezone/timezone.dart' as tz;
 
 class NotificationService {
-  // Singleton pattern: Bu sınıfın sadece bir örneği olmasını sağlar.
+  // Singleton pattern
   static final NotificationService _instance = NotificationService._internal();
   factory NotificationService() => _instance;
   NotificationService._internal();
@@ -13,18 +12,18 @@ class NotificationService {
   final FlutterLocalNotificationsPlugin _notificationsPlugin =
       FlutterLocalNotificationsPlugin();
 
-  Future<void> init() async {
-    // 1. Timezone veritabanını başlat
+  Future<void> configureLocalTimezone() async {
     tz.initializeTimeZones();
-    // Cihazın yerel saat dilimini alıp ayarla
-    // Bu satırın çalışması için main.dart'ta bir ekleme yapacağız.
-    // tz.setLocalLocation(tz.getLocation(await FlutterNativeTimezone.getLocalTimezone()));
+    final String timeZoneName = await FlutterTimezone.getLocalTimezone();
+    tz.setLocalLocation(tz.getLocation(timeZoneName));
+  }
 
-    // 2. Android için başlatma ayarları
+  Future<void> init() async {
+    // Timezone başlatma buradan kaldırıldı, çünkü main.dart'ta yapılacak.
+
     const AndroidInitializationSettings androidSettings =
         AndroidInitializationSettings('@drawable/ic_notification');
 
-    // 3. iOS için başlatma ayarları
     const DarwinInitializationSettings iosSettings =
         DarwinInitializationSettings(
       requestAlertPermission: true,
@@ -32,13 +31,11 @@ class NotificationService {
       requestSoundPermission: true,
     );
 
-    // 4. Ayarları birleştir
     const InitializationSettings settings = InitializationSettings(
       android: androidSettings,
       iOS: iosSettings,
     );
 
-    // 5. Eklentiyi başlat
     await _notificationsPlugin.initialize(settings);
   }
 

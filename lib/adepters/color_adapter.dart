@@ -7,12 +7,21 @@ class ColorAdapter extends TypeAdapter<Color> {
 
   @override
   Color read(BinaryReader reader) {
-    return Color(reader.readInt());
+    // 1. Değeri nullable (null olabilir) bir int olarak oku.
+    final value = reader.read() as int?;
+
+    // 2. Eğer değer null ise (veri bozuk veya eksikse),
+    //    çökmek yerine varsayılan bir renk döndür.
+    if (value == null) {
+      return Colors.grey.shade400; // Güvenli bir varsayılan renk
+    }
+
+    // 3. Değer null değilse, normal şekilde rengi oluştur.
+    return Color(value);
   }
 
   @override
   void write(BinaryWriter writer, Color obj) {
-    // ignore: deprecated_member_use
-    writer.writeInt(obj.value);
+    writer.write(obj.toARGB32());
   }
 }

@@ -645,6 +645,42 @@ abstract class AppLocalizations {
   /// In tr, this message translates to:
   /// **'örn. iş, spor, kişisel'**
   String get tagsHint;
+
+  /// No description provided for @statisticsPageTitle.
+  ///
+  /// In tr, this message translates to:
+  /// **'İstatistikler'**
+  String get statisticsPageTitle;
+
+  /// No description provided for @statisticsButtonTooltip.
+  ///
+  /// In tr, this message translates to:
+  /// **'İstatistikleri Görüntüle'**
+  String get statisticsButtonTooltip;
+
+  /// No description provided for @tagDistributionTitle.
+  ///
+  /// In tr, this message translates to:
+  /// **'Etikete Göre Zaman Dağılımı'**
+  String get tagDistributionTitle;
+
+  /// No description provided for @dailyActivityTitle.
+  ///
+  /// In tr, this message translates to:
+  /// **'Güne Göre Toplam Aktivite Süresi'**
+  String get dailyActivityTitle;
+
+  /// No description provided for @noDataForStatistics.
+  ///
+  /// In tr, this message translates to:
+  /// **'İstatistik gösterecek aktivite verisi bulunmuyor. Günlerinizi planlamaya başlayın!'**
+  String get noDataForStatistics;
+
+  /// No description provided for @untagged.
+  ///
+  /// In tr, this message translates to:
+  /// **'Etiketsiz'**
+  String get untagged;
 }
 
 class _AppLocalizationsDelegate

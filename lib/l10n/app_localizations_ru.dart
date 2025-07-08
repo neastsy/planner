@@ -9,7 +9,7 @@ class AppLocalizationsRu extends AppLocalizations {
   AppLocalizationsRu([String locale = 'ru']) : super(locale);
 
   @override
-  String get appTitle => 'Планировщик активностей';
+  String get appTitle => 'Планировщик дня';
 
   @override
   String get days_PZT => 'ПН';
@@ -299,4 +299,23 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get tagsHint => 'напр. работа, спорт, личное';
+
+  @override
+  String get statisticsPageTitle => 'Статистика';
+
+  @override
+  String get statisticsButtonTooltip => 'Посмотреть статистику';
+
+  @override
+  String get tagDistributionTitle => 'Распределение времени по тегам';
+
+  @override
+  String get dailyActivityTitle => 'Общее время активности по дням';
+
+  @override
+  String get noDataForStatistics =>
+      'Нет данных об активности для отображения статистики. Начните планировать свои дни!';
+
+  @override
+  String get untagged => 'Без тега';
 }

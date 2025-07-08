@@ -302,4 +302,23 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get tagsHint => 'z.B. Arbeit, Sport, Persönliches';
+
+  @override
+  String get statisticsPageTitle => 'Statistiken';
+
+  @override
+  String get statisticsButtonTooltip => 'Statistiken anzeigen';
+
+  @override
+  String get tagDistributionTitle => 'Zeitverteilung nach Tag';
+
+  @override
+  String get dailyActivityTitle => 'Gesamte Aktivitätszeit nach Tag';
+
+  @override
+  String get noDataForStatistics =>
+      'Es liegen keine Aktivitätsdaten zur Anzeige von Statistiken vor. Fang an, deine Tage zu planen!';
+
+  @override
+  String get untagged => 'Ohne Tag';
 }

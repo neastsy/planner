@@ -5,59 +5,75 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:provider/provider.dart';
-import 'package:gunluk_planlayici/services/notification_service.dart';
-import 'package:timezone/data/latest_all.dart' as tz;
-import 'package:timezone/timezone.dart' as tz;
-import 'package:flutter_timezone/flutter_timezone.dart';
-import 'package:gunluk_planlayici/utils/constants.dart';
 
+import 'package:gunluk_planlayici/l10n/app_localizations.dart';
+import 'package:gunluk_planlayici/models/activity_model.dart';
+import 'package:gunluk_planlayici/models/activity_template_model.dart';
+import 'package:gunluk_planlayici/providers/activity_provider.dart';
+import 'package:gunluk_planlayici/providers/settings_provider.dart';
+import 'package:gunluk_planlayici/providers/template_provider.dart';
+import 'package:gunluk_planlayici/providers/statistics_provider.dart';
+import 'package:gunluk_planlayici/repositories/activity_repository.dart';
+import 'package:gunluk_planlayici/repositories/template_repository.dart'; // YENİ: Repository import edildi
+import 'package:gunluk_planlayici/screens/planner_home_page.dart';
+import 'package:gunluk_planlayici/services/notification_service.dart';
+import 'package:gunluk_planlayici/utils/constants.dart';
 import 'adepters/color_adapter.dart';
 import 'adepters/time_of_day_adapter.dart';
-import 'l10n/app_localizations.dart';
-import 'models/activity_model.dart';
-import 'models/activity_template_model.dart';
-import 'screens/planner_home_page.dart';
-import 'providers/activity_provider.dart';
-import 'providers/settings_provider.dart';
-import 'providers/template_provider.dart';
-import 'repositories/activity_repository.dart';
 
 Future<void> main() async {
   try {
     WidgetsFlutterBinding.ensureInitialized();
 
-    tz.initializeTimeZones();
-    final String localTimezone = await FlutterTimezone.getLocalTimezone();
-    tz.setLocalLocation(tz.getLocation(localTimezone));
-
+    // 1. Servisleri Başlat (Timezone ve Bildirimler)
+    // GÜNCELLENDİ: NotificationService'deki yeni metodumuzu kullanıyoruz.
+    await NotificationService().configureLocalTimezone();
     await NotificationService().init();
 
+    // 2. Veritabanını Başlat (Hive)
     await Hive.initFlutter();
 
+    // Adaptörleri Kaydet
     Hive.registerAdapter(ActivityAdapter());
     Hive.registerAdapter(TimeOfDayAdapter());
     Hive.registerAdapter(ColorAdapter());
     Hive.registerAdapter(ActivityTemplateAdapter());
 
-    await Hive.openBox<Map>(AppConstants.activitiesBoxName);
-    await Hive.openBox<ActivityTemplate>('templatesBox');
+    // Kutuları Aç
+    // GÜNCELLENDİ: ActivityRepository'nin yeni yapısına uygun olarak Box<dynamic> kullanıyoruz.
+    await Hive.openBox(AppConstants.activitiesBoxName);
+    // GÜNCELLENDİ: Sabit kullanarak ve doğru tiple kutuyu açıyoruz.
+    await Hive.openBox<ActivityTemplate>(AppConstants.templatesBoxName);
+    // YENİ: Ayarlar için yeni kutumuzu açıyoruz.
+    await Hive.openBox(AppConstants.settingsBoxName);
+
+    // 3. Repository'leri Oluştur
+    // GÜNCELLENDİ: Repository'leri MultiProvider dışında oluşturmak daha temizdir.
+    final activityRepository =
+        ActivityRepository(Hive.box(AppConstants.activitiesBoxName));
+    final templateRepository = TemplateRepository(
+        Hive.box<ActivityTemplate>(AppConstants.templatesBoxName));
 
     runApp(
       MultiProvider(
         providers: [
+          // GÜNCELLENDİ: Provider'lar artık doğru bağımlılıklarla oluşturuluyor.
           ChangeNotifierProvider(
-            create: (context) => ActivityProvider(
-              ActivityRepository(Hive.box<Map>(AppConstants.activitiesBoxName)),
-            ),
+            create: (_) => ActivityProvider(activityRepository),
           ),
           ChangeNotifierProvider(
-            create: (context) => SettingsProvider(),
+            create: (_) =>
+                SettingsProvider(Hive.box(AppConstants.settingsBoxName)),
           ),
-          // YENİ: TemplateProvider'ı buraya ekliyoruz
           ChangeNotifierProvider(
-            create: (context) => TemplateProvider(
-              Hive.box<ActivityTemplate>('templatesBox'),
-            ),
+            create: (_) => TemplateProvider(templateRepository),
+          ),
+          ChangeNotifierProxyProvider<ActivityProvider, StatisticsProvider>(
+            // StatisticsProvider'ın ilk boş örneğini oluşturur.
+            create: (_) => StatisticsProvider(),
+            update: (_, activityProvider, previousStatisticsProvider) =>
+                (previousStatisticsProvider ?? StatisticsProvider())
+                  ..update(activityProvider),
           ),
         ],
         child: const MyApp(),
@@ -66,6 +82,7 @@ Future<void> main() async {
   } catch (e, stackTrace) {
     debugPrint("Uygulama başlatılırken kritik bir hata oluştu: $e");
     debugPrint("Stack Trace: $stackTrace");
+    // Hata durumunda kullanıcıya bir mesaj göstermek için basit bir hata ekranı da çalıştırılabilir.
   }
 }
 
@@ -74,14 +91,12 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // Ayarları SettingsProvider'dan dinliyoruz.
     final settingsProvider = context.watch<SettingsProvider>();
-    // Açık Tema Renkleri
+
+    // Tema renkleri
     const Color lightBackgroundColor = Color(0xFFFAFAFA);
     const Color lightDialogColor = Color(0xFFFFFFFF);
     const Color lightTextColor = Colors.black87;
-
-    // Koyu Tema Renkleri
     const Color darkBackgroundColor = Color(0xFF222831);
     const Color darkDialogColor = Color(0xFF393E46);
     const Color darkTextColor = Color(0xFFE0E0E0);
@@ -90,7 +105,6 @@ class MyApp extends StatelessWidget {
       onGenerateTitle: (context) {
         return AppLocalizations.of(context)!.appTitle;
       },
-      // YENİ: Değerler Provider'dan alınıyor
       themeMode: settingsProvider.themeMode,
       locale: settingsProvider.locale,
       localizationsDelegates: const [
@@ -100,29 +114,30 @@ class MyApp extends StatelessWidget {
         GlobalCupertinoLocalizations.delegate,
       ],
       supportedLocales: const [
-        Locale('tr', ''), // Türkçe
-        Locale('en', ''), // İngilizce
-        Locale('de', ''), // Almanca
-        Locale('fr', ''), // Fransızca
-        Locale('es', ''), // İspanyolca
-        Locale('ru', ''), // Rusça
-        Locale('ar', ''), // Arapça
-        Locale('ja', ''), // Japonca
-        Locale('zh', ''), // Çince
+        Locale('tr', ''),
+        Locale('en', ''),
+        Locale('de', ''),
+        Locale('fr', ''),
+        Locale('es', ''),
+        Locale('ru', ''),
+        Locale('ar', ''),
+        Locale('ja', ''),
+        Locale('zh', ''),
       ],
-      // Açık Tema Tanımı
       theme: ThemeData(
           brightness: Brightness.light,
           primarySwatch: Colors.blue,
           scaffoldBackgroundColor: lightBackgroundColor,
           textTheme: GoogleFonts.notoSansTextTheme(Theme.of(context).textTheme)
               .apply(bodyColor: lightTextColor, displayColor: lightTextColor),
-          dialogTheme: const DialogThemeData(
+          // GÜNCELLENDİ: DialogTheme -> DialogThemeData
+          dialogTheme: DialogThemeData(
             backgroundColor: lightDialogColor,
-            shape: RoundedRectangleBorder(
+            shape: const RoundedRectangleBorder(
               borderRadius: BorderRadius.all(Radius.circular(16.0)),
             ),
           ),
+          // GÜNCELLENDİ: CardTheme -> CardThemeData
           cardTheme: CardThemeData(
             color: const Color(0xFFE8E8E8),
             elevation: 0,
@@ -149,7 +164,6 @@ class MyApp extends StatelessWidget {
           ),
           textButtonTheme: TextButtonThemeData(
               style: TextButton.styleFrom(foregroundColor: Colors.blue))),
-      // Koyu Tema Tanımı
       darkTheme: ThemeData(
           brightness: Brightness.dark,
           primarySwatch: Colors.blue,
@@ -157,12 +171,14 @@ class MyApp extends StatelessWidget {
           textTheme:
               GoogleFonts.notoSansTextTheme(Theme.of(context).primaryTextTheme)
                   .apply(bodyColor: darkTextColor, displayColor: darkTextColor),
-          dialogTheme: const DialogThemeData(
+          // GÜNCELLENDİ: DialogTheme -> DialogThemeData
+          dialogTheme: DialogThemeData(
             backgroundColor: darkDialogColor,
-            shape: RoundedRectangleBorder(
+            shape: const RoundedRectangleBorder(
               borderRadius: BorderRadius.all(Radius.circular(16.0)),
             ),
           ),
+          // GÜNCELLENDİ: CardTheme -> CardThemeData
           cardTheme: CardThemeData(
             color: Colors.white.withAlpha((255 * 0.1).round()),
             shape: RoundedRectangleBorder(

@@ -17,5 +17,7 @@ class AppConstants {
 
   // Veritabanı sabitleri (main.dart ve ActivityRepository'de kullanılıyor)
   static const String activitiesBoxName = 'activitiesBox';
+  static const String templatesBoxName = 'templatesBox';
+  static const String settingsBoxName = 'settingsBox';
   static const String dailyActivitiesKey = 'daily_activities';
 }

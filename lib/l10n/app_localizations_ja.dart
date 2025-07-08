@@ -292,4 +292,22 @@ class AppLocalizationsJa extends AppLocalizations {
 
   @override
   String get tagsHint => '例：仕事、スポーツ、個人';
+
+  @override
+  String get statisticsPageTitle => '統計';
+
+  @override
+  String get statisticsButtonTooltip => '統計を見る';
+
+  @override
+  String get tagDistributionTitle => 'タグ別の時間分布';
+
+  @override
+  String get dailyActivityTitle => '日別の合計アクティビティ時間';
+
+  @override
+  String get noDataForStatistics => '統計を表示するアクティビティデータがありません。日々の計画を始めましょう！';
+
+  @override
+  String get untagged => 'タグなし';
 }

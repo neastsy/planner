@@ -126,5 +126,11 @@
   "noTemplatesToUse": "No hay plantillas disponibles. Por favor, cree una en los ajustes.",
   "selectTemplate": "Seleccionar una Plantilla",
   "tagsLabel": "Etiquetas (separadas por comas)",
-  "tagsHint": "ej. trabajo, deporte, personal"  
+  "tagsHint": "ej. trabajo, deporte, personal",
+  "statisticsPageTitle": "Estadísticas",
+  "statisticsButtonTooltip": "Ver estadísticas",
+  "tagDistributionTitle": "Distribución del tiempo por etiqueta",
+  "dailyActivityTitle": "Tiempo total de actividad por día",
+  "noDataForStatistics": "No hay datos de actividad para mostrar estadísticas. ¡Empieza a planificar tus días!",
+  "untagged": "Sin etiqueta"
 }

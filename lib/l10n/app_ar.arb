@@ -126,5 +126,11 @@
   "noTemplatesToUse": "لا توجد قوالب متاحة. الرجاء إنشاء واحد في الإعدادات.",
   "selectTemplate": "اختر قالبًا",
   "tagsLabel": "العلامات (مفصولة بفاصلة)",
-  "tagsHint": "مثال: عمل، رياضة، شخصي"    
+  "tagsHint": "مثال: عمل، رياضة، شخصي",
+  "statisticsPageTitle": "الإحصائيات",
+  "statisticsButtonTooltip": "عرض الإحصائيات",
+  "tagDistributionTitle": "توزيع الوقت حسب الوسم",
+  "dailyActivityTitle": "إجمالي وقت النشاط حسب اليوم",
+  "noDataForStatistics": "لا توجد بيانات نشاط لعرض الإحصائيات. ابدأ بتخطيط أيامك!",
+  "untagged": "غير موسوم"  
 }

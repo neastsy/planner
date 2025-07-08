@@ -68,7 +68,21 @@ class TemplateManagerPage extends StatelessWidget {
         builder: (context, provider, child) {
           if (provider.templates.isEmpty) {
             return Center(
-              child: Text(l10n.noTemplates), // Yeni metin
+              child: Padding(
+                // Metne yatayda boşluk veriyoruz.
+                padding: const EdgeInsets.symmetric(horizontal: 32.0),
+                child: Text(
+                  l10n.noTemplates,
+                  // YENİ: Metni kendi içinde ortalıyoruz.
+                  textAlign: TextAlign.center,
+                  // İsteğe bağlı: Metni biraz daha belirgin hale getirelim.
+                  style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                        color: Theme.of(context).textTheme.bodySmall?.color,
+                        height:
+                            1.5, // Satır yüksekliğini artırarak okunabilirliği iyileştir.
+                      ),
+                ),
+              ),
             );
           }
           return ListView.builder(
