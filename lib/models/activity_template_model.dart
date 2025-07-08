@@ -29,6 +29,9 @@ class ActivityTemplate extends HiveObject {
   @HiveField(6)
   final List<String> tags;
 
+  @HiveField(7)
+  final bool isNotificationRecurring;
+
   ActivityTemplate({
     String? id,
     required this.name,
@@ -37,6 +40,7 @@ class ActivityTemplate extends HiveObject {
     this.note,
     this.notificationMinutesBefore,
     List<String>? tags,
+    this.isNotificationRecurring = false,
   })  : id = id ?? const Uuid().v4(),
         tags = tags ?? []; // Eğer etiket listesi verilmezse, boş liste ata.
 }

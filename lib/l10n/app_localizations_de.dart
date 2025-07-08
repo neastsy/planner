@@ -347,4 +347,7 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get fullDay_sunday => 'Sonntag';
+
+  @override
+  String get repeatNotificationWeekly => 'Wöchentlich wiederholen';
 }

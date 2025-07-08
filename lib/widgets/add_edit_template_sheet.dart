@@ -21,6 +21,8 @@ class _AddEditTemplateSheetState extends State<AddEditTemplateSheet> {
 
   late Color _selectedColor;
   int? _selectedNotificationMinutes;
+  bool _isRecurring = false;
+
   final List<Color> _availableColors = [
     const Color(0xFF42A5F5),
     const Color(0xFFFFEE58),
@@ -41,10 +43,12 @@ class _AddEditTemplateSheetState extends State<AddEditTemplateSheet> {
       _noteController.text = template.note ?? '';
       _tagsController.text = template.tags.join(', ');
       _selectedNotificationMinutes = template.notificationMinutesBefore;
+      _isRecurring = template.isNotificationRecurring;
     } else {
       _selectedColor = Colors.blue;
       _selectedNotificationMinutes = null;
       _durationController.text = '60'; // Varsayılan süre 60 dakika
+      _isRecurring = false;
     }
   }
 
@@ -121,6 +125,7 @@ class _AddEditTemplateSheetState extends State<AddEditTemplateSheet> {
           : _noteController.text.trim(),
       notificationMinutesBefore: _selectedNotificationMinutes,
       tags: tags,
+      isNotificationRecurring: _isRecurring,
     );
     Navigator.pop(context, template);
   }
@@ -267,6 +272,18 @@ class _AddEditTemplateSheetState extends State<AddEditTemplateSheet> {
                       value: 15, child: Text(l10n.notify15MinBefore)),
                 ],
               ),
+              if (_selectedNotificationMinutes != null)
+                SwitchListTile(
+                  title: Text(l10n
+                      .repeatNotificationWeekly), // .arb dosyasına eklenecek
+                  value: _isRecurring,
+                  onChanged: (bool value) {
+                    setState(() {
+                      _isRecurring = value;
+                    });
+                  },
+                  contentPadding: EdgeInsets.zero,
+                ),
               const SizedBox(height: 20),
               TextFormField(
                 controller: _tagsController,

@@ -336,4 +336,7 @@ class AppLocalizationsJa extends AppLocalizations {
 
   @override
   String get fullDay_sunday => '日曜日';
+
+  @override
+  String get repeatNotificationWeekly => '毎週繰り返す';
 }

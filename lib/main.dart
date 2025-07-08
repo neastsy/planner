@@ -5,6 +5,7 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import 'package:gunluk_planlayici/l10n/app_localizations.dart';
 import 'package:gunluk_planlayici/models/activity_model.dart';
@@ -39,6 +40,8 @@ Future<void> main() async {
     Hive.registerAdapter(ColorAdapter());
     Hive.registerAdapter(ActivityTemplateAdapter());
 
+    await _runMigrations();
+
     // Kutuları Aç
     // GÜNCELLENDİ: ActivityRepository'nin yeni yapısına uygun olarak Box<dynamic> kullanıyoruz.
     await Hive.openBox(AppConstants.activitiesBoxName);
@@ -57,7 +60,6 @@ Future<void> main() async {
     runApp(
       MultiProvider(
         providers: [
-          // GÜNCELLENDİ: Provider'lar artık doğru bağımlılıklarla oluşturuluyor.
           ChangeNotifierProvider(
             create: (_) => ActivityProvider(activityRepository),
           ),
@@ -69,7 +71,6 @@ Future<void> main() async {
             create: (_) => TemplateProvider(templateRepository),
           ),
           ChangeNotifierProxyProvider<ActivityProvider, StatisticsProvider>(
-            // StatisticsProvider'ın ilk boş örneğini oluşturur.
             create: (_) => StatisticsProvider(),
             update: (_, activityProvider, previousStatisticsProvider) =>
                 (previousStatisticsProvider ?? StatisticsProvider())
@@ -82,8 +83,69 @@ Future<void> main() async {
   } catch (e, stackTrace) {
     debugPrint("Uygulama başlatılırken kritik bir hata oluştu: $e");
     debugPrint("Stack Trace: $stackTrace");
-    // Hata durumunda kullanıcıya bir mesaj göstermek için basit bir hata ekranı da çalıştırılabilir.
   }
+}
+
+Future<void> _runMigrations() async {
+  final prefs = await SharedPreferences.getInstance();
+  int currentVersion = prefs.getInt('db_version') ?? 0;
+
+  if (currentVersion < 1) {
+    // VERSİYON 0'DAN 1'E GEÇİŞ (isNotificationRecurring alanı eklendi)
+    try {
+      final box = await Hive.openBox(AppConstants.activitiesBoxName);
+
+      if (box.isNotEmpty) {
+        // DÜZELTME: .toMap().entries kullanarak anahtar-değer çiftlerini alıyoruz.
+        final Map<dynamic, dynamic> oldDataMap = box.toMap();
+        Map<dynamic, dynamic> newActivitiesMap = {};
+
+        for (var entry in oldDataMap.entries) {
+          final dayKey = entry.key;
+          try {
+            final oldActivityList = List<dynamic>.from(entry.value);
+            List<Activity> newActivityList = [];
+            for (var oldActivityData in oldActivityList) {
+              newActivityList.add(Activity(
+                id: oldActivityData.id,
+                name: oldActivityData.name,
+                startTime: oldActivityData.startTime,
+                endTime: oldActivityData.endTime,
+                color: oldActivityData.color,
+                note: oldActivityData.note,
+                notificationMinutesBefore:
+                    oldActivityData.notificationMinutesBefore,
+                tags: List<String>.from(oldActivityData.tags ?? []),
+                isNotificationRecurring: false,
+              ));
+            }
+            newActivitiesMap[dayKey] = newActivityList;
+          } catch (e, s) {
+            // DÜZELTME: 'print' yerine 'debugPrint' kullanıyoruz.
+            debugPrint(
+                "Migration error for day $dayKey: $e. Skipping this day.");
+            debugPrint("Stack trace: $s");
+            // Bozuk veriyi korumak için orijinal veriyi geri koyabiliriz.
+            newActivitiesMap[dayKey] = entry.value;
+          }
+        }
+        await box.clear();
+        await box.putAll(newActivitiesMap);
+      }
+    } catch (e, s) {
+      debugPrint(
+          "A critical error occurred during migration: $e. Migration aborted.");
+      debugPrint("Stack trace: $s");
+      return;
+    }
+
+    await prefs.setInt('db_version', 1);
+    // DÜZELTME: 'print' yerine 'debugPrint' kullanıyoruz.
+    debugPrint("Database migration to version 1 completed successfully.");
+  }
+
+  // Şablonlar için de benzer bir geçiş yapılabilir.
+  // if (currentVersion < 2) { ... }
 }
 
 class MyApp extends StatelessWidget {

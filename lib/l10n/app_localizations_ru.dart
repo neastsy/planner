@@ -344,4 +344,7 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get fullDay_sunday => 'Воскресенье';
+
+  @override
+  String get repeatNotificationWeekly => 'Повторять еженедельно';
 }

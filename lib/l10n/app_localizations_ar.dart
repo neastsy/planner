@@ -340,4 +340,7 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get fullDay_sunday => 'الأحد';
+
+  @override
+  String get repeatNotificationWeekly => 'التكرار أسبوعيًا';
 }

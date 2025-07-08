@@ -928,6 +928,7 @@ class _PlannerHomePageState extends State<PlannerHomePage> {
       note: selectedTemplate.note,
       notificationMinutesBefore: selectedTemplate.notificationMinutesBefore,
       tags: selectedTemplate.tags,
+      isNotificationRecurring: selectedTemplate.isNotificationRecurring,
     );
 
     _handleActivitySubmission(context, newActivity);

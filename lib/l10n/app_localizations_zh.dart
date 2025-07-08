@@ -336,4 +336,7 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get fullDay_sunday => '星期日';
+
+  @override
+  String get repeatNotificationWeekly => '每周重复';
 }

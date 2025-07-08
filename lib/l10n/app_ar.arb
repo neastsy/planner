@@ -148,5 +148,6 @@
   "fullDay_thursday": "الخميس",
   "fullDay_friday": "الجمعة",
   "fullDay_saturday": "السبت",
-  "fullDay_sunday": "الأحد"
+  "fullDay_sunday": "الأحد",
+  "repeatNotificationWeekly": "التكرار أسبوعيًا"
 }

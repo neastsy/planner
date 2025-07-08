@@ -342,4 +342,7 @@ class AppLocalizationsTr extends AppLocalizations {
 
   @override
   String get fullDay_sunday => 'Pazar';
+
+  @override
+  String get repeatNotificationWeekly => 'Haftalık tekrarla';
 }

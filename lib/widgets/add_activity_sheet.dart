@@ -25,6 +25,7 @@ class _AddActivitySheetState extends State<AddActivitySheet>
   late Color _selectedColor;
   String? _timeError;
   int? _selectedNotificationMinutes;
+  bool _isRecurring = false;
 
   final List<Color> _availableColors = [
     const Color(0xFF42A5F5),
@@ -57,9 +58,11 @@ class _AddActivitySheetState extends State<AddActivitySheet>
       _noteController.text = activity.note ?? '';
       _tagsController.text = activity.tags.join(', ');
       _selectedNotificationMinutes = activity.notificationMinutesBefore;
+      _isRecurring = activity.isNotificationRecurring;
     } else {
       _selectedColor = _availableColors[0];
       _selectedNotificationMinutes = null;
+      _isRecurring = false;
     }
   }
 
@@ -189,7 +192,8 @@ class _AddActivitySheetState extends State<AddActivitySheet>
           ? null
           : _noteController.text.trim(),
       notificationMinutesBefore: _selectedNotificationMinutes,
-      tags: tags, // YENİ: İşlenmiş etiket listesini ata
+      tags: tags,
+      isNotificationRecurring: _isRecurring,
     );
     Navigator.pop(context, activity);
   }
@@ -352,6 +356,18 @@ class _AddActivitySheetState extends State<AddActivitySheet>
                   ),
                 ],
               ),
+              if (_selectedNotificationMinutes != null)
+                SwitchListTile(
+                  title: Text(l10n
+                      .repeatNotificationWeekly), // .arb dosyasına eklenecek
+                  value: _isRecurring,
+                  onChanged: (bool value) {
+                    setState(() {
+                      _isRecurring = value;
+                    });
+                  },
+                  contentPadding: EdgeInsets.zero,
+                ),
               const SizedBox(height: 20),
               TextFormField(
                 controller: _tagsController,

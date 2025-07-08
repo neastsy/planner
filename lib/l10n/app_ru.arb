@@ -148,5 +148,6 @@
   "fullDay_thursday": "Четверг",
   "fullDay_friday": "Пятница",
   "fullDay_saturday": "Суббота",
-  "fullDay_sunday": "Воскресенье"
+  "fullDay_sunday": "Воскресенье",
+  "repeatNotificationWeekly": "Повторять еженедельно"
 }

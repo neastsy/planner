@@ -729,6 +729,12 @@ abstract class AppLocalizations {
   /// In tr, this message translates to:
   /// **'Pazar'**
   String get fullDay_sunday;
+
+  /// No description provided for @repeatNotificationWeekly.
+  ///
+  /// In tr, this message translates to:
+  /// **'Haftalık tekrarla'**
+  String get repeatNotificationWeekly;
 }
 
 class _AppLocalizationsDelegate

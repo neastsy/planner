@@ -148,5 +148,6 @@
   "fullDay_thursday": "木曜日",
   "fullDay_friday": "金曜日",
   "fullDay_saturday": "土曜日",
-  "fullDay_sunday": "日曜日"  
+  "fullDay_sunday": "日曜日",
+  "repeatNotificationWeekly": "毎週繰り返す" 
 }

@@ -148,5 +148,6 @@
   "fullDay_thursday": "星期四",
   "fullDay_friday": "星期五",
   "fullDay_saturday": "星期六",
-  "fullDay_sunday": "星期日"
+  "fullDay_sunday": "星期日",
+  "repeatNotificationWeekly": "每周重复"
 }

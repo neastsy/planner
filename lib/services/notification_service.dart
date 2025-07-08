@@ -19,8 +19,6 @@ class NotificationService {
   }
 
   Future<void> init() async {
-    // Timezone başlatma buradan kaldırıldı, çünkü main.dart'ta yapılacak.
-
     const AndroidInitializationSettings androidSettings =
         AndroidInitializationSettings('@drawable/ic_notification');
 
@@ -56,27 +54,25 @@ class NotificationService {
     required String body,
     required DateTime scheduledTime,
     String? payload,
+    required bool isRecurring,
   }) async {
-    // Android için bildirim detayları
     const AndroidNotificationDetails androidDetails =
         AndroidNotificationDetails(
-      'activity_channel', // Kanal ID'si
-      'Aktivite Hatırlatıcıları', // Kanal Adı
+      'activity_channel',
+      'Aktivite Hatırlatıcıları',
       channelDescription: 'Aktivite başlangıç zamanları için hatırlatıcılar.',
       importance: Importance.max,
       priority: Priority.high,
       ticker: 'ticker',
     );
-
-    // iOS için bildirim detayları
     const DarwinNotificationDetails iosDetails = DarwinNotificationDetails();
-
     const NotificationDetails notificationDetails = NotificationDetails(
       android: androidDetails,
       iOS: iosDetails,
     );
 
-    // Bildirimi planla
+    await _notificationsPlugin.cancel(id);
+
     await _notificationsPlugin.zonedSchedule(
       id,
       title,
@@ -87,6 +83,8 @@ class NotificationService {
       androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,
       uiLocalNotificationDateInterpretation:
           UILocalNotificationDateInterpretation.absoluteTime,
+      matchDateTimeComponents:
+          isRecurring ? DateTimeComponents.dayOfWeekAndTime : null,
     );
   }
 
@@ -95,7 +93,6 @@ class NotificationService {
     await _notificationsPlugin.cancel(id);
   }
 
-  // Tüm bildirimleri iptal etme metodu
   Future<void> cancelAllNotifications() async {
     await _notificationsPlugin.cancelAll();
   }

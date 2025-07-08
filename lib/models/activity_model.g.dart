@@ -25,13 +25,14 @@ class ActivityAdapter extends TypeAdapter<Activity> {
       note: fields[5] as String?,
       notificationMinutesBefore: fields[6] as int?,
       tags: (fields[7] as List?)?.cast<String>(),
+      isNotificationRecurring: fields[8] as bool,
     );
   }
 
   @override
   void write(BinaryWriter writer, Activity obj) {
     writer
-      ..writeByte(8)
+      ..writeByte(9)
       ..writeByte(0)
       ..write(obj.id)
       ..writeByte(1)
@@ -47,7 +48,9 @@ class ActivityAdapter extends TypeAdapter<Activity> {
       ..writeByte(6)
       ..write(obj.notificationMinutesBefore)
       ..writeByte(7)
-      ..write(obj.tags);
+      ..write(obj.tags)
+      ..writeByte(8)
+      ..write(obj.isNotificationRecurring);
   }
 
   @override

@@ -148,5 +148,6 @@
   "fullDay_thursday": "Donnerstag",
   "fullDay_friday": "Freitag",
   "fullDay_saturday": "Samstag",
-  "fullDay_sunday": "Sonntag"  
+  "fullDay_sunday": "Sonntag",
+  "repeatNotificationWeekly": "Wöchentlich wiederholen"
 }

@@ -239,7 +239,14 @@ class ActivityProvider with ChangeNotifier {
 
   Future<void> _scheduleNotificationForActivity(
       Activity activity, String dayKey) async {
-    if (activity.notificationMinutesBefore == null) return;
+    // Bildirim süresi ayarlanmamışsa veya aktivite silinmişse hiçbir şey yapma.
+    if (activity.notificationMinutesBefore == null) {
+      // Olası bir eski bildirimi iptal et.
+      _cancelNotificationForActivity(activity);
+      return;
+    }
+
+    // Zamanlama ve yerelleştirme hesaplamaları aynı kalıyor.
     final String defaultLocale = Platform.localeName;
     final languageCode = defaultLocale.split('_').first;
     final locale = Locale(languageCode);
@@ -252,9 +259,7 @@ class ActivityProvider with ChangeNotifier {
     var scheduledTime = activityDate
         .subtract(Duration(minutes: activity.notificationMinutesBefore!));
     if (scheduledTime.isBefore(now)) {
-      activityDate = activityDate.add(const Duration(days: 7));
-      scheduledTime = activityDate
-          .subtract(Duration(minutes: activity.notificationMinutesBefore!));
+      scheduledTime = scheduledTime.add(const Duration(days: 7));
     }
     _notificationService.scheduleNotification(
       id: activity.id.hashCode,
@@ -263,6 +268,7 @@ class ActivityProvider with ChangeNotifier {
           l10n.notificationBody(activity.name, _formatTime(activity.startTime)),
       scheduledTime: scheduledTime,
       payload: activity.notificationMinutesBefore.toString(),
+      isRecurring: activity.isNotificationRecurring,
     );
   }
 
