@@ -57,9 +57,11 @@ class ActivityProvider with ChangeNotifier {
 
   // YENİ METOT: Periyodik senkronizasyonu başlatır
   void _startPeriodicSync() {
-    _syncTimer = Timer.periodic(const Duration(minutes: 1), (timer) {
-      syncNotificationsOnLoad(); // İsim güncellendi
-      debugPrint("Periodic notification sync completed.");
+    _syncTimer = Timer.periodic(const Duration(seconds: 10), (timer) {
+      if (WidgetsBinding.instance.lifecycleState == AppLifecycleState.resumed) {
+        syncNotificationsOnLoad();
+        debugPrint("Periodic notification sync completed.");
+      }
     });
   }
 

@@ -27,7 +27,8 @@ class PlannerHomePage extends StatefulWidget {
   State<PlannerHomePage> createState() => _PlannerHomePageState();
 }
 
-class _PlannerHomePageState extends State<PlannerHomePage> {
+class _PlannerHomePageState extends State<PlannerHomePage>
+    with WidgetsBindingObserver {
   final List<String> hiveKeys = AppConstants.dayKeys;
   Timer? _timer;
   String _currentTime = '...';
@@ -37,6 +38,7 @@ class _PlannerHomePageState extends State<PlannerHomePage> {
   @override
   void initState() {
     super.initState();
+    WidgetsBinding.instance.addObserver(this);
     NotificationService().requestPermissions();
     final initialDayIndex = DateTime.now().weekday - 1;
     _pageController = PageController(initialPage: initialDayIndex);
@@ -62,9 +64,21 @@ class _PlannerHomePageState extends State<PlannerHomePage> {
 
   @override
   void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
     _timer?.cancel();
     _pageController.dispose();
     super.dispose();
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    super.didChangeAppLifecycleState(state);
+    // Eğer uygulama arka plandan tekrar ön plana geldiyse...
+    if (state == AppLifecycleState.resumed) {
+      debugPrint("App resumed. Triggering notification sync.");
+      // ...senkronizasyonu manuel olarak tetikle.
+      context.read<ActivityProvider>().syncNotificationsOnLoad();
+    }
   }
 
   void _updateTime() {
