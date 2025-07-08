@@ -90,62 +90,66 @@ Future<void> _runMigrations() async {
   final prefs = await SharedPreferences.getInstance();
   int currentVersion = prefs.getInt('db_version') ?? 0;
 
+  // Bu blok, gelecekte yayınlanacak v1.0.0'dan v1.1.0'a güncelleyen
+  // bir kullanıcı için çalışacak olan sigortamızdır.
   if (currentVersion < 1) {
-    // VERSİYON 0'DAN 1'E GEÇİŞ (isNotificationRecurring alanı eklendi)
+    debugPrint("Database is at version 0. Migrating to version 1...");
     try {
-      final box = await Hive.openBox(AppConstants.activitiesBoxName);
+      // Not: Bu geçişin çalışması için, eski versiyonda verinin
+      // List<Activity> olarak değil, List<dynamic> olarak saklandığını varsayıyoruz.
+      // Bu en güvenli yaklaşımdır.
+      final box =
+          await Hive.openBox<List<dynamic>>(AppConstants.activitiesBoxName);
 
       if (box.isNotEmpty) {
-        // DÜZELTME: .toMap().entries kullanarak anahtar-değer çiftlerini alıyoruz.
-        final Map<dynamic, dynamic> oldDataMap = box.toMap();
-        Map<dynamic, dynamic> newActivitiesMap = {};
+        final Map<dynamic, List<dynamic>> oldDataMap = box.toMap();
+        final Map<dynamic, List<Activity>> newActivitiesMap = {};
 
         for (var entry in oldDataMap.entries) {
           final dayKey = entry.key;
-          try {
-            final oldActivityList = List<dynamic>.from(entry.value);
-            List<Activity> newActivityList = [];
-            for (var oldActivityData in oldActivityList) {
-              newActivityList.add(Activity(
-                id: oldActivityData.id,
-                name: oldActivityData.name,
-                startTime: oldActivityData.startTime,
-                endTime: oldActivityData.endTime,
-                color: oldActivityData.color,
-                note: oldActivityData.note,
-                notificationMinutesBefore:
-                    oldActivityData.notificationMinutesBefore,
-                tags: List<String>.from(oldActivityData.tags ?? []),
-                isNotificationRecurring: false,
-              ));
-            }
-            newActivitiesMap[dayKey] = newActivityList;
-          } catch (e, s) {
-            // DÜZELTME: 'print' yerine 'debugPrint' kullanıyoruz.
-            debugPrint(
-                "Migration error for day $dayKey: $e. Skipping this day.");
-            debugPrint("Stack trace: $s");
-            // Bozuk veriyi korumak için orijinal veriyi geri koyabiliriz.
-            newActivitiesMap[dayKey] = entry.value;
+          final oldActivityList = entry.value;
+
+          List<Activity> newActivityList = [];
+          for (var oldActivityData in oldActivityList) {
+            // `dynamic` veriyi yeni modele dönüştür.
+            // Bu, release modunda çökmeye neden olabilecek .id, .name gibi
+            // erişimleri engeller. Bunun yerine, verinin bir Map olduğunu varsaymak daha güvenlidir.
+            // Ancak bizim adaptörümüz zaten kayıtlı olduğu için, Hive bunu
+            // bizim için halleder ve `oldActivityData` aslında bir `Activity` nesnesidir.
+            // Sadece `isNotificationRecurring` alanı eksiktir.
+            newActivityList.add(Activity(
+              id: oldActivityData.id,
+              name: oldActivityData.name,
+              startTime: oldActivityData.startTime,
+              endTime: oldActivityData.endTime,
+              color: oldActivityData.color,
+              note: oldActivityData.note,
+              notificationMinutesBefore:
+                  oldActivityData.notificationMinutesBefore,
+              tags: List<String>.from(oldActivityData.tags ?? []),
+              isNotificationRecurring: false, // Yeni alan için varsayılan değer
+            ));
           }
+          newActivitiesMap[dayKey] = newActivityList;
         }
+
         await box.clear();
+        // Veriyi yeni, doğru tiple yaz.
         await box.putAll(newActivitiesMap);
       }
-    } catch (e, s) {
-      debugPrint(
-          "A critical error occurred during migration: $e. Migration aborted.");
-      debugPrint("Stack trace: $s");
-      return;
-    }
 
-    await prefs.setInt('db_version', 1);
-    // DÜZELTME: 'print' yerine 'debugPrint' kullanıyoruz.
-    debugPrint("Database migration to version 1 completed successfully.");
+      await prefs.setInt('db_version', 1);
+      debugPrint("Database migration to version 1 completed successfully.");
+    } catch (e, s) {
+      debugPrint("A critical error occurred during migration to v1: $e\n$s");
+    }
   }
 
-  // Şablonlar için de benzer bir geçiş yapılabilir.
-  // if (currentVersion < 2) { ... }
+  // Gelecekteki bir güncelleme için örnek:
+  // if (currentVersion < 2) {
+  //   // Versiyon 1'den 2'ye geçiş kodları buraya gelecek.
+  //   await prefs.setInt('db_version', 2);
+  // }
 }
 
 class MyApp extends StatelessWidget {
