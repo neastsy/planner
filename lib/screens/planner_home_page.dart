@@ -1249,8 +1249,7 @@ class _PlannerHomePageState extends State<PlannerHomePage>
                                                   ...activity.tags
                                                       .take(2)
                                                       .map((tag) => Chip(
-                                                            label:
-                                                                Text('#$tag'),
+                                                            label: Text(tag),
                                                             labelStyle: TextStyle(
                                                                 fontSize: 12,
                                                                 color: Theme.of(

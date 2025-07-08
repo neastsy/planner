@@ -65,7 +65,7 @@ class _TagPieChartState extends State<TagPieChart> {
         Indicator(
           color: color,
           // 'untagged' anahtarını yerelleştirilmiş metne çevir.
-          text: tag == 'untagged' ? l10n.untagged : '#$tag',
+          text: tag == 'untagged' ? l10n.untagged : tag,
           isSquare: false,
           size: 14,
           textColor: Theme.of(context).textTheme.bodyLarge?.color,

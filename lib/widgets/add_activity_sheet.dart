@@ -178,7 +178,13 @@ class _AddActivitySheetState extends State<AddActivitySheet>
         ? []
         : tagsText
             .split(',')
-            .map((tag) => tag.trim())
+            .map((tag) {
+              final trimmedTag = tag.trim();
+              if (trimmedTag.startsWith('#')) {
+                return trimmedTag.substring(1).trim();
+              }
+              return trimmedTag;
+            })
             .where((tag) => tag.isNotEmpty)
             .toList();
 
