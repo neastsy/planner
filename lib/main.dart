@@ -15,7 +15,7 @@ import 'package:gunluk_planlayici/providers/settings_provider.dart';
 import 'package:gunluk_planlayici/providers/template_provider.dart';
 import 'package:gunluk_planlayici/providers/statistics_provider.dart';
 import 'package:gunluk_planlayici/repositories/activity_repository.dart';
-import 'package:gunluk_planlayici/repositories/template_repository.dart'; // YENİ: Repository import edildi
+import 'package:gunluk_planlayici/repositories/template_repository.dart';
 import 'package:gunluk_planlayici/screens/planner_home_page.dart';
 import 'package:gunluk_planlayici/services/notification_service.dart';
 import 'package:gunluk_planlayici/utils/constants.dart';
@@ -23,36 +23,36 @@ import 'adepters/color_adapter.dart';
 import 'adepters/time_of_day_adapter.dart';
 
 Future<void> main() async {
-  try {
-    WidgetsFlutterBinding.ensureInitialized();
+  WidgetsFlutterBinding.ensureInitialized();
 
-    // 1. Servisleri Başlat (Timezone ve Bildirimler)
-    // GÜNCELLENDİ: NotificationService'deki yeni metodumuzu kullanıyoruz.
+  try {
+    // 1. Servisleri başlat
     await NotificationService().configureLocalTimezone();
     await NotificationService().init();
 
-    // 2. Veritabanını Başlat (Hive)
+    // 2. Hive'ı başlat
     await Hive.initFlutter();
 
-    // Adaptörleri Kaydet
+    // 3. TÜM ADAPTÖRLERİ KAYDET
     Hive.registerAdapter(ActivityAdapter());
+    Hive.registerAdapter(ActivityTemplateAdapter());
     Hive.registerAdapter(TimeOfDayAdapter());
     Hive.registerAdapter(ColorAdapter());
-    Hive.registerAdapter(ActivityTemplateAdapter());
 
+    // 4. Geçiş işlemini ÇALIŞTIR
     await _runMigrations();
 
-    // Kutuları Aç
-    await Hive.openBox(AppConstants.activitiesBoxName);
-    await Hive.openBox<ActivityTemplate>(AppConstants.templatesBoxName);
-    await Hive.openBox(AppConstants.settingsBoxName);
+    // 5. Kutuları aç
+    final activitiesBox = await Hive.openBox(AppConstants.activitiesBoxName);
+    final templatesBox =
+        await Hive.openBox<ActivityTemplate>(AppConstants.templatesBoxName);
+    final settingsBox = await Hive.openBox(AppConstants.settingsBoxName);
 
-    // 3. Repository'leri Oluştur
-    final activityRepository =
-        ActivityRepository(Hive.box(AppConstants.activitiesBoxName));
-    final templateRepository = TemplateRepository(
-        Hive.box<ActivityTemplate>(AppConstants.templatesBoxName));
+    // 6. Repository'leri oluştur
+    final activityRepository = ActivityRepository(activitiesBox);
+    final templateRepository = TemplateRepository(templatesBox);
 
+    // 7. Uygulamayı çalıştır
     runApp(
       MultiProvider(
         providers: [
@@ -60,8 +60,7 @@ Future<void> main() async {
             create: (_) => ActivityProvider(activityRepository),
           ),
           ChangeNotifierProvider(
-            create: (_) =>
-                SettingsProvider(Hive.box(AppConstants.settingsBoxName)),
+            create: (_) => SettingsProvider(settingsBox),
           ),
           ChangeNotifierProvider(
             create: (_) => TemplateProvider(templateRepository),
@@ -79,61 +78,75 @@ Future<void> main() async {
   } catch (e, stackTrace) {
     debugPrint("Uygulama başlatılırken kritik bir hata oluştu: $e");
     debugPrint("Stack Trace: $stackTrace");
+    runApp(ErrorApp(error: e.toString()));
   }
 }
 
+// DÜZELTME 1: 'uture' -> 'Future'
 Future<void> _runMigrations() async {
   final prefs = await SharedPreferences.getInstance();
   int currentVersion = prefs.getInt('db_version') ?? 0;
 
   if (currentVersion < 1) {
     debugPrint("Database is at version 0. Migrating to version 1...");
+    Box? box;
     try {
-      final box =
-          await Hive.openBox<List<dynamic>>(AppConstants.activitiesBoxName);
+      box = await Hive.openBox<List<dynamic>>(AppConstants.activitiesBoxName);
 
       if (box.isNotEmpty) {
-        final Map<dynamic, List<dynamic>> oldDataMap = box.toMap();
+        // DÜZELTME 2: toMap() doğru tipi döndürür, cast etmeye gerek yok.
+        final Map<dynamic, dynamic> oldDataMap = box.toMap();
         final Map<dynamic, List<Activity>> newActivitiesMap = {};
 
         for (var entry in oldDataMap.entries) {
           final dayKey = entry.key;
-          final oldActivityList = entry.value;
-
-          List<Activity> newActivityList = [];
-          for (var oldActivityData in oldActivityList) {
-            newActivityList.add(Activity(
-              id: oldActivityData.id,
-              name: oldActivityData.name,
-              startTime: oldActivityData.startTime,
-              endTime: oldActivityData.endTime,
-              color: oldActivityData.color,
-              note: oldActivityData.note,
-              notificationMinutesBefore:
-                  oldActivityData.notificationMinutesBefore,
-              tags: List<String>.from(oldActivityData.tags ?? []),
-              isNotificationRecurring: false,
-            ));
+          try {
+            final oldActivityList = List<dynamic>.from(entry.value);
+            List<Activity> newActivityList = [];
+            for (var oldActivityData in oldActivityList) {
+              newActivityList.add(Activity(
+                id: oldActivityData.id,
+                name: oldActivityData.name,
+                startTime: oldActivityData.startTime,
+                endTime: oldActivityData.endTime,
+                color: oldActivityData.color,
+                note: oldActivityData.note,
+                notificationMinutesBefore:
+                    oldActivityData.notificationMinutesBefore,
+                tags: List<String>.from(oldActivityData.tags ?? []),
+                isNotificationRecurring: false,
+              ));
+            }
+            newActivitiesMap[dayKey] = newActivityList;
+          } catch (e, s) {
+            debugPrint(
+                "Migration error for day $dayKey: $e. Skipping this day.");
+            debugPrint("Stack trace: $s");
+            // DÜZELTME 3: Hata durumunda eski veriyi korumaya çalışırken doğru cast yap.
+            if (entry.value is List) {
+              newActivitiesMap[dayKey] = entry.value.cast<Activity>().toList();
+            } else {
+              newActivitiesMap[dayKey] = [];
+            }
           }
-          newActivitiesMap[dayKey] = newActivityList;
         }
-
         await box.clear();
         await box.putAll(newActivitiesMap);
       }
-
-      await prefs.setInt('db_version', 1);
-      debugPrint("Database migration to version 1 completed successfully.");
     } catch (e, s) {
-      debugPrint("A critical error occurred during migration to v1: $e\n$s");
+      debugPrint(
+          "A critical error occurred during migration: $e. Migration aborted.");
+      debugPrint("Stack trace: $s");
+      await box?.close();
+      // DÜZELTME 4: Hata durumunda fonksiyondan çık.
+      return;
+    } finally {
+      await box?.close();
     }
-  }
 
-  // Gelecekteki bir güncelleme için örnek:
-  // if (currentVersion < 2) {
-  //   // Versiyon 1'den 2'ye geçiş kodları buraya gelecek.
-  //   await prefs.setInt('db_version', 2);
-  // }
+    await prefs.setInt('db_version', 1);
+    debugPrint("Database migration to version 1 completed successfully.");
+  }
 }
 
 class MyApp extends StatelessWidget {
@@ -144,7 +157,6 @@ class MyApp extends StatelessWidget {
     final settingsProvider = context.watch<SettingsProvider>();
     final selectedTheme = settingsProvider.appTheme;
 
-    // Tema renkleri
     final Color lightBackgroundColor = selectedTheme.lightBackgroundColor;
     final Color lightCardColor = selectedTheme.lightCardColor;
     final Color darkBackgroundColor = selectedTheme.darkBackgroundColor;
@@ -242,6 +254,28 @@ class MyApp extends StatelessWidget {
               style: TextButton.styleFrom(foregroundColor: Colors.white70))),
       home: const PlannerHomePage(),
       debugShowCheckedModeBanner: false,
+    );
+  }
+}
+
+class ErrorApp extends StatelessWidget {
+  final String error;
+  const ErrorApp({super.key, required this.error});
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      home: Scaffold(
+        body: Center(
+          child: Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Text(
+              "Uygulama başlatılamadı.\nLütfen yeniden deneyin.\n\nHata Detayı (Geliştirici için):\n$error",
+              textAlign: TextAlign.center,
+            ),
+          ),
+        ),
+      ),
     );
   }
 }
