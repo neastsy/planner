@@ -75,10 +75,8 @@ class _PlannerHomePageState extends State<PlannerHomePage>
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
     super.didChangeAppLifecycleState(state);
-    // Eğer uygulama arka plandan tekrar ön plana geldiyse...
     if (state == AppLifecycleState.resumed) {
       debugPrint("App resumed. Triggering notification sync.");
-      // ...senkronizasyonu manuel olarak tetikle.
       context.read<ActivityProvider>().syncNotificationsOnLoad();
     }
   }
@@ -244,7 +242,6 @@ class _PlannerHomePageState extends State<PlannerHomePage>
                   mainAxisSize: MainAxisSize.min,
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    // 1. AÇIK/KOYU TEMA ANAHTARI
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
@@ -263,8 +260,6 @@ class _PlannerHomePageState extends State<PlannerHomePage>
                       ],
                     ),
                     const Divider(),
-
-                    // 2. TEMA RENKLERİ SEÇİMİ
                     Text("Theme Color",
                         style: const TextStyle(fontWeight: FontWeight.bold)),
                     const SizedBox(height: 12),
@@ -302,8 +297,6 @@ class _PlannerHomePageState extends State<PlannerHomePage>
                       }).toList(),
                     ),
                     const Divider(),
-
-                    // 3. DİL SEÇİMİ
                     Text(l10n.selectLanguage,
                         style: const TextStyle(fontWeight: FontWeight.bold)),
                     const SizedBox(height: 8),
@@ -334,8 +327,6 @@ class _PlannerHomePageState extends State<PlannerHomePage>
                       },
                     ),
                     const Divider(),
-
-                    // 4. DİĞER AYARLAR
                     TextButton.icon(
                       icon: const Icon(Icons.notifications_on_outlined),
                       label: Text(l10n.viewPendingNotifications),
@@ -582,6 +573,7 @@ class _PlannerHomePageState extends State<PlannerHomePage>
       note: activity.note,
       notificationMinutesBefore: minutes,
       tags: activity.tags,
+      isNotificationRecurring: activity.isNotificationRecurring,
     );
 
     activityProvider.updateActivity(updatedActivity, index);
@@ -623,7 +615,6 @@ class _PlannerHomePageState extends State<PlannerHomePage>
     final center = Offset(size.width / 2, size.height / 2);
     final tapPosition = details.localPosition;
 
-    // 1. Dokunma mesafesini hesapla
     final distance = (tapPosition - center).distance;
     const tolerance = 4.0;
     final outerRadius = (size.width / 2) - 18.4 + (35.0 / 2) + tolerance;
@@ -633,7 +624,6 @@ class _PlannerHomePageState extends State<PlannerHomePage>
       return;
     }
 
-    // 2. Dokunma açısını hesapla ve normalize et
     var tapAngle =
         atan2(tapPosition.dy - center.dy, tapPosition.dx - center.dx) +
             (pi / 2);
@@ -641,7 +631,6 @@ class _PlannerHomePageState extends State<PlannerHomePage>
       tapAngle += 2 * pi;
     }
 
-    // 3. YENİ MANTIK: Dokunulan noktayı kapsayan tüm aday aktiviteleri bul
     final List<Activity> tappedCandidates = [];
 
     for (final activity in activities) {
@@ -657,12 +646,10 @@ class _PlannerHomePageState extends State<PlannerHomePage>
       bool isTapped = false;
 
       if (startAngle <= endAngle) {
-        // Normal aktivite
         if (tapAngle >= startAngle && tapAngle <= endAngle) {
           isTapped = true;
         }
       } else {
-        // Gece yarısını geçen aktivite
         if (tapAngle >= startAngle || tapAngle <= endAngle) {
           isTapped = true;
         }
@@ -677,25 +664,18 @@ class _PlannerHomePageState extends State<PlannerHomePage>
       }
     }
 
-    // 4. Adaylar arasından en üsttekini seç ve SnackBar göster
     if (tappedCandidates.isNotEmpty) {
-      // YENİ: İki aşamalı sıralama mantığı
       tappedCandidates.sort((a, b) {
-        // 1. Önce süreye göre karşılaştır.
         final durationComparison =
             a.durationInMinutes.compareTo(b.durationInMinutes);
-        // Eğer süreler farklıysa, bu karşılaştırmayı kullan.
         if (durationComparison != 0) {
           return durationComparison;
         }
-        // 2. Eğer süreler aynıysa, başlangıç saatine göre tersten karşılaştır.
-        // (Daha geç başlayan, daha üstte çizilir).
         final aStartMinutes = a.startTime.hour * 60 + a.startTime.minute;
         final bStartMinutes = b.startTime.hour * 60 + b.startTime.minute;
         return bStartMinutes.compareTo(aStartMinutes);
       });
 
-      // Sıralanmış listenin ilk elemanı, her zaman görsel olarak en üsttekidir.
       final Activity topmostActivity = tappedCandidates.first;
 
       ScaffoldMessenger.of(context).hideCurrentSnackBar();
@@ -724,7 +704,6 @@ class _PlannerHomePageState extends State<PlannerHomePage>
 
     await activityProvider.syncNotificationsOnLoad();
 
-    // Artık en güncel listeyi alabiliriz.
     final List<PendingNotificationRequest> pendingNotifications =
         await notificationService.getPendingNotifications();
 
@@ -998,18 +977,12 @@ class _PlannerHomePageState extends State<PlannerHomePage>
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
-    final isDarkMode = Theme.of(context).brightness == Brightness.dark;
-    final clockColor = isDarkMode
-        ? Theme.of(context)
-            .textTheme
-            .displayLarge
-            ?.color
-            ?.withAlpha((255 * 0.8).round())
-        : Colors.black.withAlpha(185);
-
+    final clockColor = Theme.of(context).colorScheme.onSurface;
     final activityProvider = context.watch<ActivityProvider>();
 
     return Scaffold(
+      // Klavye açıldığında taşma hatasını önlemek için en basit ve en etkili çözüm.
+      resizeToAvoidBottomInset: false,
       appBar: AppBar(
         title: Text(l10n.appTitle),
         backgroundColor: Colors.transparent,
@@ -1034,7 +1007,6 @@ class _PlannerHomePageState extends State<PlannerHomePage>
       ),
       body: Column(
         children: [
-          // YENİ: Gün butonları için Row kullanıyoruz
           Padding(
             padding: const EdgeInsets.symmetric(vertical: 8.0),
             child: Row(
@@ -1088,10 +1060,8 @@ class _PlannerHomePageState extends State<PlannerHomePage>
           Expanded(
             child: PageView.builder(
               controller: _pageController,
-              // itemCount'ı null yaparak sonsuz hale getiriyoruz.
               itemCount: null,
               onPageChanged: (pageIndex) {
-                // YENİ: Modulo kullanarak doğru gün index'ini bul
                 final dayIndex = pageIndex % 7;
                 context.read<ActivityProvider>().changeDay(hiveKeys[dayIndex]);
               },
@@ -1100,33 +1070,25 @@ class _PlannerHomePageState extends State<PlannerHomePage>
                 final activities =
                     activityProvider.dailyActivities[dayKey] ?? [];
 
-                // YENİ YAPI: SingleChildScrollView yerine Column kullanıyoruz.
+                // BASİTLEŞTİRİLMİŞ VE SAĞLAM YAPI
                 return Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 16.0),
                   child: Column(
-                    // Ana sütunun tüm alanı kaplamasını sağlıyoruz.
                     children: [
-                      // Bu üst kısımlar sabit kalacak, kaydırılmayacak.
                       const SizedBox(height: 16),
                       SizedBox(
                         width: 300,
                         height: 300,
-                        // YENİ: InteractiveViewer ile sarmalıyoruz
                         child: InteractiveViewer(
-                          // Zoom yapıldığında içeriğin dışarı taşmasını engeller
                           clipBehavior: Clip.none,
                           minScale: 1.0,
-                          maxScale: 3.0, // 3 kat yakınlaştırma limiti
-                          // İçindeki GestureDetector'ı olduğu gibi bırakıyoruz.
-                          // Bu, hem zoom hem de dokunma özelliğinin çalışmasını sağlar.
+                          maxScale: 3.0,
                           child: GestureDetector(
                             onTapDown: (details) {
                               const size = Size(300, 300);
                               _handlePlannerTap(details, activities, size);
                             },
                             child: CustomPaint(
-                              // Painter'a sabit bir boyut vermek,
-                              // zoom sırasında oluşabilecek hataları önler.
                               size: const Size(300, 300),
                               painter: CircularPlannerPainter(
                                 activities: activities,
@@ -1150,8 +1112,8 @@ class _PlannerHomePageState extends State<PlannerHomePage>
                                         _getLocalizedTodayName(context)
                                             .toUpperCase(),
                                         style: TextStyle(
-                                            color: clockColor?.withAlpha(
-                                                (255 * 0.8).round()),
+                                            // Gün adını %70 opaklıkta gösterelim
+                                            color: clockColor.withAlpha(180),
                                             fontSize: 20,
                                             fontWeight: FontWeight.bold,
                                             letterSpacing: 2.0)),
@@ -1213,9 +1175,6 @@ class _PlannerHomePageState extends State<PlannerHomePage>
                         ],
                       ),
                       const SizedBox(height: 10),
-
-                      // YENİ: ListView'ı Expanded ile sarmalıyoruz.
-                      // Bu, listenin kalan tüm dikey alanı doldurmasını sağlar.
                       Expanded(
                         child: activities.isEmpty
                             ? Center(
@@ -1227,7 +1186,6 @@ class _PlannerHomePageState extends State<PlannerHomePage>
                                             ?.color,
                                         fontSize: 16)))
                             : ListView.builder(
-                                // Artık shrinkWrap ve NeverScrollableScrollPhysics'e gerek yok.
                                 key: ValueKey<String>(dayKey),
                                 itemCount: activities.length,
                                 itemBuilder: (context, index) {
@@ -1244,12 +1202,6 @@ class _PlannerHomePageState extends State<PlannerHomePage>
                                               .titleMedium
                                               ?.copyWith(
                                                 fontWeight: FontWeight.bold,
-                                                color: Theme.of(context)
-                                                    .textTheme
-                                                    .bodyLarge
-                                                    ?.color
-                                                    ?.withAlpha(
-                                                        (255 * 0.8).round()),
                                               )),
                                       subtitle: Column(
                                         crossAxisAlignment:
@@ -1257,17 +1209,6 @@ class _PlannerHomePageState extends State<PlannerHomePage>
                                         children: [
                                           Text(
                                             '${_formatTime(activity.startTime)} - ${_formatTime(activity.endTime)}',
-                                            style: Theme.of(context)
-                                                .textTheme
-                                                .bodySmall
-                                                ?.copyWith(
-                                                  color: Theme.of(context)
-                                                      .textTheme
-                                                      .bodyLarge
-                                                      ?.color
-                                                      ?.withAlpha(
-                                                          (255 * 0.6).round()),
-                                                ),
                                           ),
                                           if (activity.note != null &&
                                               activity.note!.isNotEmpty)
@@ -1282,13 +1223,6 @@ class _PlannerHomePageState extends State<PlannerHomePage>
                                                     ?.copyWith(
                                                       fontStyle:
                                                           FontStyle.italic,
-                                                      color: Theme.of(context)
-                                                          .textTheme
-                                                          .bodyLarge
-                                                          ?.color
-                                                          ?.withAlpha(
-                                                              (255 * 0.5)
-                                                                  .round()),
                                                     ),
                                                 maxLines: 2,
                                                 overflow: TextOverflow.ellipsis,
@@ -1306,12 +1240,14 @@ class _PlannerHomePageState extends State<PlannerHomePage>
                                                       .take(2)
                                                       .map((tag) => Chip(
                                                             label: Text(tag),
-                                                            labelStyle: TextStyle(
-                                                                fontSize: 12,
-                                                                color: Theme.of(
-                                                                        context)
-                                                                    .colorScheme
-                                                                    .onSecondaryContainer),
+                                                            labelStyle:
+                                                                TextStyle(
+                                                              fontSize: 12,
+                                                              color: Theme.of(
+                                                                      context)
+                                                                  .colorScheme
+                                                                  .onSecondaryContainer,
+                                                            ),
                                                             backgroundColor: Theme
                                                                     .of(context)
                                                                 .colorScheme
@@ -1332,11 +1268,11 @@ class _PlannerHomePageState extends State<PlannerHomePage>
                                                       label: Text(
                                                           '+${activity.tags.length - 2}'),
                                                       labelStyle: TextStyle(
-                                                          fontSize: 12,
-                                                          color: Theme.of(
-                                                                  context)
-                                                              .colorScheme
-                                                              .onSurfaceVariant),
+                                                        fontSize: 12,
+                                                        color: Theme.of(context)
+                                                            .colorScheme
+                                                            .onSurfaceVariant,
+                                                      ),
                                                       backgroundColor: Theme.of(
                                                               context)
                                                           .colorScheme
