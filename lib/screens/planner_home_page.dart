@@ -1038,21 +1038,19 @@ class _PlannerHomePageState extends State<PlannerHomePage>
           Padding(
             padding: const EdgeInsets.symmetric(vertical: 8.0),
             child: Row(
-              // Butonları yatayda yaymak için children listesini kullanıyoruz
               children: List.generate(7, (index) {
                 final dayLabel = _days[index];
                 final dayKey = hiveKeys[index];
                 final isSelected = dayKey == activityProvider.selectedDay;
 
-                // Her butonu Expanded ile sarmalıyoruz
                 return Expanded(
                   child: Padding(
-                    // Butonlar arasına biraz boşluk koyalım
                     padding: const EdgeInsets.symmetric(horizontal: 2.0),
                     child: TextButton(
                       style: TextButton.styleFrom(
-                        backgroundColor:
-                            isSelected ? Colors.blueAccent : Colors.transparent,
+                        backgroundColor: isSelected
+                            ? Theme.of(context).colorScheme.primary
+                            : Colors.transparent,
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(20),
                           side: isSelected
@@ -1060,8 +1058,6 @@ class _PlannerHomePageState extends State<PlannerHomePage>
                               : BorderSide(
                                   color: Theme.of(context).dividerColor),
                         ),
-                        // Butonun içindeki metnin sıkışmasını önlemek için
-                        // padding'i ayarlıyoruz.
                         padding: const EdgeInsets.symmetric(vertical: 12.0),
                       ),
                       onPressed: () {
@@ -1077,7 +1073,7 @@ class _PlannerHomePageState extends State<PlannerHomePage>
                         dayLabel,
                         style: TextStyle(
                           color: isSelected
-                              ? Colors.white
+                              ? Theme.of(context).colorScheme.onPrimary
                               : Theme.of(context).textTheme.bodySmall?.color,
                           fontWeight:
                               isSelected ? FontWeight.bold : FontWeight.normal,
