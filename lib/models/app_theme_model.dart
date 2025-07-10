@@ -34,7 +34,7 @@ class AppTheme {
     const AppTheme(
       name: 'Emerald Green',
       primaryColor: Colors.teal,
-      lightBackgroundColor: Color(0xFFF0FDF4),
+      lightBackgroundColor: Color.fromARGB(255, 247, 255, 248),
       lightCardColor: Color(0xFFDCFCE7),
       darkBackgroundColor: Color(0xFF042f2e),
       darkCardColor: Color(0xFF024c48),
@@ -43,16 +43,16 @@ class AppTheme {
     const AppTheme(
       name: 'Rose Pink',
       primaryColor: Colors.pinkAccent,
-      lightBackgroundColor: Color(0xFFFFF1F2),
+      lightBackgroundColor: Color.fromARGB(255, 255, 248, 248),
       lightCardColor: Color(0xFFFCE7F3),
-      darkBackgroundColor: Color(0xFF581c37),
+      darkBackgroundColor: Color.fromARGB(255, 116, 14, 45),
       darkCardColor: Color(0xFF831843),
     ),
     // Mor Tema
     const AppTheme(
       name: 'Deep Purple',
       primaryColor: Colors.deepPurple,
-      lightBackgroundColor: Color(0xFFF5F3FF),
+      lightBackgroundColor: Color.fromARGB(255, 250, 249, 255),
       lightCardColor: Color(0xFFEDE9FE),
       darkBackgroundColor: Color(0xFF2a224a),
       darkCardColor: Color(0xFF3c316e),
