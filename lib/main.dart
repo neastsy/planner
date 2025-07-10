@@ -190,7 +190,15 @@ class MyApp extends StatelessWidget {
           brightness: Brightness.light,
           primarySwatch: Colors.blue,
           colorScheme: ColorScheme.fromSeed(
-              seedColor: primaryColor, brightness: Brightness.light),
+                  seedColor: primaryColor, brightness: Brightness.light)
+              .copyWith(
+            primary:
+                primaryColor, // Butonlar için kullanılacak ana rengin, bizim orijinal rengimiz olmasını sağla.
+            onPrimary: Colors
+                .white, // Ana rengin üzerindeki metin her zaman beyaz olsun.
+            secondary: primaryColor
+                .withAlpha(204), // İkincil renkler için bir varyasyon
+          ),
           textTheme: GoogleFonts.notoSansTextTheme(
             Theme.of(context).textTheme,
           ).apply(bodyColor: const Color(0xFF1f2937)),
@@ -225,7 +233,12 @@ class MyApp extends StatelessWidget {
           brightness: Brightness.dark,
           primarySwatch: Colors.blue,
           colorScheme: ColorScheme.fromSeed(
-              seedColor: primaryColor, brightness: Brightness.dark),
+                  seedColor: primaryColor, brightness: Brightness.dark)
+              .copyWith(
+            primary: primaryColor,
+            onPrimary: Colors.white,
+            secondary: primaryColor.withAlpha(204),
+          ),
           textTheme: GoogleFonts.notoSansTextTheme(
             Theme.of(context).primaryTextTheme,
           ).apply(bodyColor: const Color(0xFFe5e7eb)),
