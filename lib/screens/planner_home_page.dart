@@ -505,8 +505,24 @@ class _PlannerHomePageState extends State<PlannerHomePage>
                           _days[hiveKeys.indexOf(targetDayKey)];
                       ScaffoldMessenger.of(context).showSnackBar(
                         SnackBar(
-                            content: Text(l10n.dayCopied(
-                                sourceDayLabel, targetDayLabel))),
+                          content: Text(
+                            l10n.dayCopied(sourceDayLabel, targetDayLabel),
+                            style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                              color: Theme.of(context)
+                                  .colorScheme
+                                  .onSecondaryContainer,
+                            ),
+                          ),
+                          behavior: SnackBarBehavior.floating,
+                          backgroundColor:
+                              Theme.of(context).colorScheme.secondaryContainer,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(24),
+                          ),
+                          margin: const EdgeInsets.symmetric(
+                              horizontal: 24, vertical: 12),
+                        ),
                       );
                     }
                   },
@@ -545,7 +561,25 @@ class _PlannerHomePageState extends State<PlannerHomePage>
               Navigator.of(ctx).pop();
               if (context.mounted) {
                 ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(content: Text(l10n.allDeleted(dayLabel))),
+                  SnackBar(
+                    content: Text(
+                      l10n.allDeleted(dayLabel),
+                      // YENİ: Metin rengini dinamik olarak alıyoruz
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        color:
+                            Theme.of(context).colorScheme.onSecondaryContainer,
+                      ),
+                    ),
+                    behavior: SnackBarBehavior.floating,
+                    backgroundColor:
+                        Theme.of(context).colorScheme.secondaryContainer,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(24),
+                    ),
+                    margin: const EdgeInsets.symmetric(
+                        horizontal: 24, vertical: 12),
+                  ),
                 );
               }
             },
