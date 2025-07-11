@@ -150,5 +150,9 @@
   "fullDay_saturday": "Samstag",
   "fullDay_sunday": "Sonntag",
   "repeatNotificationWeekly": "Wöchentlich wiederholen",
-  "recurringNotificationHint": "Wird zur Aktivitätszeit wiederholt"
+  "recurringNotificationHint": "Wird zur Aktivitätszeit wiederholt",
+  "error_appCouldNotStart": "Anwendung konnte nicht gestartet werden",
+  "error_unexpectedError": "Ein unerwarteter Fehler ist aufgetreten. Bitte versuchen Sie, die Anwendung neu zu starten.",
+  "error_restart": "Neu starten",
+  "error_detailsForDeveloper": "Fehlerdetails (für Entwickler):"  
 }

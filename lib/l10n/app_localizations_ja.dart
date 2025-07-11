@@ -342,4 +342,16 @@ class AppLocalizationsJa extends AppLocalizations {
 
   @override
   String get recurringNotificationHint => 'アクティビティ時間に繰り返されます';
+
+  @override
+  String get error_appCouldNotStart => 'アプリケーションを起動できませんでした';
+
+  @override
+  String get error_unexpectedError => '予期せぬエラーが発生しました。アプリケーションを再起動してみてください。';
+
+  @override
+  String get error_restart => '再起動';
+
+  @override
+  String get error_detailsForDeveloper => 'エラー詳細（開発者向け）:';
 }

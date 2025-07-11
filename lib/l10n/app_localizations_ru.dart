@@ -350,4 +350,17 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get recurringNotificationHint => 'Повторяется во время активности';
+
+  @override
+  String get error_appCouldNotStart => 'Не удалось запустить приложение';
+
+  @override
+  String get error_unexpectedError =>
+      'Произошла непредвиденная ошибка. Пожалуйста, попробуйте перезапустить приложение.';
+
+  @override
+  String get error_restart => 'Перезапустить';
+
+  @override
+  String get error_detailsForDeveloper => 'Детали ошибки (для разработчика):';
 }

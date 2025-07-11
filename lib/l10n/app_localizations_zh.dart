@@ -342,4 +342,16 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get recurringNotificationHint => '在活动时间重复';
+
+  @override
+  String get error_appCouldNotStart => '无法启动应用';
+
+  @override
+  String get error_unexpectedError => '发生未知错误，请尝试重启应用。';
+
+  @override
+  String get error_restart => '重启';
+
+  @override
+  String get error_detailsForDeveloper => '错误详情（开发者适用）：';
 }

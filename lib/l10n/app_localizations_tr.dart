@@ -348,4 +348,17 @@ class AppLocalizationsTr extends AppLocalizations {
 
   @override
   String get recurringNotificationHint => 'Aktivite saatinde tekrarlanır';
+
+  @override
+  String get error_appCouldNotStart => 'Uygulama Başlatılamadı';
+
+  @override
+  String get error_unexpectedError =>
+      'Beklenmedik bir hata oluştu. Lütfen yeniden başlatmayı deneyin.';
+
+  @override
+  String get error_restart => 'Yeniden Başlat';
+
+  @override
+  String get error_detailsForDeveloper => 'Hata Detayı (Geliştirici için):';
 }

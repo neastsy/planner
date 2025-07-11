@@ -353,4 +353,18 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get recurringNotificationHint => 'Wird zur Aktivitätszeit wiederholt';
+
+  @override
+  String get error_appCouldNotStart =>
+      'Anwendung konnte nicht gestartet werden';
+
+  @override
+  String get error_unexpectedError =>
+      'Ein unerwarteter Fehler ist aufgetreten. Bitte versuchen Sie, die Anwendung neu zu starten.';
+
+  @override
+  String get error_restart => 'Neu starten';
+
+  @override
+  String get error_detailsForDeveloper => 'Fehlerdetails (für Entwickler):';
 }

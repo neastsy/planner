@@ -346,4 +346,17 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get recurringNotificationHint => 'يتكرر في وقت النشاط';
+
+  @override
+  String get error_appCouldNotStart => 'تعذر بدء التطبيق';
+
+  @override
+  String get error_unexpectedError =>
+      'حدث خطأ غير متوقع. يرجى محاولة إعادة تشغيل التطبيق.';
+
+  @override
+  String get error_restart => 'إعادة التشغيل';
+
+  @override
+  String get error_detailsForDeveloper => 'تفاصيل الخطأ (للمطور):';
 }

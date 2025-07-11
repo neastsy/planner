@@ -151,5 +151,9 @@
   "fullDay_saturday": "Saturday",
   "fullDay_sunday": "Sunday",
   "repeatNotificationWeekly": "Repeat weekly",
-  "recurringNotificationHint": "Repeats at activity time"
+  "recurringNotificationHint": "Repeats at activity time",
+  "error_appCouldNotStart": "Application Could Not Start",
+  "error_unexpectedError": "An unexpected error occurred. Please try restarting the application.",
+  "error_restart": "Restart",
+  "error_detailsForDeveloper": "Error Details (for developer):"  
 }

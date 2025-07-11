@@ -150,5 +150,9 @@
   "fullDay_saturday": "土曜日",
   "fullDay_sunday": "日曜日",
   "repeatNotificationWeekly": "毎週繰り返す",
-  "recurringNotificationHint": "アクティビティ時間に繰り返されます"
+  "recurringNotificationHint": "アクティビティ時間に繰り返されます",
+  "error_appCouldNotStart": "アプリケーションを起動できませんでした",
+  "error_unexpectedError": "予期せぬエラーが発生しました。アプリケーションを再起動してみてください。",
+  "error_restart": "再起動",
+  "error_detailsForDeveloper": "エラー詳細（開発者向け）:"  
 }

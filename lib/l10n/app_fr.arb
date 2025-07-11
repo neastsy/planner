@@ -150,5 +150,9 @@
   "fullDay_saturday": "Samedi",
   "fullDay_sunday": "Dimanche",
   "repeatNotificationWeekly": "Répéter chaque semaine",
-  "recurringNotificationHint": "Se répète à l'heure de l'activité"
+  "recurringNotificationHint": "Se répète à l'heure de l'activité",
+  "error_appCouldNotStart": "L'application n'a pas pu démarrer",
+  "error_unexpectedError": "Une erreur inattendue s'est produite. Veuillez essayer de redémarrer l'application.",
+  "error_restart": "Redémarrer",
+  "error_detailsForDeveloper": "Détails de l'erreur (pour le développeur):"  
 }

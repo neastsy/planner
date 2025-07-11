@@ -6,6 +6,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:flutter_phoenix/flutter_phoenix.dart';
 
 import 'package:gunluk_planlayici/l10n/app_localizations.dart';
 import 'package:gunluk_planlayici/models/activity_model.dart';
@@ -54,35 +55,36 @@ Future<void> main() async {
 
     // 7. Uygulamayı çalıştır
     runApp(
-      MultiProvider(
-        providers: [
-          ChangeNotifierProvider(
-            create: (_) => ActivityProvider(activityRepository),
-          ),
-          ChangeNotifierProvider(
-            create: (_) => SettingsProvider(settingsBox),
-          ),
-          ChangeNotifierProvider(
-            create: (_) => TemplateProvider(templateRepository),
-          ),
-          ChangeNotifierProxyProvider<ActivityProvider, StatisticsProvider>(
-            create: (_) => StatisticsProvider(),
-            update: (_, activityProvider, previousStatisticsProvider) =>
-                (previousStatisticsProvider ?? StatisticsProvider())
-                  ..update(activityProvider),
-          ),
-        ],
-        child: const MyApp(),
+      Phoenix(
+        child: MultiProvider(
+          providers: [
+            ChangeNotifierProvider(
+              create: (_) => ActivityProvider(activityRepository),
+            ),
+            ChangeNotifierProvider(
+              create: (_) => SettingsProvider(settingsBox),
+            ),
+            ChangeNotifierProvider(
+              create: (_) => TemplateProvider(templateRepository),
+            ),
+            ChangeNotifierProxyProvider<ActivityProvider, StatisticsProvider>(
+              create: (_) => StatisticsProvider(),
+              update: (_, activityProvider, previousStatisticsProvider) =>
+                  (previousStatisticsProvider ?? StatisticsProvider())
+                    ..update(activityProvider),
+            ),
+          ],
+          child: const MyApp(),
+        ),
       ),
     );
   } catch (e, stackTrace) {
     debugPrint("Uygulama başlatılırken kritik bir hata oluştu: $e");
     debugPrint("Stack Trace: $stackTrace");
-    runApp(ErrorApp(error: e.toString()));
+    runApp(Phoenix(child: ErrorApp(error: e.toString())));
   }
 }
 
-// DÜZELTME 1: 'uture' -> 'Future'
 Future<void> _runMigrations() async {
   final prefs = await SharedPreferences.getInstance();
   int currentVersion = prefs.getInt('db_version') ?? 0;
@@ -94,7 +96,6 @@ Future<void> _runMigrations() async {
       box = await Hive.openBox<List<dynamic>>(AppConstants.activitiesBoxName);
 
       if (box.isNotEmpty) {
-        // DÜZELTME 2: toMap() doğru tipi döndürür, cast etmeye gerek yok.
         final Map<dynamic, dynamic> oldDataMap = box.toMap();
         final Map<dynamic, List<Activity>> newActivitiesMap = {};
 
@@ -122,7 +123,6 @@ Future<void> _runMigrations() async {
             debugPrint(
                 "Migration error for day $dayKey: $e. Skipping this day.");
             debugPrint("Stack trace: $s");
-            // DÜZELTME 3: Hata durumunda eski veriyi korumaya çalışırken doğru cast yap.
             if (entry.value is List) {
               newActivitiesMap[dayKey] = entry.value.cast<Activity>().toList();
             } else {
@@ -138,7 +138,6 @@ Future<void> _runMigrations() async {
           "A critical error occurred during migration: $e. Migration aborted.");
       debugPrint("Stack trace: $s");
       await box?.close();
-      // DÜZELTME 4: Hata durumunda fonksiyondan çık.
       return;
     } finally {
       await box?.close();
@@ -192,12 +191,9 @@ class MyApp extends StatelessWidget {
           colorScheme: ColorScheme.fromSeed(
                   seedColor: primaryColor, brightness: Brightness.light)
               .copyWith(
-            primary:
-                primaryColor, // Butonlar için kullanılacak ana rengin, bizim orijinal rengimiz olmasını sağla.
-            onPrimary: Colors
-                .white, // Ana rengin üzerindeki metin her zaman beyaz olsun.
-            secondary: primaryColor
-                .withAlpha(204), // İkincil renkler için bir varyasyon
+            primary: primaryColor,
+            onPrimary: Colors.white,
+            secondary: primaryColor.withAlpha(204),
           ),
           textTheme: GoogleFonts.notoSansTextTheme(
             Theme.of(context).textTheme,
@@ -278,13 +274,72 @@ class ErrorApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      localizationsDelegates: const [
+        AppLocalizations.delegate,
+        GlobalMaterialLocalizations.delegate,
+        GlobalWidgetsLocalizations.delegate,
+        GlobalCupertinoLocalizations.delegate,
+      ],
+      supportedLocales: const [
+        Locale('tr', ''),
+        Locale('en', ''),
+        Locale('de', ''),
+        Locale('fr', ''),
+        Locale('es', ''),
+        Locale('ru', ''),
+        Locale('ar', ''),
+        Locale('ja', ''),
+        Locale('zh', ''),
+      ],
       home: Scaffold(
         body: Center(
           child: Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: Text(
-              "Uygulama başlatılamadı.\nLütfen yeniden deneyin.\n\nHata Detayı (Geliştirici için):\n$error",
-              textAlign: TextAlign.center,
+            padding: const EdgeInsets.all(24.0),
+            child: Builder(
+              builder: (context) {
+                final l10n = AppLocalizations.of(context)!;
+                return Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    const Icon(
+                      Icons.error_outline,
+                      color: Colors.red,
+                      size: 60,
+                    ),
+                    const SizedBox(height: 24),
+                    Text(
+                      l10n.error_appCouldNotStart,
+                      style: const TextStyle(
+                          fontSize: 22, fontWeight: FontWeight.bold),
+                      textAlign: TextAlign.center,
+                    ),
+                    const SizedBox(height: 8),
+                    Text(
+                      l10n.error_unexpectedError,
+                      textAlign: TextAlign.center,
+                      style: const TextStyle(fontSize: 16),
+                    ),
+                    const SizedBox(height: 24),
+                    ElevatedButton.icon(
+                      icon: const Icon(Icons.refresh),
+                      label: Text(l10n.error_restart),
+                      onPressed: () {
+                        Phoenix.rebirth(context);
+                      },
+                      style: ElevatedButton.styleFrom(
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 24, vertical: 12),
+                      ),
+                    ),
+                    const SizedBox(height: 40),
+                    Text(
+                      "${l10n.error_detailsForDeveloper}\n$error",
+                      textAlign: TextAlign.center,
+                      style: const TextStyle(fontSize: 12, color: Colors.grey),
+                    ),
+                  ],
+                );
+              },
             ),
           ),
         ),

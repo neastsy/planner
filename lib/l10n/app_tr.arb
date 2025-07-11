@@ -150,5 +150,9 @@
   "fullDay_saturday": "Cumartesi",
   "fullDay_sunday": "Pazar",
   "repeatNotificationWeekly": "Haftalık tekrarla",
-  "recurringNotificationHint": "Aktivite saatinde tekrarlanır"
+  "recurringNotificationHint": "Aktivite saatinde tekrarlanır",
+  "error_appCouldNotStart": "Uygulama Başlatılamadı",
+  "error_unexpectedError": "Beklenmedik bir hata oluştu. Lütfen yeniden başlatmayı deneyin.",
+  "error_restart": "Yeniden Başlat",
+  "error_detailsForDeveloper": "Hata Detayı (Geliştirici için):"  
 }

@@ -741,6 +741,30 @@ abstract class AppLocalizations {
   /// In tr, this message translates to:
   /// **'Aktivite saatinde tekrarlanır'**
   String get recurringNotificationHint;
+
+  /// No description provided for @error_appCouldNotStart.
+  ///
+  /// In tr, this message translates to:
+  /// **'Uygulama Başlatılamadı'**
+  String get error_appCouldNotStart;
+
+  /// No description provided for @error_unexpectedError.
+  ///
+  /// In tr, this message translates to:
+  /// **'Beklenmedik bir hata oluştu. Lütfen yeniden başlatmayı deneyin.'**
+  String get error_unexpectedError;
+
+  /// No description provided for @error_restart.
+  ///
+  /// In tr, this message translates to:
+  /// **'Yeniden Başlat'**
+  String get error_restart;
+
+  /// No description provided for @error_detailsForDeveloper.
+  ///
+  /// In tr, this message translates to:
+  /// **'Hata Detayı (Geliştirici için):'**
+  String get error_detailsForDeveloper;
 }
 
 class _AppLocalizationsDelegate
