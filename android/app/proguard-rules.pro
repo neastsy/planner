@@ -14,3 +14,26 @@
 -keepclassmembers class * extends hive.HiveObject {
     <fields>;
 }
+# Drawable kaynakları koruma
+-keep class **.R
+-keep class **.R$* {
+    <fields>;
+}
+
+# Notification ikonlarını özellikle koruma
+-keep class * {
+    *** ic_notification;
+}
+
+# Flutter notification plugin için kaynak koruması
+-keep class com.dexterous.** { *; }
+
+# Tüm drawable kaynakları koruma
+-keepclassmembers class **.R$drawable {
+    public static final int *;
+}
+
+# Notification kaynakları koruma
+-keepclassmembers class * {
+    @android.webkit.JavascriptInterface <methods>;
+}
