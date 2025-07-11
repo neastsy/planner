@@ -35,6 +35,8 @@ class _PlannerHomePageState extends State<PlannerHomePage>
   String _currentTime = '...';
   late List<String> _days;
   late PageController _pageController;
+  final TransformationController _transformationController =
+      TransformationController();
 
   @override
   void initState() {
@@ -1071,6 +1073,9 @@ class _PlannerHomePageState extends State<PlannerHomePage>
                         final targetPage = (middleCycle * 7) + index;
 
                         activityProvider.changeDay(hiveKeys[index]);
+
+                        _transformationController.value = Matrix4.identity();
+
                         if (_pageController.page?.round() != targetPage) {
                           _pageController.jumpToPage(targetPage);
                         }
@@ -1098,6 +1103,7 @@ class _PlannerHomePageState extends State<PlannerHomePage>
               onPageChanged: (pageIndex) {
                 final dayIndex = pageIndex % 7;
                 context.read<ActivityProvider>().changeDay(hiveKeys[dayIndex]);
+                _transformationController.value = Matrix4.identity();
               },
               itemBuilder: (context, pageIndex) {
                 final dayKey = hiveKeys[pageIndex % 7];
