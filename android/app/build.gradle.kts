@@ -15,7 +15,7 @@ if (keyPropertiesFile.exists()) {
 
 android {
     namespace = "com.neastsy.gunluk_planlayici"
-    compileSdk = 35
+    compileSdk = 34
     ndkVersion = "27.0.12077973"
 
     compileOptions {
