@@ -354,4 +354,42 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get error_detailsForDeveloper => '错误详情（开发者适用）：';
+
+  @override
+  String get pomodoro_startFocusSession => '开始专注时段';
+
+  @override
+  String get pomodoro_sessionStateWork => '工作';
+
+  @override
+  String get pomodoro_sessionStateShortBreak => '短暂休息';
+
+  @override
+  String get pomodoro_sessionStateLongBreak => '长时间休息';
+
+  @override
+  String get pomodoro_sessionStatePaused => '已暂停';
+
+  @override
+  String pomodoro_completedSessions(int count) {
+    return '已完成时段：$count';
+  }
+
+  @override
+  String get pomodoro_endSessionTitle => '结束时段';
+
+  @override
+  String pomodoro_endSessionContent(
+      Object sessionCount, Object minutes, Object activityName) {
+    return '要将 $sessionCount 个番茄时段（$minutes 分钟）添加到活动“$activityName”吗？';
+  }
+
+  @override
+  String get pomodoro_dontSave => '不保存';
+
+  @override
+  String get pomodoro_saveAndExit => '是的，添加';
+
+  @override
+  String get tapPlusToStart => '点击“+”按钮开始计划。';
 }

@@ -765,6 +765,73 @@ abstract class AppLocalizations {
   /// In tr, this message translates to:
   /// **'Hata Detayı (Geliştirici için):'**
   String get error_detailsForDeveloper;
+
+  /// No description provided for @pomodoro_startFocusSession.
+  ///
+  /// In tr, this message translates to:
+  /// **'Odaklanma Seansını Başlat'**
+  String get pomodoro_startFocusSession;
+
+  /// No description provided for @pomodoro_sessionStateWork.
+  ///
+  /// In tr, this message translates to:
+  /// **'Çalışma'**
+  String get pomodoro_sessionStateWork;
+
+  /// No description provided for @pomodoro_sessionStateShortBreak.
+  ///
+  /// In tr, this message translates to:
+  /// **'Kısa Mola'**
+  String get pomodoro_sessionStateShortBreak;
+
+  /// No description provided for @pomodoro_sessionStateLongBreak.
+  ///
+  /// In tr, this message translates to:
+  /// **'Uzun Mola'**
+  String get pomodoro_sessionStateLongBreak;
+
+  /// No description provided for @pomodoro_sessionStatePaused.
+  ///
+  /// In tr, this message translates to:
+  /// **'Duraklatıldı'**
+  String get pomodoro_sessionStatePaused;
+
+  /// No description provided for @pomodoro_completedSessions.
+  ///
+  /// In tr, this message translates to:
+  /// **'Tamamlanan Seans: {count}'**
+  String pomodoro_completedSessions(int count);
+
+  /// No description provided for @pomodoro_endSessionTitle.
+  ///
+  /// In tr, this message translates to:
+  /// **'Seansı Bitir'**
+  String get pomodoro_endSessionTitle;
+
+  /// No description provided for @pomodoro_endSessionContent.
+  ///
+  /// In tr, this message translates to:
+  /// **'{sessionCount} pomodoro seansını ({minutes} dakika) \'{activityName}\' aktivitesine eklemek ister misiniz?'**
+  String pomodoro_endSessionContent(
+      Object sessionCount, Object minutes, Object activityName);
+
+  /// No description provided for @pomodoro_dontSave.
+  ///
+  /// In tr, this message translates to:
+  /// **'Kaydetme'**
+  String get pomodoro_dontSave;
+
+  /// No description provided for @pomodoro_saveAndExit.
+  ///
+  /// In tr, this message translates to:
+  /// **'Evet, Ekle'**
+  String get pomodoro_saveAndExit;
+
+  /// No description provided for @tapPlusToStart.
+  ///
+  /// In tr, this message translates to:
+  /// **'Planlamaya başlamak için \'+\' butonuna dokunun.'**
+  String get tapPlusToStart;
 }
 
 class _AppLocalizationsDelegate

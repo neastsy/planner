@@ -5,7 +5,6 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:provider/provider.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter_phoenix/flutter_phoenix.dart';
 
 import 'package:gunluk_planlayici/l10n/app_localizations.dart';
@@ -15,6 +14,7 @@ import 'package:gunluk_planlayici/providers/activity_provider.dart';
 import 'package:gunluk_planlayici/providers/settings_provider.dart';
 import 'package:gunluk_planlayici/providers/template_provider.dart';
 import 'package:gunluk_planlayici/providers/statistics_provider.dart';
+import 'package:gunluk_planlayici/providers/pomodoro_provider.dart';
 import 'package:gunluk_planlayici/repositories/activity_repository.dart';
 import 'package:gunluk_planlayici/repositories/template_repository.dart';
 import 'package:gunluk_planlayici/screens/planner_home_page.dart';
@@ -32,33 +32,24 @@ Future<void> main() async {
   ]);
 
   try {
-    // 1. Servisleri başlat
     await NotificationService().configureLocalTimezone();
     await NotificationService().init();
 
-    // 2. Hive'ı başlat
     await Hive.initFlutter();
 
-    // 3. TÜM ADAPTÖRLERİ KAYDET
     Hive.registerAdapter(ActivityAdapter());
     Hive.registerAdapter(ActivityTemplateAdapter());
     Hive.registerAdapter(TimeOfDayAdapter());
     Hive.registerAdapter(ColorAdapter());
 
-    // 4. Geçiş işlemini ÇALIŞTIR
-    await _runMigrations();
-
-    // 5. Kutuları aç
     final activitiesBox = await Hive.openBox(AppConstants.activitiesBoxName);
     final templatesBox =
         await Hive.openBox<ActivityTemplate>(AppConstants.templatesBoxName);
     final settingsBox = await Hive.openBox(AppConstants.settingsBoxName);
 
-    // 6. Repository'leri oluştur
     final activityRepository = ActivityRepository(activitiesBox);
     final templateRepository = TemplateRepository(templatesBox);
 
-    // 7. Uygulamayı çalıştır
     runApp(
       Phoenix(
         child: MultiProvider(
@@ -78,6 +69,9 @@ Future<void> main() async {
                   (previousStatisticsProvider ?? StatisticsProvider())
                     ..update(activityProvider),
             ),
+            ChangeNotifierProvider(
+              create: (_) => PomodoroProvider(),
+            ),
           ],
           child: const MyApp(),
         ),
@@ -87,69 +81,6 @@ Future<void> main() async {
     debugPrint("Uygulama başlatılırken kritik bir hata oluştu: $e");
     debugPrint("Stack Trace: $stackTrace");
     runApp(Phoenix(child: ErrorApp(error: e.toString())));
-  }
-}
-
-Future<void> _runMigrations() async {
-  final prefs = await SharedPreferences.getInstance();
-  int currentVersion = prefs.getInt('db_version') ?? 0;
-
-  if (currentVersion < 1) {
-    debugPrint("Database is at version 0. Migrating to version 1...");
-    Box? box;
-    try {
-      box = await Hive.openBox<List<dynamic>>(AppConstants.activitiesBoxName);
-
-      if (box.isNotEmpty) {
-        final Map<dynamic, dynamic> oldDataMap = box.toMap();
-        final Map<dynamic, List<Activity>> newActivitiesMap = {};
-
-        for (var entry in oldDataMap.entries) {
-          final dayKey = entry.key;
-          try {
-            final oldActivityList = List<dynamic>.from(entry.value);
-            List<Activity> newActivityList = [];
-            for (var oldActivityData in oldActivityList) {
-              newActivityList.add(Activity(
-                id: oldActivityData.id,
-                name: oldActivityData.name,
-                startTime: oldActivityData.startTime,
-                endTime: oldActivityData.endTime,
-                color: oldActivityData.color,
-                note: oldActivityData.note,
-                notificationMinutesBefore:
-                    oldActivityData.notificationMinutesBefore,
-                tags: List<String>.from(oldActivityData.tags ?? []),
-                isNotificationRecurring: false,
-              ));
-            }
-            newActivitiesMap[dayKey] = newActivityList;
-          } catch (e, s) {
-            debugPrint(
-                "Migration error for day $dayKey: $e. Skipping this day.");
-            debugPrint("Stack trace: $s");
-            if (entry.value is List) {
-              newActivitiesMap[dayKey] = entry.value.cast<Activity>().toList();
-            } else {
-              newActivitiesMap[dayKey] = [];
-            }
-          }
-        }
-        await box.clear();
-        await box.putAll(newActivitiesMap);
-      }
-    } catch (e, s) {
-      debugPrint(
-          "A critical error occurred during migration: $e. Migration aborted.");
-      debugPrint("Stack trace: $s");
-      await box?.close();
-      return;
-    } finally {
-      await box?.close();
-    }
-
-    await prefs.setInt('db_version', 1);
-    debugPrint("Database migration to version 1 completed successfully.");
   }
 }
 

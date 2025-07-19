@@ -361,4 +361,43 @@ class AppLocalizationsTr extends AppLocalizations {
 
   @override
   String get error_detailsForDeveloper => 'Hata Detayı (Geliştirici için):';
+
+  @override
+  String get pomodoro_startFocusSession => 'Odaklanma Seansını Başlat';
+
+  @override
+  String get pomodoro_sessionStateWork => 'Çalışma';
+
+  @override
+  String get pomodoro_sessionStateShortBreak => 'Kısa Mola';
+
+  @override
+  String get pomodoro_sessionStateLongBreak => 'Uzun Mola';
+
+  @override
+  String get pomodoro_sessionStatePaused => 'Duraklatıldı';
+
+  @override
+  String pomodoro_completedSessions(int count) {
+    return 'Tamamlanan Seans: $count';
+  }
+
+  @override
+  String get pomodoro_endSessionTitle => 'Seansı Bitir';
+
+  @override
+  String pomodoro_endSessionContent(
+      Object sessionCount, Object minutes, Object activityName) {
+    return '$sessionCount pomodoro seansını ($minutes dakika) \'$activityName\' aktivitesine eklemek ister misiniz?';
+  }
+
+  @override
+  String get pomodoro_dontSave => 'Kaydetme';
+
+  @override
+  String get pomodoro_saveAndExit => 'Evet, Ekle';
+
+  @override
+  String get tapPlusToStart =>
+      'Planlamaya başlamak için \'+\' butonuna dokunun.';
 }

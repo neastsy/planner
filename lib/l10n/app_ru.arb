@@ -154,5 +154,16 @@
   "error_appCouldNotStart": "Не удалось запустить приложение",
   "error_unexpectedError": "Произошла непредвиденная ошибка. Пожалуйста, попробуйте перезапустить приложение.",
   "error_restart": "Перезапустить",
-  "error_detailsForDeveloper": "Детали ошибки (для разработчика):"  
+  "error_detailsForDeveloper": "Детали ошибки (для разработчика):",
+  "pomodoro_startFocusSession": "Начать сеанс фокусировки",
+  "pomodoro_sessionStateWork": "Работа",
+  "pomodoro_sessionStateShortBreak": "Короткий перерыв",
+  "pomodoro_sessionStateLongBreak": "Длинный перерыв",
+  "pomodoro_sessionStatePaused": "Пауза",
+  "pomodoro_completedSessions": "Завершено сеансов: {count}",
+  "pomodoro_endSessionTitle": "Завершить сеанс",
+  "pomodoro_endSessionContent": "Добавить {sessionCount} сеанс(ов) Pomodoro ({minutes} минут) к задаче '{activityName}'?",
+  "pomodoro_dontSave": "Не сохранять",
+  "pomodoro_saveAndExit": "Да, добавить",
+  "tapPlusToStart": "Нажмите кнопку '+', чтобы начать планирование."  
 }

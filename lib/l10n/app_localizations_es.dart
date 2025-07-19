@@ -366,4 +366,43 @@ class AppLocalizationsEs extends AppLocalizations {
   @override
   String get error_detailsForDeveloper =>
       'Detalles del error (para el desarrollador):';
+
+  @override
+  String get pomodoro_startFocusSession => 'Iniciar sesión de enfoque';
+
+  @override
+  String get pomodoro_sessionStateWork => 'Trabajo';
+
+  @override
+  String get pomodoro_sessionStateShortBreak => 'Descanso corto';
+
+  @override
+  String get pomodoro_sessionStateLongBreak => 'Descanso largo';
+
+  @override
+  String get pomodoro_sessionStatePaused => 'En pausa';
+
+  @override
+  String pomodoro_completedSessions(int count) {
+    return 'Sesiones completadas: $count';
+  }
+
+  @override
+  String get pomodoro_endSessionTitle => 'Finalizar sesión';
+
+  @override
+  String pomodoro_endSessionContent(
+      Object sessionCount, Object minutes, Object activityName) {
+    return '¿Añadir $sessionCount sesión(es) de Pomodoro ($minutes minutos) a la actividad \'$activityName\'?';
+  }
+
+  @override
+  String get pomodoro_dontSave => 'No guardar';
+
+  @override
+  String get pomodoro_saveAndExit => 'Sí, añadir';
+
+  @override
+  String get tapPlusToStart =>
+      'Toque el botón \'+\' para comenzar a planificar.';
 }

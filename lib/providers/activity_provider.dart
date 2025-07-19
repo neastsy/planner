@@ -20,11 +20,11 @@ class ActivityProvider with ChangeNotifier {
 
   Map<String, List<Activity>> _dailyActivities = {};
   late String _selectedDay;
-  Timer? _syncTimer; // YENİ: Senkronizasyon için Timer
+  Timer? _syncTimer;
 
   ActivityProvider(this._activityRepository) {
     _initialize();
-    _startPeriodicSync(); // YENİ: Periyodik senkronizasyonu başlat
+    _startPeriodicSync();
   }
 
   DateTime? calculateNextNotificationTime(Activity activity, String dayKey) {
@@ -48,14 +48,12 @@ class ActivityProvider with ChangeNotifier {
     return scheduledTime;
   }
 
-  // YENİ: Provider yok edildiğinde Timer'ı temizlemek için dispose metodu
   @override
   void dispose() {
     _syncTimer?.cancel();
     super.dispose();
   }
 
-  // YENİ METOT: Periyodik senkronizasyonu başlatır
   void _startPeriodicSync() {
     _syncTimer = Timer.periodic(const Duration(seconds: 10), (timer) {
       if (WidgetsBinding.instance.lifecycleState == AppLifecycleState.resumed) {
@@ -84,7 +82,7 @@ class ActivityProvider with ChangeNotifier {
   void _loadActivities() {
     _dailyActivities = _activityRepository.loadActivities();
     _dailyActivities.forEach((_, list) => _sortList(list));
-    syncNotificationsOnLoad(); // İsim güncellendi
+    syncNotificationsOnLoad();
     notifyListeners();
   }
 
@@ -116,6 +114,46 @@ class ActivityProvider with ChangeNotifier {
     _saveActivitiesForDay(_selectedDay);
     _scheduleNotificationForActivity(activity, _selectedDay);
     notifyListeners();
+  }
+
+  void addCompletedDuration(String activityId, int minutesToAdd) {
+    String? dayKeyOfActivity;
+    int? indexInList;
+
+    for (var dayKey in _dailyActivities.keys) {
+      final activities = _dailyActivities[dayKey]!;
+      final index = activities.indexWhere((a) => a.id == activityId);
+      if (index != -1) {
+        dayKeyOfActivity = dayKey;
+        indexInList = index;
+        break;
+      }
+    }
+
+    if (dayKeyOfActivity != null && indexInList != null) {
+      final activitiesForDay = _dailyActivities[dayKeyOfActivity]!;
+      final oldActivity = activitiesForDay[indexInList];
+      final updatedActivity = Activity(
+        id: oldActivity.id,
+        name: oldActivity.name,
+        startTime: oldActivity.startTime,
+        endTime: oldActivity.endTime,
+        color: oldActivity.color,
+        note: oldActivity.note,
+        notificationMinutesBefore: oldActivity.notificationMinutesBefore,
+        tags: oldActivity.tags,
+        isNotificationRecurring: oldActivity.isNotificationRecurring,
+        completedDurationInMinutes:
+            oldActivity.completedDurationInMinutes + minutesToAdd,
+      );
+
+      activitiesForDay[indexInList] = updatedActivity;
+      _dailyActivities[dayKeyOfActivity] = activitiesForDay;
+      _saveActivitiesForDay(dayKeyOfActivity);
+      notifyListeners();
+      debugPrint(
+          "Added $minutesToAdd minutes to '${updatedActivity.name}'. New total: ${updatedActivity.completedDurationInMinutes}");
+    }
   }
 
   void deleteActivity(Activity activity) {

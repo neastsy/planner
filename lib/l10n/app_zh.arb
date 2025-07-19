@@ -154,5 +154,16 @@
   "error_appCouldNotStart": "无法启动应用",
   "error_unexpectedError": "发生未知错误，请尝试重启应用。",
   "error_restart": "重启",
-  "error_detailsForDeveloper": "错误详情（开发者适用）："  
+  "error_detailsForDeveloper": "错误详情（开发者适用）：",
+  "pomodoro_startFocusSession": "开始专注时段",
+  "pomodoro_sessionStateWork": "工作",
+  "pomodoro_sessionStateShortBreak": "短暂休息",
+  "pomodoro_sessionStateLongBreak": "长时间休息",
+  "pomodoro_sessionStatePaused": "已暂停",
+  "pomodoro_completedSessions": "已完成时段：{count}",
+  "pomodoro_endSessionTitle": "结束时段",
+  "pomodoro_endSessionContent": "要将 {sessionCount} 个番茄时段（{minutes} 分钟）添加到活动“{activityName}”吗？",
+  "pomodoro_dontSave": "不保存",
+  "pomodoro_saveAndExit": "是的，添加",
+  "tapPlusToStart": "点击“+”按钮开始计划。"    
 }

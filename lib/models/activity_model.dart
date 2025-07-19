@@ -33,6 +33,9 @@ class Activity extends HiveObject {
   @HiveField(8)
   final bool isNotificationRecurring;
 
+  @HiveField(9)
+  final int completedDurationInMinutes;
+
   int get durationInMinutes {
     // Eğer başlangıç ve bitiş aynıysa, bu 24 saatlik bir aktivitedir.
     if (startTime.hour == endTime.hour && startTime.minute == endTime.minute) {
@@ -60,6 +63,7 @@ class Activity extends HiveObject {
     this.notificationMinutesBefore,
     List<String>? tags,
     this.isNotificationRecurring = false,
+    this.completedDurationInMinutes = 0,
   })  : id = id ?? const Uuid().v4(),
         tags = tags ?? [];
 }

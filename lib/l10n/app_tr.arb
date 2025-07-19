@@ -154,5 +154,30 @@
   "error_appCouldNotStart": "Uygulama Başlatılamadı",
   "error_unexpectedError": "Beklenmedik bir hata oluştu. Lütfen yeniden başlatmayı deneyin.",
   "error_restart": "Yeniden Başlat",
-  "error_detailsForDeveloper": "Hata Detayı (Geliştirici için):"  
+  "error_detailsForDeveloper": "Hata Detayı (Geliştirici için):",
+    "pomodoro_startFocusSession": "Odaklanma Seansını Başlat",
+  "pomodoro_sessionStateWork": "Çalışma",
+  "pomodoro_sessionStateShortBreak": "Kısa Mola",
+  "pomodoro_sessionStateLongBreak": "Uzun Mola",
+  "pomodoro_sessionStatePaused": "Duraklatıldı",
+  "pomodoro_completedSessions": "Tamamlanan Seans: {count}",
+  "@pomodoro_completedSessions": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "pomodoro_endSessionTitle": "Seansı Bitir",
+  "pomodoro_endSessionContent": "{sessionCount} pomodoro seansını ({minutes} dakika) '{activityName}' aktivitesine eklemek ister misiniz?",
+  "@pomodoro_endSessionContent": {
+    "placeholders": {
+      "sessionCount": {},
+      "minutes": {},
+      "activityName": {}
+    }
+  },
+  "pomodoro_dontSave": "Kaydetme",
+  "pomodoro_saveAndExit": "Evet, Ekle",
+  "tapPlusToStart": "Planlamaya başlamak için '+' butonuna dokunun."
 }

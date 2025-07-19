@@ -154,5 +154,16 @@
   "error_appCouldNotStart": "No se pudo iniciar la aplicación",
   "error_unexpectedError": "Ocurrió un error inesperado. Por favor, intente reiniciar la aplicación.",
   "error_restart": "Reiniciar",
-  "error_detailsForDeveloper": "Detalles del error (para el desarrollador):"  
+  "error_detailsForDeveloper": "Detalles del error (para el desarrollador):",
+  "pomodoro_startFocusSession": "Iniciar sesión de enfoque",
+  "pomodoro_sessionStateWork": "Trabajo",
+  "pomodoro_sessionStateShortBreak": "Descanso corto",
+  "pomodoro_sessionStateLongBreak": "Descanso largo",
+  "pomodoro_sessionStatePaused": "En pausa",
+  "pomodoro_completedSessions": "Sesiones completadas: {count}",
+  "pomodoro_endSessionTitle": "Finalizar sesión",
+  "pomodoro_endSessionContent": "¿Añadir {sessionCount} sesión(es) de Pomodoro ({minutes} minutos) a la actividad '{activityName}'?",
+  "pomodoro_dontSave": "No guardar",
+  "pomodoro_saveAndExit": "Sí, añadir",
+  "tapPlusToStart": "Toque el botón '+' para comenzar a planificar."
 }

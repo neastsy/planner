@@ -154,5 +154,16 @@
   "error_appCouldNotStart": "アプリケーションを起動できませんでした",
   "error_unexpectedError": "予期せぬエラーが発生しました。アプリケーションを再起動してみてください。",
   "error_restart": "再起動",
-  "error_detailsForDeveloper": "エラー詳細（開発者向け）:"  
+  "error_detailsForDeveloper": "エラー詳細（開発者向け）:",
+  "pomodoro_startFocusSession": "集中セッションを開始",
+  "pomodoro_sessionStateWork": "作業",
+  "pomodoro_sessionStateShortBreak": "短い休憩",
+  "pomodoro_sessionStateLongBreak": "長い休憩",
+  "pomodoro_sessionStatePaused": "一時停止中",
+  "pomodoro_completedSessions": "完了したセッション: {count}",
+  "pomodoro_endSessionTitle": "セッションを終了",
+  "pomodoro_endSessionContent": "{sessionCount}回のポモドーロセッション（{minutes}分）をアクティビティ「{activityName}」に追加しますか？",
+  "pomodoro_dontSave": "保存しない",
+  "pomodoro_saveAndExit": "はい、追加する",
+  "tapPlusToStart": "「+」ボタンをタップして計画を開始します。"    
 }

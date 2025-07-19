@@ -363,4 +363,43 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get error_detailsForDeveloper => 'Детали ошибки (для разработчика):';
+
+  @override
+  String get pomodoro_startFocusSession => 'Начать сеанс фокусировки';
+
+  @override
+  String get pomodoro_sessionStateWork => 'Работа';
+
+  @override
+  String get pomodoro_sessionStateShortBreak => 'Короткий перерыв';
+
+  @override
+  String get pomodoro_sessionStateLongBreak => 'Длинный перерыв';
+
+  @override
+  String get pomodoro_sessionStatePaused => 'Пауза';
+
+  @override
+  String pomodoro_completedSessions(int count) {
+    return 'Завершено сеансов: $count';
+  }
+
+  @override
+  String get pomodoro_endSessionTitle => 'Завершить сеанс';
+
+  @override
+  String pomodoro_endSessionContent(
+      Object sessionCount, Object minutes, Object activityName) {
+    return 'Добавить $sessionCount сеанс(ов) Pomodoro ($minutes минут) к задаче \'$activityName\'?';
+  }
+
+  @override
+  String get pomodoro_dontSave => 'Не сохранять';
+
+  @override
+  String get pomodoro_saveAndExit => 'Да, добавить';
+
+  @override
+  String get tapPlusToStart =>
+      'Нажмите кнопку \'+\', чтобы начать планирование.';
 }

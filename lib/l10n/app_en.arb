@@ -155,5 +155,30 @@
   "error_appCouldNotStart": "Application Could Not Start",
   "error_unexpectedError": "An unexpected error occurred. Please try restarting the application.",
   "error_restart": "Restart",
-  "error_detailsForDeveloper": "Error Details (for developer):"  
+  "error_detailsForDeveloper": "Error Details (for developer):",
+  "pomodoro_startFocusSession": "Start Focus Session",
+  "pomodoro_sessionStateWork": "Work",
+  "pomodoro_sessionStateShortBreak": "Short Break",
+  "pomodoro_sessionStateLongBreak": "Long Break",
+  "pomodoro_sessionStatePaused": "Paused",
+  "pomodoro_completedSessions": "Completed Sessions: {count}",
+  "@pomodoro_completedSessions": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "pomodoro_endSessionTitle": "End Session",
+  "pomodoro_endSessionContent": "Add {sessionCount} pomodoro session(s) ({minutes} minutes) to the '{activityName}' activity?",
+  "@pomodoro_endSessionContent": {
+    "placeholders": {
+      "sessionCount": {},
+      "minutes": {},
+      "activityName": {}
+    }
+  },
+  "pomodoro_dontSave": "Don't Save",
+  "pomodoro_saveAndExit": "Yes, Add" ,
+  "tapPlusToStart": "Tap the '+' button to start planning."
 }

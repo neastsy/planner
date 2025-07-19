@@ -19,6 +19,7 @@ import '../widgets/theme_switcher.dart';
 import '../services/notification_service.dart';
 import '../screens/template_manager_page.dart';
 import '../screens/statistics_page.dart';
+import '../screens/focus_screen.dart';
 import '../utils/constants.dart';
 
 class PlannerHomePage extends StatefulWidget {
@@ -566,7 +567,6 @@ class _PlannerHomePageState extends State<PlannerHomePage>
                   SnackBar(
                     content: Text(
                       l10n.allDeleted(dayLabel),
-                      // YENİ: Metin rengini dinamik olarak alıyoruz
                       style: TextStyle(
                         fontWeight: FontWeight.bold,
                         color:
@@ -1010,6 +1010,45 @@ class _PlannerHomePageState extends State<PlannerHomePage>
     _handleActivitySubmission(context, newActivity);
   }
 
+  Widget _buildPomodoroStartButton(
+      BuildContext context, Activity activity, String dayKey) {
+    final todayKey = AppConstants.dayKeys[DateTime.now().weekday - 1];
+    if (dayKey != todayKey) {
+      // Eğer bakılan gün bugün değilse, butonu HİÇ gösterme.
+      return const SizedBox.shrink();
+    }
+
+    // 2. Adım: Saat kontrolü (bu kısım aynı)
+    final now = TimeOfDay.now();
+    final nowInMinutes = now.hour * 60 + now.minute;
+    final startInMinutes =
+        activity.startTime.hour * 60 + activity.startTime.minute;
+    final endInMinutes = activity.endTime.hour * 60 + activity.endTime.minute;
+
+    final bool isCurrentActivity = (startInMinutes <= endInMinutes)
+        ? (nowInMinutes >= startInMinutes && nowInMinutes < endInMinutes)
+        : (nowInMinutes >= startInMinutes || nowInMinutes < endInMinutes);
+
+    if (isCurrentActivity) {
+      final l10n = AppLocalizations.of(context)!;
+      return IconButton(
+        icon: Icon(Icons.play_circle_fill_rounded,
+            color: Theme.of(context).colorScheme.primary),
+        tooltip: l10n.pomodoro_startFocusSession,
+        onPressed: () {
+          Navigator.of(context).push(MaterialPageRoute(
+            builder: (context) => FocusScreen(
+              activityId: activity.id,
+              activityName: activity.name,
+            ),
+          ));
+        },
+      );
+    } else {
+      return const SizedBox.shrink();
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
@@ -1017,7 +1056,6 @@ class _PlannerHomePageState extends State<PlannerHomePage>
     final activityProvider = context.watch<ActivityProvider>();
 
     return Scaffold(
-      // Klavye açıldığında taşma hatasını önlemek için en basit ve en etkili çözüm.
       resizeToAvoidBottomInset: false,
       appBar: AppBar(
         title: Text(l10n.appTitle),
@@ -1109,8 +1147,6 @@ class _PlannerHomePageState extends State<PlannerHomePage>
                 final dayKey = hiveKeys[pageIndex % 7];
                 final activities =
                     activityProvider.dailyActivities[dayKey] ?? [];
-
-                // BASİTLEŞTİRİLMİŞ VE SAĞLAM YAPI
                 return Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 16.0),
                   child: Column(
@@ -1152,7 +1188,6 @@ class _PlannerHomePageState extends State<PlannerHomePage>
                                         _getLocalizedTodayName(context)
                                             .toUpperCase(),
                                         style: TextStyle(
-                                            // Gün adını %70 opaklıkta gösterelim
                                             color: clockColor.withAlpha(180),
                                             fontSize: 20,
                                             fontWeight: FontWeight.bold,
@@ -1218,18 +1253,53 @@ class _PlannerHomePageState extends State<PlannerHomePage>
                       Expanded(
                         child: activities.isEmpty
                             ? Center(
-                                child: Text(l10n.noActivityToday,
+                                child: Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Icon(Icons.add_task_rounded,
+                                      size: 60,
+                                      color: Theme.of(context)
+                                          .textTheme
+                                          .bodySmall
+                                          ?.color
+                                          ?.withAlpha((255 * 0.5).round())),
+                                  const SizedBox(height: 16),
+                                  Text(
+                                    l10n.noActivityToday,
+                                    textAlign: TextAlign.center,
                                     style: TextStyle(
-                                        color: Theme.of(context)
-                                            .textTheme
-                                            .bodySmall
-                                            ?.color,
-                                        fontSize: 16)))
+                                      color: Theme.of(context)
+                                          .textTheme
+                                          .bodySmall
+                                          ?.color,
+                                      fontSize: 16,
+                                    ),
+                                  ),
+                                  const SizedBox(height: 8),
+                                  Text(
+                                    l10n.tapPlusToStart,
+                                    textAlign: TextAlign.center,
+                                    style: TextStyle(
+                                      color: Theme.of(context)
+                                          .textTheme
+                                          .bodySmall
+                                          ?.color
+                                          ?.withAlpha((255 * 0.7).round()),
+                                      fontSize: 14,
+                                    ),
+                                  ),
+                                ],
+                              ))
                             : ListView.builder(
                                 key: ValueKey<String>(dayKey),
                                 itemCount: activities.length,
                                 itemBuilder: (context, index) {
                                   final activity = activities[index];
+                                  final baseSubtitleColor = Theme.of(context)
+                                      .textTheme
+                                      .bodySmall
+                                      ?.color;
+
                                   return Card(
                                     margin: const EdgeInsets.symmetric(
                                         vertical: 8.0),
@@ -1249,6 +1319,11 @@ class _PlannerHomePageState extends State<PlannerHomePage>
                                         children: [
                                           Text(
                                             '${_formatTime(activity.startTime)} - ${_formatTime(activity.endTime)}',
+                                            style: TextStyle(
+                                              color:
+                                                  baseSubtitleColor?.withAlpha(
+                                                      (255 * 0.7).round()),
+                                            ),
                                           ),
                                           if (activity.note != null &&
                                               activity.note!.isNotEmpty)
@@ -1257,13 +1332,12 @@ class _PlannerHomePageState extends State<PlannerHomePage>
                                                   top: 4.0),
                                               child: Text(
                                                 activity.note!,
-                                                style: Theme.of(context)
-                                                    .textTheme
-                                                    .bodySmall
-                                                    ?.copyWith(
-                                                      fontStyle:
-                                                          FontStyle.italic,
-                                                    ),
+                                                style: TextStyle(
+                                                  fontStyle: FontStyle.italic,
+                                                  color: baseSubtitleColor
+                                                      ?.withAlpha(
+                                                          (255 * 0.6).round()),
+                                                ),
                                                 maxLines: 2,
                                                 overflow: TextOverflow.ellipsis,
                                               ),
@@ -1328,11 +1402,64 @@ class _PlannerHomePageState extends State<PlannerHomePage>
                                                 ],
                                               ),
                                             ),
+
+                                          // YENİ: Pomodoro İlerleme Bölümü
+                                          if (activity
+                                                  .completedDurationInMinutes >
+                                              0)
+                                            Padding(
+                                              padding: const EdgeInsets.only(
+                                                  top: 8.0),
+                                              child: Column(
+                                                crossAxisAlignment:
+                                                    CrossAxisAlignment.start,
+                                                children: [
+                                                  LinearProgressIndicator(
+                                                    value: activity
+                                                                .durationInMinutes >
+                                                            0
+                                                        ? activity
+                                                                .completedDurationInMinutes /
+                                                            activity
+                                                                .durationInMinutes
+                                                        : 0,
+                                                    backgroundColor: Theme.of(
+                                                            context)
+                                                        .colorScheme
+                                                        .surfaceContainerHighest,
+                                                    valueColor:
+                                                        AlwaysStoppedAnimation<
+                                                                Color>(
+                                                            activity.color
+                                                                .withAlpha((255 *
+                                                                        0.7)
+                                                                    .round())),
+                                                    minHeight: 6,
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                            3),
+                                                  ),
+                                                  const SizedBox(height: 4),
+                                                  Text(
+                                                    "${activity.completedDurationInMinutes} / ${activity.durationInMinutes} min completed", // .arb'a eklenecek
+                                                    style: TextStyle(
+                                                      fontSize: 12,
+                                                      color: baseSubtitleColor
+                                                          ?.withAlpha(
+                                                              (255 * 0.7)
+                                                                  .round()),
+                                                    ),
+                                                  ),
+                                                ],
+                                              ),
+                                            ),
                                         ],
                                       ),
                                       trailing: Row(
                                         mainAxisSize: MainAxisSize.min,
                                         children: [
+                                          _buildPomodoroStartButton(
+                                              context, activity, dayKey),
                                           IconButton(
                                               icon: Icon(Icons.edit,
                                                   color: Theme.of(context)

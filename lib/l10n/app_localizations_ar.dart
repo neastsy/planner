@@ -359,4 +359,42 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get error_detailsForDeveloper => 'تفاصيل الخطأ (للمطور):';
+
+  @override
+  String get pomodoro_startFocusSession => 'بدء جلسة التركيز';
+
+  @override
+  String get pomodoro_sessionStateWork => 'عمل';
+
+  @override
+  String get pomodoro_sessionStateShortBreak => 'استراحة قصيرة';
+
+  @override
+  String get pomodoro_sessionStateLongBreak => 'استراحة طويلة';
+
+  @override
+  String get pomodoro_sessionStatePaused => 'متوقف مؤقتاً';
+
+  @override
+  String pomodoro_completedSessions(int count) {
+    return 'الجلسات المكتملة: $count';
+  }
+
+  @override
+  String get pomodoro_endSessionTitle => 'إنهاء الجلسة';
+
+  @override
+  String pomodoro_endSessionContent(
+      Object sessionCount, Object minutes, Object activityName) {
+    return 'هل تريد إضافة $sessionCount جلسة (جلسات) بومودورو ($minutes دقيقة) إلى نشاط \'$activityName\'؟';
+  }
+
+  @override
+  String get pomodoro_dontSave => 'عدم الحفظ';
+
+  @override
+  String get pomodoro_saveAndExit => 'نعم، أضف';
+
+  @override
+  String get tapPlusToStart => 'اضغط على زر \'+\' لبدء التخطيط.';
 }

@@ -154,5 +154,16 @@
   "error_appCouldNotStart": "Anwendung konnte nicht gestartet werden",
   "error_unexpectedError": "Ein unerwarteter Fehler ist aufgetreten. Bitte versuchen Sie, die Anwendung neu zu starten.",
   "error_restart": "Neu starten",
-  "error_detailsForDeveloper": "Fehlerdetails (für Entwickler):"  
+  "error_detailsForDeveloper": "Fehlerdetails (für Entwickler):",
+  "pomodoro_startFocusSession": "Fokus-Sitzung starten",
+  "pomodoro_sessionStateWork": "Arbeit",
+  "pomodoro_sessionStateShortBreak": "Kurze Pause",
+  "pomodoro_sessionStateLongBreak": "Lange Pause",
+  "pomodoro_sessionStatePaused": "Pausiert",
+  "pomodoro_completedSessions": "Abgeschlossene Sitzungen: {count}",
+  "pomodoro_endSessionTitle": "Sitzung beenden",
+  "pomodoro_endSessionContent": "{sessionCount} Pomodoro-Sitzung(en) ({minutes} Minuten) zur Aktivität '{activityName}' hinzufügen?",
+  "pomodoro_dontSave": "Nicht speichern",
+  "pomodoro_saveAndExit": "Ja, hinzufügen",
+  "tapPlusToStart": "Tippen Sie auf die '+'-Schaltfläche, um mit der Planung zu beginnen." 
 }

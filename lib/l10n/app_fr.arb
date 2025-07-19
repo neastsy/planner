@@ -154,5 +154,16 @@
   "error_appCouldNotStart": "L'application n'a pas pu démarrer",
   "error_unexpectedError": "Une erreur inattendue s'est produite. Veuillez essayer de redémarrer l'application.",
   "error_restart": "Redémarrer",
-  "error_detailsForDeveloper": "Détails de l'erreur (pour le développeur):"  
+  "error_detailsForDeveloper": "Détails de l'erreur (pour le développeur):",
+  "pomodoro_startFocusSession": "Démarrer la session de concentration",
+  "pomodoro_sessionStateWork": "Travail",
+  "pomodoro_sessionStateShortBreak": "Courte pause",
+  "pomodoro_sessionStateLongBreak": "Longue pause",
+  "pomodoro_sessionStatePaused": "En pause",
+  "pomodoro_completedSessions": "Sessions terminées : {count}",
+  "pomodoro_endSessionTitle": "Terminer la session",
+  "pomodoro_endSessionContent": "Ajouter {sessionCount} session(s) Pomodoro ({minutes} minutes) à l'activité '{activityName}' ?",
+  "pomodoro_dontSave": "Ne pas enregistrer",
+  "pomodoro_saveAndExit": "Oui, ajouter" ,
+  "tapPlusToStart": "Appuyez sur le bouton '+' pour commencer à planifier."
 }
