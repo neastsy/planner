@@ -179,5 +179,9 @@
   },
   "pomodoro_dontSave": "Kaydetme",
   "pomodoro_saveAndExit": "Evet, Ekle",
-  "tapPlusToStart": "Planlamaya başlamak için '+' butonuna dokunun."
+  "tapPlusToStart": "Planlamaya başlamak için '+' butonuna dokunun.",
+  "pomodoro_resetProgress": "İlerlemeyi Sıfırla",
+  "pomodoro_continueSession": "Seansa Devam Et",
+  "pomodoro_activityCompleted": "Bu aktivite zaten tamamlandı!",
+  "targetReached": "Hedefe Ulaşıldı! '{activityName}' aktivitesini tamamladınız."
 }

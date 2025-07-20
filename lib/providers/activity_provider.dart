@@ -72,6 +72,44 @@ class ActivityProvider with ChangeNotifier {
     final List<String> hiveKeys = AppConstants.dayKeys;
     _selectedDay = hiveKeys[DateTime.now().weekday - 1];
     _loadActivities();
+    _clearOutdatedProgress();
+  }
+
+  Future<void> _clearOutdatedProgress() async {
+    final todayKey = AppConstants.dayKeys[DateTime.now().weekday - 1];
+    bool dataChanged = false;
+
+    for (var dayKey in _dailyActivities.keys) {
+      if (dayKey != todayKey &&
+          _dailyActivities[dayKey]!
+              .any((a) => a.completedDurationInMinutes > 0)) {
+        final updatedList = _dailyActivities[dayKey]!.map((activity) {
+          if (activity.completedDurationInMinutes > 0) {
+            dataChanged = true;
+            return Activity(
+              id: activity.id,
+              name: activity.name,
+              startTime: activity.startTime,
+              endTime: activity.endTime,
+              color: activity.color,
+              note: activity.note,
+              notificationMinutesBefore: activity.notificationMinutesBefore,
+              tags: activity.tags,
+              isNotificationRecurring: activity.isNotificationRecurring,
+              completedDurationInMinutes: 0,
+            );
+          }
+          return activity;
+        }).toList();
+
+        _dailyActivities[dayKey] = updatedList;
+        await _saveActivitiesForDay(dayKey);
+      }
+    }
+
+    if (dataChanged) {
+      notifyListeners();
+    }
   }
 
   void changeDay(String newDay) {
@@ -153,6 +191,46 @@ class ActivityProvider with ChangeNotifier {
       notifyListeners();
       debugPrint(
           "Added $minutesToAdd minutes to '${updatedActivity.name}'. New total: ${updatedActivity.completedDurationInMinutes}");
+    }
+  }
+
+  void resetCompletedDuration(String activityId) {
+    String? dayKeyOfActivity;
+    int? indexInList;
+
+    for (var dayKey in _dailyActivities.keys) {
+      final activities = _dailyActivities[dayKey]!;
+      final index = activities.indexWhere((a) => a.id == activityId);
+      if (index != -1) {
+        dayKeyOfActivity = dayKey;
+        indexInList = index;
+        break;
+      }
+    }
+
+    if (dayKeyOfActivity != null && indexInList != null) {
+      final activitiesForDay = _dailyActivities[dayKeyOfActivity]!;
+      final oldActivity = activitiesForDay[indexInList];
+      if (oldActivity.completedDurationInMinutes == 0) return;
+
+      final updatedActivity = Activity(
+        id: oldActivity.id,
+        name: oldActivity.name,
+        startTime: oldActivity.startTime,
+        endTime: oldActivity.endTime,
+        color: oldActivity.color,
+        note: oldActivity.note,
+        notificationMinutesBefore: oldActivity.notificationMinutesBefore,
+        tags: oldActivity.tags,
+        isNotificationRecurring: oldActivity.isNotificationRecurring,
+        completedDurationInMinutes: 0,
+      );
+
+      activitiesForDay[indexInList] = updatedActivity;
+      _dailyActivities[dayKeyOfActivity] = activitiesForDay;
+      _saveActivitiesForDay(dayKeyOfActivity);
+      notifyListeners();
+      debugPrint("Reset completed duration for '${updatedActivity.name}'.");
     }
   }
 

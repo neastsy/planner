@@ -83,7 +83,12 @@ class FocusScreen extends StatelessWidget {
     return Consumer<PomodoroProvider>(
       builder: (context, provider, child) {
         final remainingTime = provider.remainingTime;
-        final totalDuration = provider.workDuration;
+        final totalDuration = provider.currentState == PomodoroState.work
+            ? provider.currentWorkDuration
+            : (provider.currentState == PomodoroState.shortBreak
+                ? 5 * 60
+                : 15 * 60);
+
         final progress =
             totalDuration > 0 ? 1 - (remainingTime / totalDuration) : 0.0;
 

@@ -165,5 +165,9 @@
   "pomodoro_endSessionContent": "要将 {sessionCount} 个番茄时段（{minutes} 分钟）添加到活动“{activityName}”吗？",
   "pomodoro_dontSave": "不保存",
   "pomodoro_saveAndExit": "是的，添加",
-  "tapPlusToStart": "点击“+”按钮开始计划。"    
+  "tapPlusToStart": "点击“+”按钮开始计划。",
+  "pomodoro_resetProgress": "重置进度",
+  "pomodoro_continueSession": "继续时段",
+  "pomodoro_activityCompleted": "此活动已完成！",
+  "targetReached": "已达成目标！您已完成“{activityName}”活动。"      
 }

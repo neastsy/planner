@@ -392,4 +392,18 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get tapPlusToStart => '点击“+”按钮开始计划。';
+
+  @override
+  String get pomodoro_resetProgress => '重置进度';
+
+  @override
+  String get pomodoro_continueSession => '继续时段';
+
+  @override
+  String get pomodoro_activityCompleted => '此活动已完成！';
+
+  @override
+  String targetReached(Object activityName) {
+    return '已达成目标！您已完成“$activityName”活动。';
+  }
 }

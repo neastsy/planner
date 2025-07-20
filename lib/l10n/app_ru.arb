@@ -165,5 +165,9 @@
   "pomodoro_endSessionContent": "Добавить {sessionCount} сеанс(ов) Pomodoro ({minutes} минут) к задаче '{activityName}'?",
   "pomodoro_dontSave": "Не сохранять",
   "pomodoro_saveAndExit": "Да, добавить",
-  "tapPlusToStart": "Нажмите кнопку '+', чтобы начать планирование."  
+  "tapPlusToStart": "Нажмите кнопку '+', чтобы начать планирование.",
+  "pomodoro_resetProgress": "Сбросить прогресс",
+  "pomodoro_continueSession": "Продолжить сеанс",
+  "pomodoro_activityCompleted": "Это задание уже выполнено!",
+  "targetReached": "Цель достигнута! Вы завершили задачу '{activityName}'."   
 }

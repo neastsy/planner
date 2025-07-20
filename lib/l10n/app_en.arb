@@ -180,5 +180,9 @@
   },
   "pomodoro_dontSave": "Don't Save",
   "pomodoro_saveAndExit": "Yes, Add" ,
-  "tapPlusToStart": "Tap the '+' button to start planning."
+  "tapPlusToStart": "Tap the '+' button to start planning.",
+  "pomodoro_resetProgress": "Reset Progress",
+  "pomodoro_continueSession": "Continue Session",
+  "pomodoro_activityCompleted": "This activity is already completed!",
+  "targetReached": "Target Reached! You completed the '{activityName}' activity."
 }

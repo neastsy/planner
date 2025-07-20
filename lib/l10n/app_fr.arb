@@ -165,5 +165,9 @@
   "pomodoro_endSessionContent": "Ajouter {sessionCount} session(s) Pomodoro ({minutes} minutes) à l'activité '{activityName}' ?",
   "pomodoro_dontSave": "Ne pas enregistrer",
   "pomodoro_saveAndExit": "Oui, ajouter" ,
-  "tapPlusToStart": "Appuyez sur le bouton '+' pour commencer à planifier."
+  "tapPlusToStart": "Appuyez sur le bouton '+' pour commencer à planifier.",
+  "pomodoro_resetProgress": "Réinitialiser la progression",
+  "pomodoro_continueSession": "Continuer la session",
+  "pomodoro_activityCompleted": "Cette activité est déjà terminée !",
+  "targetReached": "Objectif atteint ! Vous avez terminé l'activité '{activityName}'."
 }

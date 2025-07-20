@@ -832,6 +832,30 @@ abstract class AppLocalizations {
   /// In tr, this message translates to:
   /// **'Planlamaya başlamak için \'+\' butonuna dokunun.'**
   String get tapPlusToStart;
+
+  /// No description provided for @pomodoro_resetProgress.
+  ///
+  /// In tr, this message translates to:
+  /// **'İlerlemeyi Sıfırla'**
+  String get pomodoro_resetProgress;
+
+  /// No description provided for @pomodoro_continueSession.
+  ///
+  /// In tr, this message translates to:
+  /// **'Seansa Devam Et'**
+  String get pomodoro_continueSession;
+
+  /// No description provided for @pomodoro_activityCompleted.
+  ///
+  /// In tr, this message translates to:
+  /// **'Bu aktivite zaten tamamlandı!'**
+  String get pomodoro_activityCompleted;
+
+  /// No description provided for @targetReached.
+  ///
+  /// In tr, this message translates to:
+  /// **'Hedefe Ulaşıldı! \'{activityName}\' aktivitesini tamamladınız.'**
+  String targetReached(Object activityName);
 }
 
 class _AppLocalizationsDelegate

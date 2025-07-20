@@ -10,8 +10,8 @@ enum PomodoroState {
 }
 
 class PomodoroProvider with ChangeNotifier {
-  final int _workDuration = 25 * 60;
-  final int _shortBreakDuration = 5 * 60;
+  final int _workDuration = 2 * 60;
+  final int _shortBreakDuration = 1 * 60;
   final int _longBreakDuration = 15 * 60;
   final int _sessionsBeforeLongBreak = 4;
 
@@ -22,11 +22,38 @@ class PomodoroProvider with ChangeNotifier {
   Timer? _timer;
   final AudioPlayer _audioPlayer = AudioPlayer();
 
+  int _currentWorkDuration = 25 * 60;
+
   PomodoroState get currentState => _currentState;
   bool get isPaused => _isPaused;
   int get remainingTime => _remainingTime;
   int get completedSessions => _completedSessions;
   int get workDuration => _workDuration;
+  int get currentWorkDuration => _currentWorkDuration;
+
+  VoidCallback? onTargetReached;
+
+  void playTargetReachedSound() {
+    _playSound('sounds/end_sound.mp3');
+  }
+
+  void startCustomSession({
+    required int durationInSeconds,
+    required int totalActivityDuration,
+    required int alreadyCompletedDuration,
+    required VoidCallback onTargetReachedCallback,
+  }) {
+    _isPaused = false;
+    _currentState = PomodoroState.work;
+    _currentWorkDuration = durationInSeconds;
+    _remainingTime = durationInSeconds;
+    onTargetReached = onTargetReachedCallback;
+    _startTimer(
+      totalActivityDuration: totalActivityDuration,
+      alreadyCompletedDuration: alreadyCompletedDuration,
+    );
+    notifyListeners();
+  }
 
   void toggleTimer() {
     _isPaused = !_isPaused;
@@ -46,6 +73,7 @@ class PomodoroProvider with ChangeNotifier {
     _timer?.cancel();
     _currentState = PomodoroState.initial;
     _isPaused = true;
+    _currentWorkDuration = _workDuration;
     _remainingTime = _workDuration;
     _completedSessions = 0;
     notifyListeners();
@@ -53,15 +81,30 @@ class PomodoroProvider with ChangeNotifier {
 
   void _startWorkSession() {
     _currentState = PomodoroState.work;
+    _currentWorkDuration = _workDuration;
     _remainingTime = _workDuration;
     _startTimer();
   }
 
-  void _startTimer() {
+  void _startTimer(
+      {int? totalActivityDuration, int? alreadyCompletedDuration}) {
+    bool targetReachedNotified = false;
     _timer?.cancel();
     _timer = Timer.periodic(const Duration(seconds: 1), (timer) {
       if (_remainingTime > 0) {
         _remainingTime--;
+        if (totalActivityDuration != null &&
+            alreadyCompletedDuration != null &&
+            !targetReachedNotified) {
+          final elapsedSeconds = _currentWorkDuration - _remainingTime;
+          final currentTotalCompleted =
+              (alreadyCompletedDuration * 60) + elapsedSeconds;
+
+          if (currentTotalCompleted >= (totalActivityDuration * 60)) {
+            onTargetReached?.call();
+            targetReachedNotified = true;
+          }
+        }
       } else {
         _timer?.cancel();
         _isPaused = true;

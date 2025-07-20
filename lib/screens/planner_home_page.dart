@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:math';
 
 import 'package:flutter/material.dart';
+import 'package:gunluk_planlayici/providers/pomodoro_provider.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 
@@ -1014,11 +1015,9 @@ class _PlannerHomePageState extends State<PlannerHomePage>
       BuildContext context, Activity activity, String dayKey) {
     final todayKey = AppConstants.dayKeys[DateTime.now().weekday - 1];
     if (dayKey != todayKey) {
-      // Eğer bakılan gün bugün değilse, butonu HİÇ gösterme.
       return const SizedBox.shrink();
     }
 
-    // 2. Adım: Saat kontrolü (bu kısım aynı)
     final now = TimeOfDay.now();
     final nowInMinutes = now.hour * 60 + now.minute;
     final startInMinutes =
@@ -1031,22 +1030,116 @@ class _PlannerHomePageState extends State<PlannerHomePage>
 
     if (isCurrentActivity) {
       final l10n = AppLocalizations.of(context)!;
+      final bool isCompleted = activity.durationInMinutes > 0 &&
+          activity.completedDurationInMinutes >= activity.durationInMinutes;
+
       return IconButton(
-        icon: Icon(Icons.play_circle_fill_rounded,
-            color: Theme.of(context).colorScheme.primary),
-        tooltip: l10n.pomodoro_startFocusSession,
+        icon: Icon(
+          isCompleted
+              ? Icons.check_circle_rounded
+              : Icons.play_circle_fill_rounded,
+          color: isCompleted
+              ? Colors.green
+              : Theme.of(context).colorScheme.primary,
+        ),
+        tooltip: activity.completedDurationInMinutes > 0
+            ? l10n.pomodoro_continueSession
+            : l10n.pomodoro_startFocusSession,
         onPressed: () {
-          Navigator.of(context).push(MaterialPageRoute(
-            builder: (context) => FocusScreen(
-              activityId: activity.id,
-              activityName: activity.name,
-            ),
-          ));
+          _startPomodoroSession(context, activity);
         },
       );
     } else {
       return const SizedBox.shrink();
     }
+  }
+
+  void _startPomodoroSession(BuildContext context, Activity activity) {
+    final l10n = AppLocalizations.of(context)!;
+    final pomodoroProvider = context.read<PomodoroProvider>();
+
+    final totalDuration = activity.durationInMinutes;
+    final completedDuration = activity.completedDurationInMinutes;
+    final remainingDurationForActivity = totalDuration - completedDuration;
+    if (remainingDurationForActivity <= 0) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(l10n.pomodoro_activityCompleted)),
+      );
+      return;
+    }
+
+    int sessionDurationInSeconds;
+    if (remainingDurationForActivity < (pomodoroProvider.workDuration / 60)) {
+      sessionDurationInSeconds = remainingDurationForActivity * 60;
+    } else {
+      sessionDurationInSeconds = pomodoroProvider.workDuration;
+    }
+
+    pomodoroProvider.startCustomSession(
+      durationInSeconds: sessionDurationInSeconds,
+      totalActivityDuration: totalDuration,
+      alreadyCompletedDuration: completedDuration,
+      onTargetReachedCallback: () {
+        context.read<PomodoroProvider>().playTargetReachedSound();
+
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text("🏆 ${l10n.targetReached(activity.name)}"),
+            backgroundColor: Colors.green,
+          ),
+        );
+      },
+    );
+
+    Navigator.of(context).push(MaterialPageRoute(
+      builder: (context) => FocusScreen(
+        activityId: activity.id,
+        activityName: activity.name,
+      ),
+    ));
+  }
+
+  void _showPomodoroActionsMenu(BuildContext context, Activity activity) {
+    final l10n = AppLocalizations.of(context)!;
+    final activityProvider = context.read<ActivityProvider>();
+
+    showModalBottomSheet(
+      context: context,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+      ),
+      builder: (context) {
+        return Wrap(
+          children: <Widget>[
+            ListTile(
+              title: Text(
+                activity.name,
+                style: Theme.of(context).textTheme.titleLarge,
+                textAlign: TextAlign.center,
+              ),
+            ),
+            // Bilgi
+            ListTile(
+              leading: const Icon(Icons.hourglass_bottom_rounded),
+              title: Text(
+                  "${activity.completedDurationInMinutes} / ${activity.durationInMinutes} min completed"),
+            ),
+            ListTile(
+              leading: Icon(Icons.refresh_rounded,
+                  color: Theme.of(context).colorScheme.error),
+              title: Text(
+                l10n.pomodoro_resetProgress,
+                style: TextStyle(color: Theme.of(context).colorScheme.error),
+              ),
+              onTap: () {
+                activityProvider.resetCompletedDuration(activity.id);
+                Navigator.pop(context);
+              },
+            ),
+          ],
+        );
+      },
+    );
   }
 
   @override
@@ -1317,31 +1410,49 @@ class _PlannerHomePageState extends State<PlannerHomePage>
                                         crossAxisAlignment:
                                             CrossAxisAlignment.start,
                                         children: [
-                                          Text(
-                                            '${_formatTime(activity.startTime)} - ${_formatTime(activity.endTime)}',
-                                            style: TextStyle(
-                                              color:
-                                                  baseSubtitleColor?.withAlpha(
-                                                      (255 * 0.7).round()),
-                                            ),
-                                          ),
-                                          if (activity.note != null &&
-                                              activity.note!.isNotEmpty)
-                                            Padding(
-                                              padding: const EdgeInsets.only(
-                                                  top: 4.0),
-                                              child: Text(
-                                                activity.note!,
-                                                style: TextStyle(
-                                                  fontStyle: FontStyle.italic,
-                                                  color: baseSubtitleColor
-                                                      ?.withAlpha(
-                                                          (255 * 0.6).round()),
+                                          // Temel metin rengini bir değişkene alalım
+                                          Builder(builder: (context) {
+                                            final baseSubtitleColor =
+                                                Theme.of(context)
+                                                    .textTheme
+                                                    .bodySmall
+                                                    ?.color;
+                                            return Column(
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.start,
+                                              children: [
+                                                Text(
+                                                  '${_formatTime(activity.startTime)} - ${_formatTime(activity.endTime)}',
+                                                  style: TextStyle(
+                                                    color: baseSubtitleColor
+                                                        ?.withAlpha((255 * 0.7)
+                                                            .round()),
+                                                  ),
                                                 ),
-                                                maxLines: 2,
-                                                overflow: TextOverflow.ellipsis,
-                                              ),
-                                            ),
+                                                if (activity.note != null &&
+                                                    activity.note!.isNotEmpty)
+                                                  Padding(
+                                                    padding:
+                                                        const EdgeInsets.only(
+                                                            top: 4.0),
+                                                    child: Text(
+                                                      activity.note!,
+                                                      style: TextStyle(
+                                                        fontStyle:
+                                                            FontStyle.italic,
+                                                        color: baseSubtitleColor
+                                                            ?.withAlpha(
+                                                                (255 * 0.6)
+                                                                    .round()),
+                                                      ),
+                                                      maxLines: 2,
+                                                      overflow:
+                                                          TextOverflow.ellipsis,
+                                                    ),
+                                                  ),
+                                              ],
+                                            );
+                                          }),
                                           if (activity.tags.isNotEmpty)
                                             Padding(
                                               padding: const EdgeInsets.only(
@@ -1402,55 +1513,76 @@ class _PlannerHomePageState extends State<PlannerHomePage>
                                                 ],
                                               ),
                                             ),
-
-                                          // YENİ: Pomodoro İlerleme Bölümü
                                           if (activity
                                                   .completedDurationInMinutes >
                                               0)
-                                            Padding(
-                                              padding: const EdgeInsets.only(
-                                                  top: 8.0),
-                                              child: Column(
-                                                crossAxisAlignment:
-                                                    CrossAxisAlignment.start,
-                                                children: [
-                                                  LinearProgressIndicator(
-                                                    value: activity
-                                                                .durationInMinutes >
-                                                            0
-                                                        ? activity
-                                                                .completedDurationInMinutes /
-                                                            activity
-                                                                .durationInMinutes
-                                                        : 0,
-                                                    backgroundColor: Theme.of(
-                                                            context)
-                                                        .colorScheme
-                                                        .surfaceContainerHighest,
-                                                    valueColor:
-                                                        AlwaysStoppedAnimation<
-                                                                Color>(
-                                                            activity.color
-                                                                .withAlpha((255 *
-                                                                        0.7)
-                                                                    .round())),
-                                                    minHeight: 6,
-                                                    borderRadius:
-                                                        BorderRadius.circular(
-                                                            3),
-                                                  ),
-                                                  const SizedBox(height: 4),
-                                                  Text(
-                                                    "${activity.completedDurationInMinutes} / ${activity.durationInMinutes} min completed", // .arb'a eklenecek
-                                                    style: TextStyle(
-                                                      fontSize: 12,
-                                                      color: baseSubtitleColor
-                                                          ?.withAlpha(
-                                                              (255 * 0.7)
-                                                                  .round()),
+                                            GestureDetector(
+                                              onTap: () {
+                                                _showPomodoroActionsMenu(
+                                                    context, activity);
+                                              },
+                                              child: Container(
+                                                margin: const EdgeInsets.only(
+                                                    top: 8.0),
+                                                padding:
+                                                    const EdgeInsets.all(8.0),
+                                                decoration: BoxDecoration(
+                                                  color: Theme.of(context)
+                                                      .colorScheme
+                                                      .surfaceContainer,
+                                                  borderRadius:
+                                                      BorderRadius.circular(8),
+                                                ),
+                                                child: Column(
+                                                  crossAxisAlignment:
+                                                      CrossAxisAlignment.start,
+                                                  children: [
+                                                    LinearProgressIndicator(
+                                                      value: activity
+                                                                  .durationInMinutes >
+                                                              0
+                                                          ? activity
+                                                                  .completedDurationInMinutes /
+                                                              activity
+                                                                  .durationInMinutes
+                                                          : 0,
+                                                      backgroundColor: Theme.of(
+                                                              context)
+                                                          .colorScheme
+                                                          .surfaceContainerHighest,
+                                                      valueColor:
+                                                          AlwaysStoppedAnimation<
+                                                                  Color>(
+                                                              activity.color
+                                                                  .withAlpha((255 *
+                                                                          0.7)
+                                                                      .round())),
+                                                      minHeight: 6,
+                                                      borderRadius:
+                                                          BorderRadius.circular(
+                                                              3),
                                                     ),
-                                                  ),
-                                                ],
+                                                    const SizedBox(height: 4),
+                                                    Builder(builder: (context) {
+                                                      final baseTextColor =
+                                                          Theme.of(context)
+                                                              .textTheme
+                                                              .bodySmall
+                                                              ?.color;
+                                                      return Text(
+                                                        "${activity.completedDurationInMinutes} / ${activity.durationInMinutes} min completed", // .arb'a eklenecek
+                                                        style: TextStyle(
+                                                          fontSize: 12,
+                                                          // DÜZELTME: withAlpha kullanıldı
+                                                          color: baseTextColor
+                                                              ?.withAlpha(
+                                                                  (255 * 0.8)
+                                                                      .round()),
+                                                        ),
+                                                      );
+                                                    }),
+                                                  ],
+                                                ),
                                               ),
                                             ),
                                         ],

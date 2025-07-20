@@ -400,4 +400,18 @@ class AppLocalizationsTr extends AppLocalizations {
   @override
   String get tapPlusToStart =>
       'Planlamaya başlamak için \'+\' butonuna dokunun.';
+
+  @override
+  String get pomodoro_resetProgress => 'İlerlemeyi Sıfırla';
+
+  @override
+  String get pomodoro_continueSession => 'Seansa Devam Et';
+
+  @override
+  String get pomodoro_activityCompleted => 'Bu aktivite zaten tamamlandı!';
+
+  @override
+  String targetReached(Object activityName) {
+    return 'Hedefe Ulaşıldı! \'$activityName\' aktivitesini tamamladınız.';
+  }
 }

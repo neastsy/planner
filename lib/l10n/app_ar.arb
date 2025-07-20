@@ -165,5 +165,9 @@
   "pomodoro_endSessionContent": "هل تريد إضافة {sessionCount} جلسة (جلسات) بومودورو ({minutes} دقيقة) إلى نشاط '{activityName}'؟",
   "pomodoro_dontSave": "عدم الحفظ",
   "pomodoro_saveAndExit": "نعم، أضف",
-  "tapPlusToStart": "اضغط على زر '+' لبدء التخطيط."   
+  "tapPlusToStart": "اضغط على زر '+' لبدء التخطيط.",
+  "pomodoro_resetProgress": "إعادة ضبط التقدم",
+  "pomodoro_continueSession": "متابعة الجلسة",
+  "pomodoro_activityCompleted": "هذا النشاط مكتمل بالفعل!",
+  "targetReached": "تم الوصول إلى الهدف! لقد أكملت نشاط '{activityName}'."
 }

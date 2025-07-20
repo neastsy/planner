@@ -165,5 +165,9 @@
   "pomodoro_endSessionContent": "{sessionCount}回のポモドーロセッション（{minutes}分）をアクティビティ「{activityName}」に追加しますか？",
   "pomodoro_dontSave": "保存しない",
   "pomodoro_saveAndExit": "はい、追加する",
-  "tapPlusToStart": "「+」ボタンをタップして計画を開始します。"    
+  "tapPlusToStart": "「+」ボタンをタップして計画を開始します。",
+  "pomodoro_resetProgress": "進捗をリセット",
+  "pomodoro_continueSession": "セッションを続行",
+  "pomodoro_activityCompleted": "このアクティビティは既に完了しています！",
+  "targetReached": "目標達成！アクティビティ「{activityName}」を完了しました。"     
 }

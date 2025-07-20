@@ -402,4 +402,18 @@ class AppLocalizationsRu extends AppLocalizations {
   @override
   String get tapPlusToStart =>
       'Нажмите кнопку \'+\', чтобы начать планирование.';
+
+  @override
+  String get pomodoro_resetProgress => 'Сбросить прогресс';
+
+  @override
+  String get pomodoro_continueSession => 'Продолжить сеанс';
+
+  @override
+  String get pomodoro_activityCompleted => 'Это задание уже выполнено!';
+
+  @override
+  String targetReached(Object activityName) {
+    return 'Цель достигнута! Вы завершили задачу \'$activityName\'.';
+  }
 }

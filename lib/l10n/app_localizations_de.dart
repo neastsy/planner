@@ -406,4 +406,19 @@ class AppLocalizationsDe extends AppLocalizations {
   @override
   String get tapPlusToStart =>
       'Tippen Sie auf die \'+\'-Schaltfläche, um mit der Planung zu beginnen.';
+
+  @override
+  String get pomodoro_resetProgress => 'Fortschritt zurücksetzen';
+
+  @override
+  String get pomodoro_continueSession => 'Sitzung fortsetzen';
+
+  @override
+  String get pomodoro_activityCompleted =>
+      'Diese Aktivität ist bereits abgeschlossen!';
+
+  @override
+  String targetReached(Object activityName) {
+    return 'Ziel erreicht! Sie haben die Aktivität \'$activityName\' abgeschlossen.';
+  }
 }
