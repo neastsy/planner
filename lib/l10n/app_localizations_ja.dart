@@ -406,4 +406,14 @@ class AppLocalizationsJa extends AppLocalizations {
   String targetReached(Object activityName) {
     return '目標達成！アクティビティ「$activityName」を完了しました。';
   }
+
+  @override
+  String pomodoro_completedMinutes(Object completed, Object total) {
+    return '$completed / $total 分 完了';
+  }
+
+  @override
+  String pomodoro_confirmSaveContent(Object activityName, Object minutes) {
+    return 'このセッションで完了した$minutes分をアクティビティ「$activityName」に追加しますか？';
+  }
 }

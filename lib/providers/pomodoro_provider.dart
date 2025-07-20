@@ -3,55 +3,60 @@ import 'package:flutter/foundation.dart';
 import 'package:audioplayers/audioplayers.dart';
 
 enum PomodoroState {
-  initial,
   work,
   shortBreak,
   longBreak,
 }
 
 class PomodoroProvider with ChangeNotifier {
-  final int _workDuration = 2 * 60;
-  final int _shortBreakDuration = 1 * 60;
+  // --- Ayarlar ---
+  final int _workDuration = 25 * 60;
+  final int _shortBreakDuration = 5 * 60;
   final int _longBreakDuration = 15 * 60;
   final int _sessionsBeforeLongBreak = 4;
 
-  PomodoroState _currentState = PomodoroState.initial;
+  // --- Anlık Durum Değişkenleri ---
+  PomodoroState _currentState = PomodoroState.work;
   bool _isPaused = true;
-  int _remainingTime = 25 * 60;
-  int _completedSessions = 0;
+  int _remainingTimeInSession = 0;
+  int _completedWorkSessions = 0;
   Timer? _timer;
   final AudioPlayer _audioPlayer = AudioPlayer();
 
-  int _currentWorkDuration = 25 * 60;
-
-  PomodoroState get currentState => _currentState;
-  bool get isPaused => _isPaused;
-  int get remainingTime => _remainingTime;
-  int get completedSessions => _completedSessions;
-  int get workDuration => _workDuration;
-  int get currentWorkDuration => _currentWorkDuration;
-
+  int _totalTargetMinutes = 0;
+  int _alreadyCompletedMinutes = 0;
+  // YENİ: Sadece bu oturumda tamamlanan gerçek çalışma süresini saniye cinsinden tutar.
+  int _elapsedWorkSecondsInSession = 0;
   VoidCallback? onTargetReached;
 
-  void playTargetReachedSound() {
-    _playSound('sounds/end_sound.mp3');
-  }
+  // --- Getter'lar ---
+  PomodoroState get currentState => _currentState;
+  bool get isSessionActive => _totalTargetMinutes > 0;
+  bool get isPaused => _isPaused;
+  int get remainingTimeInSession => _remainingTimeInSession;
+  int get completedWorkSessions => _completedWorkSessions;
 
-  void startCustomSession({
-    required int durationInSeconds,
-    required int totalActivityDuration,
-    required int alreadyCompletedDuration,
+  // DÜZELTME: Kaydedilecek olan, SADECE BU OTURUMDA tamamlanan süreyi verir.
+  int get newCompletedWorkMinutes => _elapsedWorkSecondsInSession ~/ 60;
+
+  // --- Ana Kontrol Metotları ---
+
+  void startSession({
+    required int totalActivityMinutes,
+    required int alreadyCompletedMinutes,
     required VoidCallback onTargetReachedCallback,
   }) {
-    _isPaused = false;
+    if (isSessionActive) return; // Zaten aktif bir seans varsa başlatma
+
+    _totalTargetMinutes = totalActivityMinutes;
+    _alreadyCompletedMinutes = alreadyCompletedMinutes;
+    _completedWorkSessions = 0;
+    _elapsedWorkSecondsInSession = 0;
     _currentState = PomodoroState.work;
-    _currentWorkDuration = durationInSeconds;
-    _remainingTime = durationInSeconds;
     onTargetReached = onTargetReachedCallback;
-    _startTimer(
-      totalActivityDuration: totalActivityDuration,
-      alreadyCompletedDuration: alreadyCompletedDuration,
-    );
+
+    _determineNextWorkSessionDuration();
+    // Seansı başlatmıyoruz, sadece hazırlıyoruz. Kullanıcı play'e basınca başlayacak.
     notifyListeners();
   }
 
@@ -60,54 +65,35 @@ class PomodoroProvider with ChangeNotifier {
     if (_isPaused) {
       _timer?.cancel();
     } else {
-      if (_currentState == PomodoroState.initial) {
-        _startWorkSession();
-      } else {
-        _startTimer();
-      }
+      _startTimer();
     }
     notifyListeners();
   }
 
   void stop() {
     _timer?.cancel();
-    _currentState = PomodoroState.initial;
     _isPaused = true;
-    _currentWorkDuration = _workDuration;
-    _remainingTime = _workDuration;
-    _completedSessions = 0;
+    _totalTargetMinutes = 0;
+    _alreadyCompletedMinutes = 0;
+    _completedWorkSessions = 0;
+    _elapsedWorkSecondsInSession = 0;
+    _remainingTimeInSession = 0;
+    _currentState = PomodoroState.work;
     notifyListeners();
   }
 
-  void _startWorkSession() {
-    _currentState = PomodoroState.work;
-    _currentWorkDuration = _workDuration;
-    _remainingTime = _workDuration;
-    _startTimer();
-  }
+  // --- İç Mantık Metotları ---
 
-  void _startTimer(
-      {int? totalActivityDuration, int? alreadyCompletedDuration}) {
-    bool targetReachedNotified = false;
+  void _startTimer() {
     _timer?.cancel();
     _timer = Timer.periodic(const Duration(seconds: 1), (timer) {
-      if (_remainingTime > 0) {
-        _remainingTime--;
-        if (totalActivityDuration != null &&
-            alreadyCompletedDuration != null &&
-            !targetReachedNotified) {
-          final elapsedSeconds = _currentWorkDuration - _remainingTime;
-          final currentTotalCompleted =
-              (alreadyCompletedDuration * 60) + elapsedSeconds;
-
-          if (currentTotalCompleted >= (totalActivityDuration * 60)) {
-            onTargetReached?.call();
-            targetReachedNotified = true;
-          }
+      if (_remainingTimeInSession > 0) {
+        _remainingTimeInSession--;
+        // Sadece çalışma seanslarında geçen süreyi say
+        if (_currentState == PomodoroState.work) {
+          _elapsedWorkSecondsInSession++;
         }
       } else {
-        _timer?.cancel();
-        _isPaused = true;
         _onSessionEnd();
       }
       notifyListeners();
@@ -116,21 +102,49 @@ class PomodoroProvider with ChangeNotifier {
 
   void _onSessionEnd() {
     if (_currentState == PomodoroState.work) {
-      _completedSessions++;
+      _completedWorkSessions++;
       _playSound('sounds/end_sound.mp3');
-      if (_completedSessions % _sessionsBeforeLongBreak == 0) {
+
+      final currentTotalCompleted =
+          _alreadyCompletedMinutes + newCompletedWorkMinutes;
+      if (currentTotalCompleted >= _totalTargetMinutes) {
+        onTargetReached?.call(); // Hedefe ulaşıldı sinyalini gönder
+        stop();
+        return;
+      }
+
+      if (_completedWorkSessions % _sessionsBeforeLongBreak == 0) {
         _currentState = PomodoroState.longBreak;
-        _remainingTime = _longBreakDuration;
+        _remainingTimeInSession = _longBreakDuration;
       } else {
         _currentState = PomodoroState.shortBreak;
-        _remainingTime = _shortBreakDuration;
+        _remainingTimeInSession = _shortBreakDuration;
       }
     } else {
       _playSound('sounds/start_sound.mp3');
-      _currentState = PomodoroState.initial;
-      _remainingTime = _workDuration;
+      _currentState = PomodoroState.work;
+      _determineNextWorkSessionDuration();
     }
-    notifyListeners();
+  }
+
+  void _determineNextWorkSessionDuration() {
+    final currentTotalCompleted =
+        _alreadyCompletedMinutes + newCompletedWorkMinutes;
+    final remainingMinutesForActivity =
+        _totalTargetMinutes - currentTotalCompleted;
+
+    if (remainingMinutesForActivity <= 0) {
+      stop();
+      return;
+    }
+
+    _remainingTimeInSession = (remainingMinutesForActivity * 60) < _workDuration
+        ? remainingMinutesForActivity * 60
+        : _workDuration;
+  }
+
+  void playTargetReachedSound() {
+    _playSound('sounds/target_sound.mp3');
   }
 
   Future<void> _playSound(String soundPath) async {

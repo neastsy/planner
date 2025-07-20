@@ -411,4 +411,14 @@ class AppLocalizationsAr extends AppLocalizations {
   String targetReached(Object activityName) {
     return 'تم الوصول إلى الهدف! لقد أكملت نشاط \'$activityName\'.';
   }
+
+  @override
+  String pomodoro_completedMinutes(Object completed, Object total) {
+    return 'اكتمل $completed / $total دقيقة';
+  }
+
+  @override
+  String pomodoro_confirmSaveContent(Object activityName, Object minutes) {
+    return 'هل تريد إضافة $minutes دقيقة التي أكملتها في هذه الجلسة إلى نشاط \'$activityName\'؟';
+  }
 }

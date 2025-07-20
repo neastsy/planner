@@ -169,5 +169,7 @@
   "pomodoro_resetProgress": "Fortschritt zurücksetzen",
   "pomodoro_continueSession": "Sitzung fortsetzen",
   "pomodoro_activityCompleted": "Diese Aktivität ist bereits abgeschlossen!",
-  "targetReached": "Ziel erreicht! Sie haben die Aktivität '{activityName}' abgeschlossen."
+  "targetReached": "Ziel erreicht! Sie haben die Aktivität '{activityName}' abgeschlossen.",
+  "pomodoro_completedMinutes": "{completed} / {total} Min. abgeschlossen",
+  "pomodoro_confirmSaveContent": "{minutes} Minuten, die Sie in dieser Sitzung abgeschlossen haben, zur Aktivität '{activityName}' hinzufügen?"
 }

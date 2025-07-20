@@ -183,5 +183,7 @@
   "pomodoro_resetProgress": "İlerlemeyi Sıfırla",
   "pomodoro_continueSession": "Seansa Devam Et",
   "pomodoro_activityCompleted": "Bu aktivite zaten tamamlandı!",
-  "targetReached": "Hedefe Ulaşıldı! '{activityName}' aktivitesini tamamladınız."
+  "targetReached": "Hedefe Ulaşıldı! '{activityName}' aktivitesini tamamladınız.",
+  "pomodoro_completedMinutes": "{completed} / {total} dk tamamlandı",
+  "pomodoro_confirmSaveContent": "Bu oturumda tamamladığınız {minutes} dakikayı '{activityName}' aktivitesine eklemek ister misiniz?"
 }

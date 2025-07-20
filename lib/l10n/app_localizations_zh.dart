@@ -406,4 +406,14 @@ class AppLocalizationsZh extends AppLocalizations {
   String targetReached(Object activityName) {
     return '已达成目标！您已完成“$activityName”活动。';
   }
+
+  @override
+  String pomodoro_completedMinutes(Object completed, Object total) {
+    return '已完成 $completed / $total 分钟';
+  }
+
+  @override
+  String pomodoro_confirmSaveContent(Object activityName, Object minutes) {
+    return '要将您在此会话中完成的 $minutes 分钟添加到活动“$activityName”吗？';
+  }
 }

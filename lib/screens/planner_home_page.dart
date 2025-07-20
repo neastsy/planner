@@ -2,7 +2,6 @@ import 'dart:async';
 import 'dart:math';
 
 import 'package:flutter/material.dart';
-import 'package:gunluk_planlayici/providers/pomodoro_provider.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 
@@ -73,6 +72,7 @@ class _PlannerHomePageState extends State<PlannerHomePage>
     WidgetsBinding.instance.removeObserver(this);
     _timer?.cancel();
     _pageController.dispose();
+    _transformationController.dispose(); // Controller'ı dispose et
     super.dispose();
   }
 
@@ -1030,7 +1030,7 @@ class _PlannerHomePageState extends State<PlannerHomePage>
 
     if (isCurrentActivity) {
       final l10n = AppLocalizations.of(context)!;
-      final bool isCompleted = activity.durationInMinutes > 0 &&
+      final isCompleted = activity.durationInMinutes > 0 &&
           activity.completedDurationInMinutes >= activity.durationInMinutes;
 
       return IconButton(
@@ -1056,45 +1056,23 @@ class _PlannerHomePageState extends State<PlannerHomePage>
 
   void _startPomodoroSession(BuildContext context, Activity activity) {
     final l10n = AppLocalizations.of(context)!;
-    final pomodoroProvider = context.read<PomodoroProvider>();
 
     final totalDuration = activity.durationInMinutes;
     final completedDuration = activity.completedDurationInMinutes;
-    final remainingDurationForActivity = totalDuration - completedDuration;
-    if (remainingDurationForActivity <= 0) {
+
+    if (completedDuration >= totalDuration && totalDuration > 0) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text(l10n.pomodoro_activityCompleted)),
       );
       return;
     }
 
-    int sessionDurationInSeconds;
-    if (remainingDurationForActivity < (pomodoroProvider.workDuration / 60)) {
-      sessionDurationInSeconds = remainingDurationForActivity * 60;
-    } else {
-      sessionDurationInSeconds = pomodoroProvider.workDuration;
-    }
-
-    pomodoroProvider.startCustomSession(
-      durationInSeconds: sessionDurationInSeconds,
-      totalActivityDuration: totalDuration,
-      alreadyCompletedDuration: completedDuration,
-      onTargetReachedCallback: () {
-        context.read<PomodoroProvider>().playTargetReachedSound();
-
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text("🏆 ${l10n.targetReached(activity.name)}"),
-            backgroundColor: Colors.green,
-          ),
-        );
-      },
-    );
-
     Navigator.of(context).push(MaterialPageRoute(
       builder: (context) => FocusScreen(
         activityId: activity.id,
         activityName: activity.name,
+        totalActivityMinutes: totalDuration,
+        alreadyCompletedMinutes: completedDuration,
       ),
     ));
   }
@@ -1118,11 +1096,11 @@ class _PlannerHomePageState extends State<PlannerHomePage>
                 textAlign: TextAlign.center,
               ),
             ),
-            // Bilgi
             ListTile(
               leading: const Icon(Icons.hourglass_bottom_rounded),
-              title: Text(
-                  "${activity.completedDurationInMinutes} / ${activity.durationInMinutes} min completed"),
+              title: Text(l10n.pomodoro_completedMinutes(
+                  activity.completedDurationInMinutes.toString(),
+                  activity.durationInMinutes.toString())),
             ),
             ListTile(
               leading: Icon(Icons.refresh_rounded,
@@ -1249,6 +1227,7 @@ class _PlannerHomePageState extends State<PlannerHomePage>
                         width: 300,
                         height: 300,
                         child: InteractiveViewer(
+                          transformationController: _transformationController,
                           clipBehavior: Clip.none,
                           minScale: 1.0,
                           maxScale: 3.0,
@@ -1388,11 +1367,6 @@ class _PlannerHomePageState extends State<PlannerHomePage>
                                 itemCount: activities.length,
                                 itemBuilder: (context, index) {
                                   final activity = activities[index];
-                                  final baseSubtitleColor = Theme.of(context)
-                                      .textTheme
-                                      .bodySmall
-                                      ?.color;
-
                                   return Card(
                                     margin: const EdgeInsets.symmetric(
                                         vertical: 8.0),
@@ -1410,7 +1384,6 @@ class _PlannerHomePageState extends State<PlannerHomePage>
                                         crossAxisAlignment:
                                             CrossAxisAlignment.start,
                                         children: [
-                                          // Temel metin rengini bir değişkene alalım
                                           Builder(builder: (context) {
                                             final baseSubtitleColor =
                                                 Theme.of(context)
@@ -1570,10 +1543,15 @@ class _PlannerHomePageState extends State<PlannerHomePage>
                                                               .bodySmall
                                                               ?.color;
                                                       return Text(
-                                                        "${activity.completedDurationInMinutes} / ${activity.durationInMinutes} min completed", // .arb'a eklenecek
+                                                        l10n.pomodoro_completedMinutes(
+                                                            activity
+                                                                .completedDurationInMinutes
+                                                                .toString(),
+                                                            activity
+                                                                .durationInMinutes
+                                                                .toString()),
                                                         style: TextStyle(
                                                           fontSize: 12,
-                                                          // DÜZELTME: withAlpha kullanıldı
                                                           color: baseTextColor
                                                               ?.withAlpha(
                                                                   (255 * 0.8)

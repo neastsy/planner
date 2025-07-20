@@ -169,5 +169,7 @@
   "pomodoro_resetProgress": "重置进度",
   "pomodoro_continueSession": "继续时段",
   "pomodoro_activityCompleted": "此活动已完成！",
-  "targetReached": "已达成目标！您已完成“{activityName}”活动。"      
+  "targetReached": "已达成目标！您已完成“{activityName}”活动。",
+  "pomodoro_completedMinutes": "已完成 {completed} / {total} 分钟",
+  "pomodoro_confirmSaveContent": "要将您在此会话中完成的 {minutes} 分钟添加到活动“{activityName}”吗？"     
 }

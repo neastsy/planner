@@ -414,4 +414,14 @@ class AppLocalizationsTr extends AppLocalizations {
   String targetReached(Object activityName) {
     return 'Hedefe Ulaşıldı! \'$activityName\' aktivitesini tamamladınız.';
   }
+
+  @override
+  String pomodoro_completedMinutes(Object completed, Object total) {
+    return '$completed / $total dk tamamlandı';
+  }
+
+  @override
+  String pomodoro_confirmSaveContent(Object activityName, Object minutes) {
+    return 'Bu oturumda tamamladığınız $minutes dakikayı \'$activityName\' aktivitesine eklemek ister misiniz?';
+  }
 }

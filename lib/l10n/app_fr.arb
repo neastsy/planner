@@ -169,5 +169,7 @@
   "pomodoro_resetProgress": "Réinitialiser la progression",
   "pomodoro_continueSession": "Continuer la session",
   "pomodoro_activityCompleted": "Cette activité est déjà terminée !",
-  "targetReached": "Objectif atteint ! Vous avez terminé l'activité '{activityName}'."
+  "targetReached": "Objectif atteint ! Vous avez terminé l'activité '{activityName}'.",
+  "pomodoro_completedMinutes": "{completed} / {total} min terminées",
+  "pomodoro_confirmSaveContent": "Ajouter les {minutes} minutes que vous avez terminées dans cette session à l'activité '{activityName}' ?"
 }

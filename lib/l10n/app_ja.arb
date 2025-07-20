@@ -169,5 +169,7 @@
   "pomodoro_resetProgress": "進捗をリセット",
   "pomodoro_continueSession": "セッションを続行",
   "pomodoro_activityCompleted": "このアクティビティは既に完了しています！",
-  "targetReached": "目標達成！アクティビティ「{activityName}」を完了しました。"     
+  "targetReached": "目標達成！アクティビティ「{activityName}」を完了しました。",
+  "pomodoro_completedMinutes": "{completed} / {total} 分 完了",
+  "pomodoro_confirmSaveContent": "このセッションで完了した{minutes}分をアクティビティ「{activityName}」に追加しますか？"    
 }

@@ -856,6 +856,18 @@ abstract class AppLocalizations {
   /// In tr, this message translates to:
   /// **'Hedefe Ulaşıldı! \'{activityName}\' aktivitesini tamamladınız.'**
   String targetReached(Object activityName);
+
+  /// No description provided for @pomodoro_completedMinutes.
+  ///
+  /// In tr, this message translates to:
+  /// **'{completed} / {total} dk tamamlandı'**
+  String pomodoro_completedMinutes(Object completed, Object total);
+
+  /// No description provided for @pomodoro_confirmSaveContent.
+  ///
+  /// In tr, this message translates to:
+  /// **'Bu oturumda tamamladığınız {minutes} dakikayı \'{activityName}\' aktivitesine eklemek ister misiniz?'**
+  String pomodoro_confirmSaveContent(Object activityName, Object minutes);
 }
 
 class _AppLocalizationsDelegate

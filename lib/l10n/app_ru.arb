@@ -169,5 +169,7 @@
   "pomodoro_resetProgress": "Сбросить прогресс",
   "pomodoro_continueSession": "Продолжить сеанс",
   "pomodoro_activityCompleted": "Это задание уже выполнено!",
-  "targetReached": "Цель достигнута! Вы завершили задачу '{activityName}'."   
+  "targetReached": "Цель достигнута! Вы завершили задачу '{activityName}'.",
+  "pomodoro_completedMinutes": "{completed} / {total} мин завершено",
+  "pomodoro_confirmSaveContent": "Добавить {minutes} минут, завершенных в этом сеансе, к задаче '{activityName}'?"
 }

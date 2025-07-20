@@ -169,5 +169,7 @@
   "pomodoro_resetProgress": "إعادة ضبط التقدم",
   "pomodoro_continueSession": "متابعة الجلسة",
   "pomodoro_activityCompleted": "هذا النشاط مكتمل بالفعل!",
-  "targetReached": "تم الوصول إلى الهدف! لقد أكملت نشاط '{activityName}'."
+  "targetReached": "تم الوصول إلى الهدف! لقد أكملت نشاط '{activityName}'.",
+  "pomodoro_completedMinutes": "اكتمل {completed} / {total} دقيقة",
+  "pomodoro_confirmSaveContent": "هل تريد إضافة {minutes} دقيقة التي أكملتها في هذه الجلسة إلى نشاط '{activityName}'؟"
 }

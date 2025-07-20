@@ -416,4 +416,14 @@ class AppLocalizationsRu extends AppLocalizations {
   String targetReached(Object activityName) {
     return 'Цель достигнута! Вы завершили задачу \'$activityName\'.';
   }
+
+  @override
+  String pomodoro_completedMinutes(Object completed, Object total) {
+    return '$completed / $total мин завершено';
+  }
+
+  @override
+  String pomodoro_confirmSaveContent(Object activityName, Object minutes) {
+    return 'Добавить $minutes минут, завершенных в этом сеансе, к задаче \'$activityName\'?';
+  }
 }
