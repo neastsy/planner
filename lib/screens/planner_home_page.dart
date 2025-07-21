@@ -11,6 +11,7 @@ import '../models/language_model.dart';
 import '../models/app_theme_model.dart';
 import '../models/activity_template_model.dart';
 import '../providers/activity_provider.dart';
+import '../providers/pomodoro_provider.dart';
 import '../providers/settings_provider.dart';
 import '../providers/template_provider.dart';
 import '../widgets/add_activity_sheet.dart';
@@ -1054,8 +1055,9 @@ class _PlannerHomePageState extends State<PlannerHomePage>
     }
   }
 
-  void _startPomodoroSession(BuildContext context, Activity activity) {
+  void _startPomodoroSession(BuildContext context, Activity activity) async {
     final l10n = AppLocalizations.of(context)!;
+    final pomodoroProvider = context.read<PomodoroProvider>();
 
     final totalDuration = activity.durationInMinutes;
     final completedDuration = activity.completedDurationInMinutes;
@@ -1067,14 +1069,33 @@ class _PlannerHomePageState extends State<PlannerHomePage>
       return;
     }
 
-    Navigator.of(context).push(MaterialPageRoute(
+    // 1. Provider'ı HAZIRLA (callback OLMADAN)
+    pomodoroProvider.startSession(
+      totalActivityMinutes: totalDuration,
+      alreadyCompletedMinutes: completedDuration,
+    );
+
+    // 2. FocusScreen'e git ve kapanmasını bekle
+    await Navigator.of(context).push(MaterialPageRoute(
       builder: (context) => FocusScreen(
         activityId: activity.id,
         activityName: activity.name,
-        totalActivityMinutes: totalDuration,
-        alreadyCompletedMinutes: completedDuration,
       ),
     ));
+
+    // 3. FocusScreen kapandıktan SONRA bu kod çalışacak
+    if (context.mounted) {
+      // Provider'daki bayrağı kontrol et
+      if (pomodoroProvider.targetReached) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text("🏆 ${l10n.targetReached(activity.name)}"),
+            backgroundColor: Colors.green,
+          ),
+        );
+      }
+      pomodoroProvider.stop();
+    }
   }
 
   void _showPomodoroActionsMenu(BuildContext context, Activity activity) {

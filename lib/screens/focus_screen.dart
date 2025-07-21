@@ -7,15 +7,11 @@ import '../providers/activity_provider.dart';
 class FocusScreen extends StatelessWidget {
   final String activityId;
   final String activityName;
-  final int totalActivityMinutes;
-  final int alreadyCompletedMinutes;
 
   const FocusScreen({
     super.key,
     required this.activityId,
     required this.activityName,
-    required this.totalActivityMinutes,
-    required this.alreadyCompletedMinutes,
   });
 
   String _formatTime(int totalSeconds) {
@@ -39,7 +35,7 @@ class FocusScreen extends StatelessWidget {
   Future<void> _showExitConfirmationDialog(
       BuildContext context, PomodoroProvider pomodoroProvider) async {
     final l10n = AppLocalizations.of(context)!;
-    final minutesToAdd = pomodoroProvider.newCompletedWorkMinutes;
+    final minutesToAdd = pomodoroProvider.minutesToAdd;
 
     if (minutesToAdd == 0) {
       pomodoroProvider.stop();
@@ -51,12 +47,8 @@ class FocusScreen extends StatelessWidget {
       context: context,
       builder: (ctx) => AlertDialog(
         title: Text(l10n.pomodoro_endSessionTitle),
-        content: Text(
-          l10n.pomodoro_confirmSaveContent(
-            activityName,
-            minutesToAdd.toString(),
-          ),
-        ),
+        content: Text(l10n.pomodoro_confirmSaveContent(
+            activityName, minutesToAdd.toString())),
         actions: [
           TextButton(
             onPressed: () => Navigator.of(ctx).pop(false),
@@ -71,12 +63,13 @@ class FocusScreen extends StatelessWidget {
     );
 
     if (context.mounted) {
-      pomodoroProvider.stop();
       if (shouldSave == true) {
         context
             .read<ActivityProvider>()
             .addCompletedDuration(activityId, minutesToAdd);
       }
+      // Provider'ı en son sıfırla
+      pomodoroProvider.stop();
       Navigator.of(context).pop();
     }
   }
@@ -84,21 +77,6 @@ class FocusScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
-
-    // Sayfa ilk oluşturulduğunda seansı HAZIRLA
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      final provider = context.read<PomodoroProvider>();
-      if (!provider.isSessionActive) {
-        provider.startSession(
-          totalActivityMinutes: totalActivityMinutes,
-          alreadyCompletedMinutes: alreadyCompletedMinutes,
-          onTargetReachedCallback: () {
-            // Bu callback artık provider'ın içinden çağrılıyor
-          },
-        );
-      }
-    });
-
     return Consumer<PomodoroProvider>(
       builder: (context, provider, child) {
         final remainingTime = provider.remainingTimeInSession;
@@ -167,7 +145,6 @@ class FocusScreen extends StatelessWidget {
                             ? Icons.play_arrow_rounded
                             : Icons.pause_rounded,
                       ),
-                      // DÜZELTME: Artık tek bir toggle metodu var
                       onPressed: () {
                         provider.toggleTimer();
                       },
