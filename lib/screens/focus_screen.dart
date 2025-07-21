@@ -39,7 +39,7 @@ class FocusScreen extends StatelessWidget {
   Future<void> _showExitConfirmationDialog(
       BuildContext context, PomodoroProvider pomodoroProvider) async {
     final l10n = AppLocalizations.of(context)!;
-    final minutesToAdd = pomodoroProvider.calculateMinutesToAdd();
+    final minutesToAdd = pomodoroProvider.newCompletedWorkMinutes;
 
     if (minutesToAdd == 0) {
       pomodoroProvider.stop();
