@@ -39,7 +39,7 @@ class FocusScreen extends StatelessWidget {
   Future<void> _showExitConfirmationDialog(
       BuildContext context, PomodoroProvider pomodoroProvider) async {
     final l10n = AppLocalizations.of(context)!;
-    final minutesToAdd = pomodoroProvider.newCompletedWorkMinutes;
+    final minutesToAdd = pomodoroProvider.calculateMinutesToAdd();
 
     if (minutesToAdd == 0) {
       pomodoroProvider.stop();
@@ -51,9 +51,12 @@ class FocusScreen extends StatelessWidget {
       context: context,
       builder: (ctx) => AlertDialog(
         title: Text(l10n.pomodoro_endSessionTitle),
-        // GÜNCELLENDİ
-        content: Text(l10n.pomodoro_confirmSaveContent(
-            minutesToAdd.toString(), activityName)),
+        content: Text(
+          l10n.pomodoro_confirmSaveContent(
+            activityName,
+            minutesToAdd.toString(),
+          ),
+        ),
         actions: [
           TextButton(
             onPressed: () => Navigator.of(ctx).pop(false),
@@ -99,19 +102,7 @@ class FocusScreen extends StatelessWidget {
     return Consumer<PomodoroProvider>(
       builder: (context, provider, child) {
         final remainingTime = provider.remainingTimeInSession;
-
-        int totalDuration;
-        switch (provider.currentState) {
-          case PomodoroState.work:
-            totalDuration = 25 * 60;
-            break;
-          case PomodoroState.shortBreak:
-            totalDuration = 5 * 60;
-            break;
-          case PomodoroState.longBreak:
-            totalDuration = 15 * 60;
-            break;
-        }
+        final totalDuration = provider.currentSessionTotalDuration;
 
         final progress =
             totalDuration > 0 ? 1 - (remainingTime / totalDuration) : 0.0;
