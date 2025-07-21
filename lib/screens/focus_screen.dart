@@ -80,10 +80,13 @@ class FocusScreen extends StatelessWidget {
     return Consumer<PomodoroProvider>(
       builder: (context, provider, child) {
         final remainingTime = provider.remainingTimeInSession;
-        final totalDuration = provider.currentSessionTotalDuration;
 
-        final progress =
-            totalDuration > 0 ? 1 - (remainingTime / totalDuration) : 0.0;
+        // Toplam aktivite ilerlemesini kullan (work + break dahil)
+        final progress = provider.totalActivityProgress;
+
+        // Debug için konsola yazdır
+        debugPrint(
+            'Progress: $progress, Remaining: $remainingTime, State: ${provider.currentState}');
 
         return Scaffold(
           appBar: AppBar(
@@ -106,7 +109,9 @@ class FocusScreen extends StatelessWidget {
                     fit: StackFit.expand,
                     children: [
                       CircularProgressIndicator(
-                        value: progress,
+                        value: progress > 0
+                            ? progress
+                            : null, // null ise animasyonlu progress
                         strokeWidth: 12,
                         backgroundColor: Theme.of(context)
                             .colorScheme

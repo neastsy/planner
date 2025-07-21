@@ -27,6 +27,7 @@ class PomodoroProvider with ChangeNotifier {
   int _totalTargetMinutes = 0;
   int _alreadyCompletedMinutes = 0;
   int _workSecondsInThisRun = 0;
+  int _completedBreakSeconds = 0;
   bool _targetReached = false;
 
   // --- Getter'lar ---
@@ -36,8 +37,33 @@ class PomodoroProvider with ChangeNotifier {
   int get remainingTimeInSession => _remainingTimeInSession;
   int get currentSessionTotalDuration => _currentSessionTotalDuration;
   int get completedWorkSessions => _completedWorkSessions;
-  int get minutesToAdd => _workSecondsInThisRun ~/ 60;
+  int get minutesToAdd =>
+      _workSecondsInThisRun ~/ 60; // Sadece work süresi kaydedilir
   bool get targetReached => _targetReached;
+
+  // Toplam aktivite ilerlemesi (work + break sürelerini say)
+  double get totalActivityProgress {
+    if (_totalTargetMinutes <= 0) return 0.0;
+
+    // Toplam geçen süre = önceki tamamlanan + bu run'daki work + tamamlanan break'ler
+    final totalElapsedSeconds = (_alreadyCompletedMinutes * 60) +
+        _workSecondsInThisRun +
+        _completedBreakSeconds;
+
+    // Eğer şu anda break'teyse, o anki break süresini de ekle
+    int currentBreakSeconds = 0;
+    if (!_isPaused && _currentState != PomodoroState.work) {
+      int breakDuration = _currentState == PomodoroState.shortBreak
+          ? _shortBreakDuration
+          : _longBreakDuration;
+      currentBreakSeconds = breakDuration - _remainingTimeInSession;
+    }
+
+    final totalElapsedWithCurrent = totalElapsedSeconds + currentBreakSeconds;
+    final totalTargetSeconds = _totalTargetMinutes * 60;
+
+    return (totalElapsedWithCurrent / totalTargetSeconds).clamp(0.0, 1.0);
+  }
 
   // --- Ana Kontrol Metotları ---
 
@@ -51,6 +77,7 @@ class PomodoroProvider with ChangeNotifier {
     _alreadyCompletedMinutes = alreadyCompletedMinutes;
     _completedWorkSessions = 0;
     _workSecondsInThisRun = 0;
+    _completedBreakSeconds = 0;
     _currentState = PomodoroState.work;
     _targetReached = false;
 
@@ -79,10 +106,11 @@ class PomodoroProvider with ChangeNotifier {
     _alreadyCompletedMinutes = 0;
     _completedWorkSessions = 0;
     _workSecondsInThisRun = 0;
+    _completedBreakSeconds = 0;
     _remainingTimeInSession = 0;
     _currentSessionTotalDuration = 0;
     _currentState = PomodoroState.work;
-    _targetReached = false; // Stop'ta da sıfırla
+    _targetReached = false;
     notifyListeners();
   }
 
@@ -91,6 +119,7 @@ class PomodoroProvider with ChangeNotifier {
     _timer = Timer.periodic(const Duration(seconds: 1), (timer) {
       if (_remainingTimeInSession > 0) {
         _remainingTimeInSession--;
+        // Sadece work durumunda work saniyelerini artır
         if (_currentState == PomodoroState.work) {
           _workSecondsInThisRun++;
         }
@@ -108,15 +137,22 @@ class PomodoroProvider with ChangeNotifier {
     if (_currentState == PomodoroState.work) {
       _completedWorkSessions++;
 
-      final currentTotalCompleted = _alreadyCompletedMinutes + minutesToAdd;
-      if (currentTotalCompleted >= _totalTargetMinutes && !_targetReached) {
+      // Hedef kontrolü - work + break dahil toplam süreyi kontrol et
+      final totalElapsedSeconds = (_alreadyCompletedMinutes * 60) +
+          _workSecondsInThisRun +
+          _completedBreakSeconds;
+      final totalElapsedMinutes = totalElapsedSeconds ~/ 60;
+
+      if (totalElapsedMinutes >= _totalTargetMinutes && !_targetReached) {
         _targetReached = true;
-        _playSound('sounds/target_sound.mp3'); // Sesi doğrudan çal
+        _playSound('sounds/target_sound.mp3');
         notifyListeners();
         return;
       }
 
       _playSound('sounds/end_sound.mp3');
+
+      // Break durumu belirleme
       if (_completedWorkSessions % _sessionsBeforeLongBreak == 0) {
         _currentState = PomodoroState.longBreak;
         _remainingTimeInSession = _longBreakDuration;
@@ -124,19 +160,35 @@ class PomodoroProvider with ChangeNotifier {
         _currentState = PomodoroState.shortBreak;
         _remainingTimeInSession = _shortBreakDuration;
       }
+      _currentSessionTotalDuration = _remainingTimeInSession;
     } else {
+      // Break bitiyor, work'e geçiyoruz
+      // Tamamlanan break süresini kaydet
+      if (_currentState == PomodoroState.shortBreak) {
+        _completedBreakSeconds += _shortBreakDuration;
+      } else if (_currentState == PomodoroState.longBreak) {
+        _completedBreakSeconds += _longBreakDuration;
+      }
+
       _playSound('sounds/start_sound.mp3');
       _currentState = PomodoroState.work;
       _determineNextWorkSessionDuration();
     }
-    _currentSessionTotalDuration = _remainingTimeInSession;
+
     notifyListeners();
   }
 
+  // Work session duration hesaplama
   void _determineNextWorkSessionDuration() {
-    final currentTotalCompleted = _alreadyCompletedMinutes + minutesToAdd;
+    // Toplam geçen süreyi hesapla (work + break dahil)
+    final totalElapsedSeconds = (_alreadyCompletedMinutes * 60) +
+        _workSecondsInThisRun +
+        _completedBreakSeconds;
+    final totalElapsedMinutes = totalElapsedSeconds ~/ 60;
+
+    // Kalan aktivite süresi (dakika cinsinden)
     final remainingMinutesForActivity =
-        _totalTargetMinutes - currentTotalCompleted;
+        _totalTargetMinutes - totalElapsedMinutes;
 
     if (remainingMinutesForActivity <= 0) {
       _remainingTimeInSession = 0;
@@ -144,9 +196,16 @@ class PomodoroProvider with ChangeNotifier {
       return;
     }
 
-    _remainingTimeInSession = (remainingMinutesForActivity * 60) < _workDuration
-        ? remainingMinutesForActivity * 60
-        : _workDuration;
+    // Kalan süreyi saniye cinsinden hesapla
+    final remainingSecondsForActivity = remainingMinutesForActivity * 60;
+
+    // Eğer kalan aktivite süresi work süresinden az ise, kalan süre kadar çalış
+    // Aksi halde normal work süresi kadar çalış
+    if (remainingSecondsForActivity < _workDuration) {
+      _remainingTimeInSession = remainingSecondsForActivity;
+    } else {
+      _remainingTimeInSession = _workDuration;
+    }
 
     _currentSessionTotalDuration = _remainingTimeInSession;
   }
