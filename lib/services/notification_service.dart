@@ -3,6 +3,17 @@ import 'package:flutter_timezone/flutter_timezone.dart';
 import 'package:timezone/data/latest_all.dart' as tz;
 import 'package:timezone/timezone.dart' as tz;
 
+const AndroidNotificationDetails pomodoroNotificationDetails =
+    AndroidNotificationDetails(
+  'pomodoro_channel',
+  'Pomodoro Zamanlayıcı',
+  channelDescription: 'Aktif Pomodoro seansları için bildirimler.',
+  importance: Importance.low,
+  priority: Priority.low,
+  ongoing: true,
+  autoCancel: false,
+);
+
 class NotificationService {
   // Singleton pattern
   static final NotificationService _instance = NotificationService._internal();

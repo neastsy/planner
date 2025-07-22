@@ -37,3 +37,5 @@
 -keepclassmembers class * {
     @android.webkit.JavascriptInterface <methods>;
 }
+
+-keep class id.flutter.flutter_background_service.** { *; }
