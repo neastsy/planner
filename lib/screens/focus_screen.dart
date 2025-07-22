@@ -64,12 +64,20 @@ class FocusScreen extends StatelessWidget {
 
     if (context.mounted) {
       if (shouldSave == true) {
-        context
-            .read<ActivityProvider>()
-            .addCompletedDuration(activityId, minutesToAdd);
+        int durationToSave;
+        if (pomodoroProvider.targetReached) {
+          final int totalTarget = pomodoroProvider.totalTargetMinutes;
+          final int alreadyCompleted = pomodoroProvider.alreadyCompletedMinutes;
+          durationToSave = totalTarget - alreadyCompleted;
+        } else {
+          durationToSave = pomodoroProvider.minutesToAdd;
+        }
+        if (durationToSave > 0) {
+          context
+              .read<ActivityProvider>()
+              .addCompletedDuration(activityId, durationToSave);
+        }
       }
-      // Provider'ı en son sıfırla
-      pomodoroProvider.stop();
       Navigator.of(context).pop();
     }
   }
@@ -81,8 +89,7 @@ class FocusScreen extends StatelessWidget {
       builder: (context, provider, child) {
         final remainingTime = provider.remainingTimeInSession;
 
-        // Toplam aktivite ilerlemesini kullan (work + break dahil)
-        final progress = provider.totalActivityProgress;
+        final progress = provider.currentSessionProgress;
 
         // Debug için konsola yazdır
         debugPrint(
@@ -109,9 +116,7 @@ class FocusScreen extends StatelessWidget {
                     fit: StackFit.expand,
                     children: [
                       CircularProgressIndicator(
-                        value: progress > 0
-                            ? progress
-                            : null, // null ise animasyonlu progress
+                        value: progress,
                         strokeWidth: 12,
                         backgroundColor: Theme.of(context)
                             .colorScheme

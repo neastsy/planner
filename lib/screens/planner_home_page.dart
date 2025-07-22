@@ -1019,6 +1019,13 @@ class _PlannerHomePageState extends State<PlannerHomePage>
       return const SizedBox.shrink();
     }
 
+    final l10n = AppLocalizations.of(context)!;
+
+    // 1. ADIM: Aktivitenin tamamlanıp tamamlanmadığını kontrol et.
+    final bool isCompleted = activity.durationInMinutes > 0 &&
+        activity.completedDurationInMinutes >= activity.durationInMinutes;
+
+    // 2. ADIM: Aktivitenin şu anki zaman diliminde olup olmadığını kontrol et.
     final now = TimeOfDay.now();
     final nowInMinutes = now.hour * 60 + now.minute;
     final startInMinutes =
@@ -1029,19 +1036,24 @@ class _PlannerHomePageState extends State<PlannerHomePage>
         ? (nowInMinutes >= startInMinutes && nowInMinutes < endInMinutes)
         : (nowInMinutes >= startInMinutes || nowInMinutes < endInMinutes);
 
-    if (isCurrentActivity) {
-      final l10n = AppLocalizations.of(context)!;
-      final isCompleted = activity.durationInMinutes > 0 &&
-          activity.completedDurationInMinutes >= activity.durationInMinutes;
-
+    if (isCompleted) {
+      return IconButton(
+        icon: const Icon(
+          Icons.check_circle_rounded,
+          color: Colors.green,
+        ),
+        tooltip: l10n.pomodoro_activityCompleted,
+        onPressed: () {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text(l10n.pomodoro_activityCompleted)),
+          );
+        },
+      );
+    } else if (isCurrentActivity) {
       return IconButton(
         icon: Icon(
-          isCompleted
-              ? Icons.check_circle_rounded
-              : Icons.play_circle_fill_rounded,
-          color: isCompleted
-              ? Colors.green
-              : Theme.of(context).colorScheme.primary,
+          Icons.play_circle_fill_rounded,
+          color: Theme.of(context).colorScheme.primary,
         ),
         tooltip: activity.completedDurationInMinutes > 0
             ? l10n.pomodoro_continueSession
