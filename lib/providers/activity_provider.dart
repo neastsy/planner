@@ -20,18 +20,7 @@ class ActivityProvider with ChangeNotifier {
   ActivityProvider(this._activityRepository) {
     _initialize();
     _startPeriodicSync();
-    // KALDIRILDI: _listenToService();
   }
-
-  // KALDIRILDI: Bu metot artık kullanılmıyor.
-  /*
-  void _listenToService() {
-    FlutterBackgroundService().on('progress_updated').listen((event) {
-      debugPrint("PROVIDER: Progress update received from service! Reloading activities.");
-      _loadActivities();
-    });
-  }
-  */
 
   @override
   void dispose() {
@@ -39,30 +28,29 @@ class ActivityProvider with ChangeNotifier {
     super.dispose();
   }
 
-  // YENİ METOT: Sadece veriyi yeniden yüklemek için dışarıdan çağrılacak metot.
-  void reloadActivitiesFromDB() {
+  // GÜNCELLENMİŞ METOT
+  void reloadActivitiesFromDB() async {
     debugPrint("ActivityProvider: Reloading activities from database...");
-    final newActivities = _activityRepository.loadActivities();
-    newActivities.forEach((_, list) => _sortList(list));
-    _dailyActivities = Map.from(newActivities);
+    _dailyActivities = _activityRepository.loadActivities();
+    _dailyActivities.forEach((_, list) => _sortList(list));
+
+    // Bu satır, notifyListeners'ın bir sonraki olay döngüsünde çalışmasını
+    // sağlayarak UI'ın güncellemeyi yakalamasını garanti eder.
+    await Future.delayed(Duration.zero);
+
     notifyListeners();
   }
 
+  // Geri kalan tüm metotlar aynı...
   DateTime? calculateNextNotificationTime(Activity activity, String dayKey) {
-    if (activity.notificationMinutesBefore == null) {
-      return null;
-    }
-
+    if (activity.notificationMinutesBefore == null) return null;
     final now = DateTime.now();
     final dayIndex = AppConstants.dayKeys.indexOf(dayKey);
     int daysToAdd = (dayIndex - (now.weekday - 1) + 7) % 7;
-
     var activityDate = DateTime(now.year, now.month, now.day + daysToAdd,
         activity.startTime.hour, activity.startTime.minute);
-
     var scheduledTime = activityDate
         .subtract(Duration(minutes: activity.notificationMinutesBefore!));
-
     while (scheduledTime.isBefore(now)) {
       scheduledTime = scheduledTime.add(const Duration(days: 7));
     }
@@ -84,8 +72,7 @@ class ActivityProvider with ChangeNotifier {
       _dailyActivities[_selectedDay] ?? [];
 
   void _initialize() {
-    final List<String> hiveKeys = AppConstants.dayKeys;
-    _selectedDay = hiveKeys[DateTime.now().weekday - 1];
+    _selectedDay = AppConstants.dayKeys[DateTime.now().weekday - 1];
     _loadActivities();
     _clearOutdatedProgress();
   }
@@ -93,7 +80,6 @@ class ActivityProvider with ChangeNotifier {
   Future<void> _clearOutdatedProgress() async {
     final todayKey = AppConstants.dayKeys[DateTime.now().weekday - 1];
     bool dataChanged = false;
-
     for (var dayKey in _dailyActivities.keys) {
       if (dayKey != todayKey &&
           _dailyActivities[dayKey]!
@@ -116,15 +102,11 @@ class ActivityProvider with ChangeNotifier {
           }
           return activity;
         }).toList();
-
         _dailyActivities[dayKey] = updatedList;
         await _saveActivitiesForDay(dayKey);
       }
     }
-
-    if (dataChanged) {
-      notifyListeners();
-    }
+    if (dataChanged) notifyListeners();
   }
 
   void changeDay(String newDay) {
@@ -148,7 +130,6 @@ class ActivityProvider with ChangeNotifier {
     final activitiesForDay = List<Activity>.from(selectedDayActivities);
     activitiesForDay.add(activity);
     _dailyActivities[_selectedDay] = activitiesForDay;
-
     _sortList(activitiesForDay);
     _saveActivitiesForDay(_selectedDay);
     _scheduleNotificationForActivity(activity, _selectedDay);
@@ -158,61 +139,18 @@ class ActivityProvider with ChangeNotifier {
   void updateActivity(Activity activity, int editIndex) {
     final oldActivity = selectedDayActivities[editIndex];
     _cancelNotificationForActivity(oldActivity);
-
     final activitiesForDay = List<Activity>.from(selectedDayActivities);
     activitiesForDay[editIndex] = activity;
     _dailyActivities[_selectedDay] = activitiesForDay;
-
     _sortList(activitiesForDay);
     _saveActivitiesForDay(_selectedDay);
     _scheduleNotificationForActivity(activity, _selectedDay);
     notifyListeners();
   }
 
-  void addCompletedDuration(String activityId, int minutesToAdd) {
-    String? dayKeyOfActivity;
-    int? indexInList;
-
-    for (var dayKey in _dailyActivities.keys) {
-      final activities = _dailyActivities[dayKey]!;
-      final index = activities.indexWhere((a) => a.id == activityId);
-      if (index != -1) {
-        dayKeyOfActivity = dayKey;
-        indexInList = index;
-        break;
-      }
-    }
-
-    if (dayKeyOfActivity != null && indexInList != null) {
-      final activitiesForDay = _dailyActivities[dayKeyOfActivity]!;
-      final oldActivity = activitiesForDay[indexInList];
-      final updatedActivity = Activity(
-        id: oldActivity.id,
-        name: oldActivity.name,
-        startTime: oldActivity.startTime,
-        endTime: oldActivity.endTime,
-        color: oldActivity.color,
-        note: oldActivity.note,
-        notificationMinutesBefore: oldActivity.notificationMinutesBefore,
-        tags: oldActivity.tags,
-        isNotificationRecurring: oldActivity.isNotificationRecurring,
-        completedDurationInMinutes:
-            oldActivity.completedDurationInMinutes + minutesToAdd,
-      );
-
-      activitiesForDay[indexInList] = updatedActivity;
-      _dailyActivities[dayKeyOfActivity] = activitiesForDay;
-      _saveActivitiesForDay(dayKeyOfActivity);
-      notifyListeners();
-      debugPrint(
-          "Added $minutesToAdd minutes to '${updatedActivity.name}'. New total: ${updatedActivity.completedDurationInMinutes}");
-    }
-  }
-
   void resetCompletedDuration(String activityId) {
     String? dayKeyOfActivity;
     int? indexInList;
-
     for (var dayKey in _dailyActivities.keys) {
       final activities = _dailyActivities[dayKey]!;
       final index = activities.indexWhere((a) => a.id == activityId);
@@ -222,12 +160,10 @@ class ActivityProvider with ChangeNotifier {
         break;
       }
     }
-
     if (dayKeyOfActivity != null && indexInList != null) {
       final activitiesForDay = _dailyActivities[dayKeyOfActivity]!;
       final oldActivity = activitiesForDay[indexInList];
       if (oldActivity.completedDurationInMinutes == 0) return;
-
       final updatedActivity = Activity(
         id: oldActivity.id,
         name: oldActivity.name,
@@ -240,7 +176,6 @@ class ActivityProvider with ChangeNotifier {
         isNotificationRecurring: oldActivity.isNotificationRecurring,
         completedDurationInMinutes: 0,
       );
-
       activitiesForDay[indexInList] = updatedActivity;
       _dailyActivities[dayKeyOfActivity] = activitiesForDay;
       _saveActivitiesForDay(dayKeyOfActivity);
@@ -254,7 +189,6 @@ class ActivityProvider with ChangeNotifier {
     final activitiesForDay = List<Activity>.from(selectedDayActivities);
     activitiesForDay.removeWhere((a) => a.id == activity.id);
     _dailyActivities[_selectedDay] = activitiesForDay;
-
     _saveActivitiesForDay(_selectedDay);
     notifyListeners();
   }
@@ -281,18 +215,15 @@ class ActivityProvider with ChangeNotifier {
     final List<Activity> sourceActivities =
         List.from(_dailyActivities[fromDay] ?? []);
     if (sourceActivities.isEmpty) return;
-
     final List<Activity> targetActivities = mode == CopyMode.overwrite
         ? []
         : List.from(_dailyActivities[toDay] ?? []);
-
     if (mode == CopyMode.overwrite) {
       final activitiesToClear = _dailyActivities[toDay] ?? [];
       for (final activity in activitiesToClear) {
         _cancelNotificationForActivity(activity);
       }
     }
-
     final List<Activity> copiedActivities = sourceActivities.map((activity) {
       final newActivity = Activity(
         name: activity.name,
@@ -307,10 +238,8 @@ class ActivityProvider with ChangeNotifier {
       _scheduleNotificationForActivity(newActivity, toDay);
       return newActivity;
     }).toList();
-
     targetActivities.addAll(copiedActivities);
     _dailyActivities[toDay] = targetActivities;
-
     _sortList(targetActivities);
     _saveActivitiesForDay(toDay);
     notifyListeners();
@@ -322,7 +251,6 @@ class ActivityProvider with ChangeNotifier {
       _cancelNotificationForActivity(activity);
     }
     _dailyActivities[dayKey] = [];
-
     _saveActivitiesForDay(dayKey);
     notifyListeners();
   }
@@ -331,13 +259,10 @@ class ActivityProvider with ChangeNotifier {
     final pendingNotifications =
         await _notificationService.getPendingNotifications();
     final pendingMap = {for (var p in pendingNotifications) p.id: p.payload};
-
     bool needsSave = false;
-
     for (var dayKey in AppConstants.dayKeys) {
       final activities = _dailyActivities[dayKey] ?? [];
       if (activities.isEmpty) continue;
-
       bool dayNeedsSave = false;
       final List<Activity> updatedActivities = [];
       for (var activity in activities) {
@@ -345,7 +270,6 @@ class ActivityProvider with ChangeNotifier {
         final payload = pendingMap[notificationId];
         int? realNotificationMinutes =
             payload != null ? int.tryParse(payload) : null;
-
         if (activity.notificationMinutesBefore != realNotificationMinutes) {
           updatedActivities.add(Activity(
             id: activity.id,
@@ -363,26 +287,20 @@ class ActivityProvider with ChangeNotifier {
           updatedActivities.add(activity);
         }
       }
-
       if (dayNeedsSave) {
         _dailyActivities[dayKey] = updatedActivities;
         await _saveActivitiesForDay(dayKey);
         needsSave = true;
       }
     }
-
-    if (needsSave) {
-      notifyListeners();
-    }
+    if (needsSave) notifyListeners();
   }
 
   Future<void> clearAllNotificationsAndUpdateActivities() async {
     await _notificationService.cancelAllNotifications();
-
     for (var dayKey in AppConstants.dayKeys) {
       final activities = _dailyActivities[dayKey] ?? [];
       if (activities.isEmpty) continue;
-
       bool dayNeedsSave = false;
       final List<Activity> updatedActivities = [];
       for (var activity in activities) {
@@ -403,7 +321,6 @@ class ActivityProvider with ChangeNotifier {
           updatedActivities.add(activity);
         }
       }
-
       if (dayNeedsSave) {
         _dailyActivities[dayKey] = updatedActivities;
         await _saveActivitiesForDay(dayKey);
@@ -415,17 +332,14 @@ class ActivityProvider with ChangeNotifier {
   Future<void> _scheduleNotificationForActivity(
       Activity activity, String dayKey) async {
     final finalScheduledTime = calculateNextNotificationTime(activity, dayKey);
-
     if (finalScheduledTime == null) {
       _cancelNotificationForActivity(activity);
       return;
     }
-
     final String defaultLocale = Platform.localeName;
     final languageCode = defaultLocale.split('_').first;
     final locale = Locale(languageCode);
     final l10n = await AppLocalizations.delegate.load(locale);
-
     _notificationService.scheduleNotification(
       id: activity.id.hashCode,
       title: activity.name,

@@ -1204,11 +1204,8 @@ class _PlannerHomePageState extends State<PlannerHomePage>
                       onPressed: () {
                         const middleCycle = 1000;
                         final targetPage = (middleCycle * 7) + index;
-
                         activityProvider.changeDay(hiveKeys[index]);
-
                         _transformationController.value = Matrix4.identity();
-
                         if (_pageController.page?.round() != targetPage) {
                           _pageController.jumpToPage(targetPage);
                         }
@@ -1360,35 +1357,29 @@ class _PlannerHomePageState extends State<PlannerHomePage>
                                           ?.color
                                           ?.withAlpha((255 * 0.5).round())),
                                   const SizedBox(height: 16),
-                                  Text(
-                                    l10n.noActivityToday,
-                                    textAlign: TextAlign.center,
-                                    style: TextStyle(
-                                      color: Theme.of(context)
-                                          .textTheme
-                                          .bodySmall
-                                          ?.color,
-                                      fontSize: 16,
-                                    ),
-                                  ),
+                                  Text(l10n.noActivityToday,
+                                      textAlign: TextAlign.center,
+                                      style: TextStyle(
+                                          color: Theme.of(context)
+                                              .textTheme
+                                              .bodySmall
+                                              ?.color,
+                                          fontSize: 16)),
                                   const SizedBox(height: 8),
-                                  Text(
-                                    l10n.tapPlusToStart,
-                                    textAlign: TextAlign.center,
-                                    style: TextStyle(
-                                      color: Theme.of(context)
-                                          .textTheme
-                                          .bodySmall
-                                          ?.color
-                                          ?.withAlpha((255 * 0.7).round()),
-                                      fontSize: 14,
-                                    ),
-                                  ),
+                                  Text(l10n.tapPlusToStart,
+                                      textAlign: TextAlign.center,
+                                      style: TextStyle(
+                                          color: Theme.of(context)
+                                              .textTheme
+                                              .bodySmall
+                                              ?.color
+                                              ?.withAlpha((255 * 0.7).round()),
+                                          fontSize: 14)),
                                 ],
                               ))
                             : ListView.builder(
-                                key: ValueKey(
-                                    "$dayKey-${activities.length}-${activities.first.completedDurationInMinutes}"),
+                                key: ValueKey<String>(
+                                    dayKey), // Bu key basit kalabilir.
                                 itemCount: activities.length,
                                 itemBuilder: (context, index) {
                                   final activity = activities[index];

@@ -36,6 +36,35 @@ class Activity extends HiveObject {
   @HiveField(9)
   final int completedDurationInMinutes;
 
+  Activity copyWith({
+    String? id,
+    String? name,
+    TimeOfDay? startTime,
+    TimeOfDay? endTime,
+    Color? color,
+    String? note,
+    int? notificationMinutesBefore,
+    List<String>? tags,
+    bool? isNotificationRecurring,
+    int? completedDurationInMinutes,
+  }) {
+    return Activity(
+      id: id ?? this.id,
+      name: name ?? this.name,
+      startTime: startTime ?? this.startTime,
+      endTime: endTime ?? this.endTime,
+      color: color ?? this.color,
+      note: note ?? this.note,
+      notificationMinutesBefore:
+          notificationMinutesBefore ?? this.notificationMinutesBefore,
+      tags: tags ?? this.tags,
+      isNotificationRecurring:
+          isNotificationRecurring ?? this.isNotificationRecurring,
+      completedDurationInMinutes:
+          completedDurationInMinutes ?? this.completedDurationInMinutes,
+    );
+  }
+
   int get durationInMinutes {
     // Eğer başlangıç ve bitiş aynıysa, bu 24 saatlik bir aktivitedir.
     if (startTime.hour == endTime.hour && startTime.minute == endTime.minute) {
