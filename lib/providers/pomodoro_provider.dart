@@ -1,51 +1,61 @@
-import 'package:flutter/foundation.dart';
+import 'dart:async';
+import 'package:flutter/material.dart';
 import 'package:flutter_background_service/flutter_background_service.dart';
+import 'package:audioplayers/audioplayers.dart';
 
-enum PomodoroState {
-  stopped,
-  work,
-  shortBreak,
-  longBreak,
-}
+enum PomodoroState { stopped, work, shortBreak, longBreak }
 
 class PomodoroProvider with ChangeNotifier {
-  bool _isLoading = true;
   PomodoroState _currentState = PomodoroState.stopped;
   bool _isPaused = true;
   int _remainingTimeInSession = 0;
   int _completedWorkSessions = 0;
   double _totalActivityProgress = 0.0;
-
-  // YENİ: Servis dinleyicisinin sadece bir kez kurulduğundan emin olmak için.
+  int _currentSessionTotalDuration = 0;
   bool _isServiceListening = false;
-  bool get isLoading => _isLoading;
+  final AudioPlayer _audioPlayer = AudioPlayer();
+
+  // Session yönetimi için
+  Completer<void>? _sessionStartedCompleter;
+  StreamSubscription? _serviceSubscription;
+  StreamSubscription? _soundSubscription;
+
+  bool get isLoading =>
+      _sessionStartedCompleter != null &&
+      !_sessionStartedCompleter!.isCompleted;
+
   PomodoroState get currentState => _currentState;
   bool get isSessionActive => _currentState != PomodoroState.stopped;
   bool get isPaused => _isPaused;
   int get remainingTimeInSession => _remainingTimeInSession;
   int get completedWorkSessions => _completedWorkSessions;
   double get totalActivityProgress => _totalActivityProgress;
+  int get currentSessionTotalDuration => _currentSessionTotalDuration;
 
-  // Bu getter'ı daha sonra servisten gelen veriyle daha akıllı hale getirebiliriz.
   double get currentSessionProgress => 0.0;
 
   PomodoroProvider() {
-    // YENİ: Daha sağlam bir başlatma metodu.
     _initializeServiceConnection();
   }
 
-  // YENİ: Servis bağlantısını başlatan ve yöneten metot.
   void _initializeServiceConnection() {
     if (!_isServiceListening) {
       _listenToService();
       _isServiceListening = true;
     }
-    getStatus();
+    // İlk durum kontrolü
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      getStatus();
+    });
   }
 
   void getStatus() {
-    final service = FlutterBackgroundService();
-    service.invoke('get_status');
+    try {
+      final service = FlutterBackgroundService();
+      service.invoke('get_status');
+    } catch (e) {
+      print("PROVIDER: Error getting status: $e");
+    }
   }
 
   Future<void> start({
@@ -55,28 +65,20 @@ class PomodoroProvider with ChangeNotifier {
     required int totalActivityMinutes,
     required int alreadyCompletedMinutes,
   }) async {
-    _isLoading = true;
-    notifyListeners();
-
     try {
       final service = FlutterBackgroundService();
-      final isRunning = await service.isRunning();
 
+      // Completer oluştur ve loading durumunu güncelle
+      _sessionStartedCompleter = Completer<void>();
+      notifyListeners();
+
+      final isRunning = await service.isRunning();
       if (!isRunning) {
         await service.startService();
-
-        // ✅ DÜZELTME: Servisin tam başlaması için kısa bekleme
+        // Service başlamasını bekle
         await Future.delayed(const Duration(milliseconds: 500));
-
-        // ✅ DÜZELTME: Servisin gerçekten başladığını kontrol et
-        int attempts = 0;
-        while (attempts < 5 && !(await service.isRunning())) {
-          await Future.delayed(const Duration(milliseconds: 200));
-          attempts++;
-        }
       }
 
-      // Servis parametrelerini gönder
       service.invoke('start', {
         'activityId': activityId,
         'dayKey': dayKey,
@@ -85,83 +87,145 @@ class PomodoroProvider with ChangeNotifier {
         'alreadyCompletedMinutes': alreadyCompletedMinutes,
       });
 
-      // ✅ DÜZELTME: Servis başladıktan sonra status güncellemesi al
-      await Future.delayed(const Duration(milliseconds: 300));
-      service.invoke('get_status');
+      // İlk update gelene kadar bekle
+      return _sessionStartedCompleter!.future.timeout(
+        const Duration(seconds: 10),
+        onTimeout: () {
+          throw TimeoutException('Service başlatma timeout');
+        },
+      );
     } catch (e) {
-      print("PROVIDER: Error starting service: $e");
-      _isLoading = false;
+      // Hata durumunda completer'ı temizle
+      if (_sessionStartedCompleter != null &&
+          !_sessionStartedCompleter!.isCompleted) {
+        _sessionStartedCompleter!.completeError(e);
+      }
+      _sessionStartedCompleter = null;
       notifyListeners();
+      rethrow;
     }
   }
 
   void stop() {
-    final service = FlutterBackgroundService();
-    service.invoke('stop');
+    try {
+      final service = FlutterBackgroundService();
+      service.invoke('stop');
+      _resetState();
+    } catch (e) {
+      print("PROVIDER: Error stopping service: $e");
+      _resetState();
+    }
+  }
+
+  void _resetState() {
     _currentState = PomodoroState.stopped;
+    _isPaused = true;
+    _remainingTimeInSession = 0;
+    _completedWorkSessions = 0;
+    _totalActivityProgress = 0.0;
+    _currentSessionTotalDuration = 0;
+    _sessionStartedCompleter = null;
     notifyListeners();
   }
 
   void togglePause() {
-    final service = FlutterBackgroundService();
-    service.invoke('togglePause');
-    _isPaused = !_isPaused;
-    notifyListeners();
+    try {
+      final service = FlutterBackgroundService();
+      service.invoke('togglePause');
+      _isPaused = !_isPaused;
+      notifyListeners();
+    } catch (e) {
+      print("PROVIDER: Error toggling pause: $e");
+    }
   }
 
   void _listenToService() {
-    final service = FlutterBackgroundService();
-    service.on('update').listen((event) {
-      // ✅ DÜZELTME: Loading state'i burada güncelle
-      if (_isLoading) {
-        _isLoading = false;
-      }
+    try {
+      final service = FlutterBackgroundService();
 
-      if (event == null) return;
-
-      try {
-        final stateString = event['currentState'] as String?;
-        if (stateString != null) {
-          _currentState = PomodoroState.values.firstWhere(
-            (e) => e.toString() == stateString,
-            orElse: () => PomodoroState.stopped,
-          );
+      // Ses çalma olayını dinle
+      _soundSubscription?.cancel();
+      _soundSubscription = service.on('play_sound').listen((event) {
+        if (event != null && event['sound'] is String) {
+          _playSound(event['sound']);
         }
+      }, onError: (error) {
+        print("PROVIDER: Sound stream error: $error");
+      });
 
-        _isPaused = event['isPaused'] as bool? ?? true;
-        _remainingTimeInSession = event['remainingTimeInSession'] as int? ?? 0;
-        _completedWorkSessions = event['completedWorkSessions'] as int? ?? 0;
+      // Service güncellemelerini dinle
+      _serviceSubscription?.cancel();
+      _serviceSubscription = service.on('update').listen((event) {
+        _handleServiceUpdate(event);
+      }, onError: (error) {
+        print("PROVIDER: Service stream error: $error");
+        if (_sessionStartedCompleter != null &&
+            !_sessionStartedCompleter!.isCompleted) {
+          _sessionStartedCompleter!.completeError(error);
+        }
+      });
 
-        final progressValue = event['totalActivityProgress'];
-        _totalActivityProgress =
-            (progressValue is num) ? progressValue.toDouble() : 0.0;
-
-        // ✅ DÜZELTME: Debug için log ekle
-        print(
-            "PROVIDER: Service update - State: $_currentState, Paused: $_isPaused, Time: $_remainingTimeInSession");
-
-        notifyListeners();
-      } catch (e) {
-        print("PROVIDER: Error parsing service update: $e");
-        _currentState = PomodoroState.stopped;
-        _isPaused = true;
-        _isLoading = false; // ✅ DÜZELTME: Hata durumunda loading'i kapat
-        notifyListeners();
-      }
-    }, onError: (error) {
-      print("PROVIDER: Service stream error: $error");
-      _currentState = PomodoroState.stopped;
-      _isPaused = true;
-      _isLoading = false; // ✅ DÜZELTME: Hata durumunda loading'i kapat
-      notifyListeners();
-    });
+      // İlerleme güncellemelerini dinle
+      service.on('progress_updated').listen((event) {
+        // Progress güncellendiğinde bir şey yapabilirsiniz
+      });
+    } catch (e) {
+      print("PROVIDER: Error setting up service listeners: $e");
+    }
   }
 
-  // YENİ: Dispose metodu artık daha anlamlı.
+  void _handleServiceUpdate(Map<String, dynamic>? event) {
+    if (event == null) return;
+
+    try {
+      final stateString = event['currentState'] as String?;
+      if (stateString != null) {
+        _currentState = PomodoroState.values.firstWhere(
+          (e) => e.toString() == stateString,
+          orElse: () => PomodoroState.stopped,
+        );
+      }
+
+      _isPaused = event['isPaused'] as bool? ?? true;
+      _remainingTimeInSession = event['remainingTimeInSession'] as int? ?? 0;
+      _completedWorkSessions = event['completedWorkSessions'] as int? ?? 0;
+
+      final progressValue = event['totalActivityProgress'];
+      _totalActivityProgress =
+          (progressValue is num) ? progressValue.toDouble() : 0.0;
+      _currentSessionTotalDuration =
+          event['currentSessionTotalDuration'] as int? ?? 0;
+
+      // İlk update geldiğinde completer'ı tamamla
+      if (_sessionStartedCompleter != null &&
+          !_sessionStartedCompleter!.isCompleted) {
+        _sessionStartedCompleter!.complete();
+      }
+
+      notifyListeners();
+    } catch (e) {
+      print("PROVIDER: Error parsing service update: $e");
+      if (_sessionStartedCompleter != null &&
+          !_sessionStartedCompleter!.isCompleted) {
+        _sessionStartedCompleter!.completeError(e);
+      }
+    }
+  }
+
+  Future<void> _playSound(String soundPath) async {
+    try {
+      await _audioPlayer.play(AssetSource(soundPath));
+    } catch (e) {
+      print("PROVIDER: Error playing sound: $e");
+    }
+  }
+
   @override
   void dispose() {
-    // Bu, provider yok edildiğinde dinleyicinin tekrar kurulmasını sağlar.
     _isServiceListening = false;
+    _serviceSubscription?.cancel();
+    _soundSubscription?.cancel();
+    _audioPlayer.dispose();
     super.dispose();
   }
 }

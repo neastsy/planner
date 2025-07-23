@@ -1069,11 +1069,8 @@ class _PlannerHomePageState extends State<PlannerHomePage>
 
   void _startPomodoroSession(
       BuildContext context, Activity activity, String dayKey) async {
-    // async olarak değiştirildi
     final pomodoroProvider = context.read<PomodoroProvider>();
 
-    // await ile servisin başlatılmasını ve provider'ın ilk verilerle
-    // güncellenmesini bekle.
     await pomodoroProvider.start(
       activityId: activity.id,
       dayKey: dayKey,

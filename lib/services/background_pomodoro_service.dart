@@ -8,7 +8,6 @@ import 'package:hive/hive.dart';
 import 'package:gunluk_planlayici/utils/constants.dart';
 import 'package:gunluk_planlayici/adepters/color_adapter.dart';
 import 'package:gunluk_planlayici/adepters/time_of_day_adapter.dart';
-import 'package:audioplayers/audioplayers.dart';
 
 enum PomodoroState { stopped, work, shortBreak, longBreak }
 
@@ -35,23 +34,21 @@ Future<void> initializeService() async {
 
 @pragma('vm:entry-point')
 bool onIosBackground(ServiceInstance service) {
-  WidgetsFlutterBinding.ensureInitialized(); // iOS için de gerekli.
+  WidgetsFlutterBinding.ensureInitialized();
   print("BACKGROUND_SERVICE: iOS background mode");
   return true;
 }
 
 @pragma('vm:entry-point')
 void onStart(ServiceInstance service) async {
-  // YENİ: En üste genel bir try-catch bloğu ekliyoruz.
   try {
-    // KRİTİK: Bu iki satır, eklentilerin çalışması için zorunludur.
     WidgetsFlutterBinding.ensureInitialized();
     DartPluginRegistrant.ensureInitialized();
 
-    final audioPlayer = AudioPlayer();
     Timer? timer;
     ActivityRepository? activityRepository;
 
+    // Durum Değişkenleri
     PomodoroState currentState = PomodoroState.stopped;
     bool isPaused = true;
     int remainingTimeInSession = 0;
@@ -62,24 +59,17 @@ void onStart(ServiceInstance service) async {
     int workSecondsForSaving = 0;
     String currentActivityId = '';
     String currentDayKey = '';
+    int currentSessionTotalDuration = 0;
 
-    const int workDuration = 25 * 60;
-    const int shortBreakDuration = 5 * 60;
+    // Sabitler
+    const int workDuration = 2 * 60;
+    const int shortBreakDuration = 1 * 60;
     const int longBreakDuration = 15 * 60;
     const int sessionsBeforeLongBreak = 4;
 
-    Future<void> playSound(String soundPath) async {
-      try {
-        await audioPlayer.play(AssetSource(soundPath));
-      } catch (e) {
-        print("BACKGROUND_SERVICE: Error playing sound: $e");
-      }
-    }
+    // --- Yardımcı Fonksiyonlar ---
 
     void updateUIAndNotification({bool isFinished = false}) {
-      print(
-          "BACKGROUND_SERVICE: Update - State: $currentState, Paused: $isPaused, Time: $remainingTimeInSession");
-
       String title;
       switch (currentState) {
         case PomodoroState.work:
@@ -95,7 +85,6 @@ void onStart(ServiceInstance service) async {
           title = "Durduruldu";
           break;
       }
-
       final minutes =
           (remainingTimeInSession / 60).floor().toString().padLeft(2, '0');
       final seconds = (remainingTimeInSession % 60).toString().padLeft(2, '0');
@@ -115,6 +104,7 @@ void onStart(ServiceInstance service) async {
                     (totalTargetMinutes * 60))
                 .clamp(0.0, 1.0)
             : 0.0,
+        'currentSessionTotalDuration': currentSessionTotalDuration,
       });
     }
 
@@ -145,6 +135,7 @@ void onStart(ServiceInstance service) async {
           activitiesForDay[index] = updatedActivity;
           await activityRepository!
               .saveActivitiesForDay(currentDayKey, activitiesForDay);
+          service.invoke('progress_updated');
         }
       } catch (e) {
         print("BACKGROUND_SERVICE: Error saving progress: $e");
@@ -158,19 +149,25 @@ void onStart(ServiceInstance service) async {
           totalTargetMinutes - totalElapsedMinutes;
       if (remainingMinutesForActivity <= 0) {
         remainingTimeInSession = 0;
+        currentSessionTotalDuration = 0;
         return;
       }
       final remainingSecondsForActivity = remainingMinutesForActivity * 60;
-      remainingTimeInSession = (remainingSecondsForActivity < workDuration)
-          ? remainingSecondsForActivity
-          : workDuration;
+      if (remainingSecondsForActivity < workDuration) {
+        remainingTimeInSession = remainingSecondsForActivity;
+        currentSessionTotalDuration = remainingSecondsForActivity;
+      } else {
+        remainingTimeInSession = workDuration;
+        currentSessionTotalDuration = workDuration;
+      }
     }
 
     void onSessionEnd() {
       isPaused = true;
       if (currentState == PomodoroState.work) {
         completedWorkSessions++;
-        playSound('sounds/end_sound.mp3');
+        // Ses çalma işlemini main UI'ya delegate et
+        service.invoke('play_sound', {'sound': 'sounds/end_sound.mp3'});
       }
       final totalElapsedMinutes =
           ((alreadyCompletedMinutes * 60) + totalSecondsInThisRun) ~/ 60;
@@ -184,12 +181,15 @@ void onStart(ServiceInstance service) async {
         if (completedWorkSessions % sessionsBeforeLongBreak == 0) {
           currentState = PomodoroState.longBreak;
           remainingTimeInSession = longBreakDuration;
+          currentSessionTotalDuration = longBreakDuration;
         } else {
           currentState = PomodoroState.shortBreak;
           remainingTimeInSession = shortBreakDuration;
+          currentSessionTotalDuration = shortBreakDuration;
         }
       } else {
-        playSound('sounds/start_sound.mp3');
+        // Ses çalma işlemini main UI'ya delegate et
+        service.invoke('play_sound', {'sound': 'sounds/start_sound.mp3'});
         currentState = PomodoroState.work;
         determineNextWorkSessionDuration();
       }
@@ -215,6 +215,8 @@ void onStart(ServiceInstance service) async {
         updateUIAndNotification();
       });
     }
+
+    // --- Dinleyiciler ---
 
     service.on('start').listen((event) async {
       if (event == null) return;
@@ -264,10 +266,9 @@ void onStart(ServiceInstance service) async {
 
     service.on('stop').listen((event) {
       timer?.cancel();
-      timer = null; // YENİ: Timer referansını temizle
+      timer = null;
       currentState = PomodoroState.stopped;
       updateUIAndNotification();
-      audioPlayer.dispose();
       service.stopSelf();
     });
 

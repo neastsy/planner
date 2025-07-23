@@ -4,15 +4,13 @@ import 'package:flutter/material.dart';
 import '../models/activity_model.dart';
 import '../repositories/activity_repository.dart';
 import '../services/notification_service.dart';
+import 'package:flutter_background_service/flutter_background_service.dart';
 // ignore: unused_import
 import 'package:timezone/timezone.dart' as tz;
 import 'package:gunluk_planlayici/l10n/app_localizations.dart';
 import '../utils/constants.dart';
 
-enum CopyMode {
-  merge,
-  overwrite,
-}
+enum CopyMode { merge, overwrite }
 
 class ActivityProvider with ChangeNotifier {
   final ActivityRepository _activityRepository;
@@ -21,10 +19,28 @@ class ActivityProvider with ChangeNotifier {
   Map<String, List<Activity>> _dailyActivities = {};
   late String _selectedDay;
   Timer? _syncTimer;
+  // DÜZELTME: Hive dinleyicisini kaldırıyoruz, artık manuel yapacağız.
 
   ActivityProvider(this._activityRepository) {
     _initialize();
     _startPeriodicSync();
+    _listenToService(); // YENİ: Servisten gelen ilerleme güncellemelerini dinle.
+  }
+
+  void _listenToService() {
+    FlutterBackgroundService().on('progress_updated').listen((event) {
+      print(
+          "PROVIDER: Progress update received from service! Reloading activities.");
+      // Servis haber verdiğinde, veritabanından en güncel veriyi yükle.
+      _loadActivities();
+    });
+  }
+
+  @override
+  void dispose() {
+    _syncTimer?.cancel();
+    // Artık StreamSubscription olmadığı için cancel'a gerek yok.
+    super.dispose();
   }
 
   DateTime? calculateNextNotificationTime(Activity activity, String dayKey) {
@@ -46,12 +62,6 @@ class ActivityProvider with ChangeNotifier {
       scheduledTime = scheduledTime.add(const Duration(days: 7));
     }
     return scheduledTime;
-  }
-
-  @override
-  void dispose() {
-    _syncTimer?.cancel();
-    super.dispose();
   }
 
   void _startPeriodicSync() {

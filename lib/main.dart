@@ -28,25 +28,43 @@ import 'adepters/time_of_day_adapter.dart';
 String dbPath = '';
 
 Future<void> main() async {
-  WidgetsFlutterBinding.ensureInitialized();
-
-  // YENİ: Veritabanı yolunu bul ve global değişkene ata.
-  final directory = await getApplicationDocumentsDirectory();
-  dbPath = directory.path;
-
-  // Arka plan servisini yapılandır.
-  await initializeService();
-
-  await SystemChrome.setPreferredOrientations([
-    DeviceOrientation.portraitUp,
-    DeviceOrientation.portraitDown,
-  ]);
-
   try {
-    await NotificationService().configureLocalTimezone();
-    await NotificationService().init();
-    await NotificationService().createPomodoroChannel();
+    WidgetsFlutterBinding.ensureInitialized();
 
+    // Veritabanı yolunu bul ve global değişkene ata
+    final directory = await getApplicationDocumentsDirectory();
+    dbPath = directory.path;
+
+    debugPrint("Database path initialized: $dbPath");
+
+    // Arka plan servisini yapılandır - SADECE main isolate'te
+    try {
+      await initializeService();
+      debugPrint("Background service initialized successfully");
+    } catch (e) {
+      debugPrint("Background service initialization failed: $e");
+      // Service başlatılamazsa da uygulamayı çalıştır
+    }
+
+    // Ekran yönlendirmesini ayarla
+    await SystemChrome.setPreferredOrientations([
+      DeviceOrientation.portraitUp,
+      DeviceOrientation.portraitDown,
+    ]);
+
+    // Bildirim servisini başlat
+    try {
+      await NotificationService().configureLocalTimezone();
+      await NotificationService().init();
+      await NotificationService().createPomodoroChannel();
+      // Bildirim izinlerini iste (Android 13+)
+      await NotificationService().requestPermissions();
+      debugPrint("Notification service initialized successfully");
+    } catch (e) {
+      debugPrint("Notification service initialization failed: $e");
+    }
+
+    // Hive veritabanını başlat
     await Hive.initFlutter(dbPath);
 
     Hive.registerAdapter(ActivityAdapter());
@@ -54,13 +72,17 @@ Future<void> main() async {
     Hive.registerAdapter(TimeOfDayAdapter());
     Hive.registerAdapter(ColorAdapter());
 
+    // Box'ları aç
     final activitiesBox = await Hive.openBox(AppConstants.activitiesBoxName);
     final templatesBox =
         await Hive.openBox<ActivityTemplate>(AppConstants.templatesBoxName);
     final settingsBox = await Hive.openBox(AppConstants.settingsBoxName);
 
+    // Repository'leri oluştur
     final activityRepository = ActivityRepository(activitiesBox);
     final templateRepository = TemplateRepository(templatesBox);
+
+    debugPrint("Application initialization completed successfully");
 
     runApp(
       Phoenix(
@@ -92,7 +114,15 @@ Future<void> main() async {
   } catch (e, stackTrace) {
     debugPrint("Uygulama başlatılırken kritik bir hata oluştu: $e");
     debugPrint("Stack Trace: $stackTrace");
-    runApp(Phoenix(child: ErrorApp(error: e.toString())));
+
+    // Hata durumunda basit bir hata uygulaması çalıştır
+    runApp(
+      Phoenix(
+        child: MaterialApp(
+          home: ErrorApp(error: e.toString()),
+        ),
+      ),
+    );
   }
 }
 

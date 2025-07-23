@@ -110,20 +110,23 @@ class _FocusScreenState extends State<FocusScreen> with WidgetsBindingObserver {
     final l10n = AppLocalizations.of(context)!;
     return Consumer<PomodoroProvider>(
       builder: (context, provider, child) {
-        // YENİ VE DAHA TEMİZ KONTROL
-        if (provider.isLoading) {
+        // ✅ DÜZELTME: Loading kontrolünü genişlet
+        if (provider.isLoading ||
+            (provider.isSessionActive &&
+                provider.remainingTimeInSession == 0)) {
           return const Scaffold(
             body: Center(child: CircularProgressIndicator()),
           );
         }
-        // ===================================================================
 
         final remainingTime = provider.remainingTimeInSession;
-        final progress = provider.totalActivityProgress;
+        final totalDuration = provider.currentSessionTotalDuration;
+        final double progress = (totalDuration > 0)
+            ? (totalDuration - remainingTime) / totalDuration
+            : 0.0;
 
         return Scaffold(
           appBar: AppBar(
-            // DÜZELTME: widget.activityName kullanılıyor.
             title: Text(widget.activityName),
             leading: IconButton(
               icon: const Icon(Icons.arrow_back),
@@ -143,9 +146,7 @@ class _FocusScreenState extends State<FocusScreen> with WidgetsBindingObserver {
                     fit: StackFit.expand,
                     children: [
                       CircularProgressIndicator(
-                        // DÜZELTME: Seans ilerlemesini daha doğru hesaplayalım.
-                        // Bu, servisten gelen toplam ilerlemedir.
-                        value: progress,
+                        value: progress.clamp(0.0, 1.0),
                         strokeWidth: 12,
                         backgroundColor: Theme.of(context)
                             .colorScheme
