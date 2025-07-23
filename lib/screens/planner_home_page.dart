@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 
+import '../utils/permissions.dart';
 import '../l10n/app_localizations.dart';
 import '../models/activity_model.dart';
 import '../models/language_model.dart';
@@ -73,7 +74,7 @@ class _PlannerHomePageState extends State<PlannerHomePage>
     WidgetsBinding.instance.removeObserver(this);
     _timer?.cancel();
     _pageController.dispose();
-    _transformationController.dispose(); // Controller'ı dispose et
+    _transformationController.dispose();
     super.dispose();
   }
 
@@ -594,9 +595,8 @@ class _PlannerHomePageState extends State<PlannerHomePage>
     );
   }
 
-  void _setNotification(Activity activity, int? minutes) {
-    final activityProvider =
-        Provider.of<ActivityProvider>(context, listen: false);
+  void _setNotification(Activity activity, int? minutes) async {
+    final activityProvider = context.read<ActivityProvider>();
     final index = activityProvider.selectedDayActivities
         .indexWhere((a) => a.id == activity.id);
 
@@ -613,7 +613,6 @@ class _PlannerHomePageState extends State<PlannerHomePage>
       tags: activity.tags,
       isNotificationRecurring: activity.isNotificationRecurring,
     );
-
     activityProvider.updateActivity(updatedActivity, index);
   }
 
@@ -1021,11 +1020,9 @@ class _PlannerHomePageState extends State<PlannerHomePage>
 
     final l10n = AppLocalizations.of(context)!;
 
-    // 1. ADIM: Aktivitenin tamamlanıp tamamlanmadığını kontrol et.
     final bool isCompleted = activity.durationInMinutes > 0 &&
         activity.completedDurationInMinutes >= activity.durationInMinutes;
 
-    // 2. ADIM: Aktivitenin şu anki zaman diliminde olup olmadığını kontrol et.
     final now = TimeOfDay.now();
     final nowInMinutes = now.hour * 60 + now.minute;
     final startInMinutes =
@@ -1069,6 +1066,19 @@ class _PlannerHomePageState extends State<PlannerHomePage>
 
   void _startPomodoroSession(
       BuildContext context, Activity activity, String dayKey) async {
+    final hasPermission = await checkAndRequestNotificationPermission(context);
+
+    if (!context.mounted) return;
+
+    if (!hasPermission) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+            content:
+                Text(AppLocalizations.of(context)!.pomodoroPermissionRequired)),
+      );
+      return;
+    }
+
     final pomodoroProvider = context.read<PomodoroProvider>();
     final activityProvider = context.read<ActivityProvider>();
 
@@ -1082,13 +1092,14 @@ class _PlannerHomePageState extends State<PlannerHomePage>
       );
 
       if (!context.mounted) return;
-
       await Navigator.of(context).push(MaterialPageRoute(
         builder: (context) => FocusScreen(
           activityId: activity.id,
           activityName: activity.name,
         ),
       ));
+
+      if (!context.mounted) return;
 
       debugPrint("Returned from FocusScreen. Triggering UI refresh.");
       activityProvider.reloadActivitiesFromDB();
@@ -1378,8 +1389,7 @@ class _PlannerHomePageState extends State<PlannerHomePage>
                                 ],
                               ))
                             : ListView.builder(
-                                key: ValueKey<String>(
-                                    dayKey), // Bu key basit kalabilir.
+                                key: ValueKey<String>(dayKey),
                                 itemCount: activities.length,
                                 itemBuilder: (context, index) {
                                   final activity = activities[index];

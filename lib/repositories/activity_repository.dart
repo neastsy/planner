@@ -3,25 +3,27 @@ import '../models/activity_model.dart';
 import '../utils/constants.dart';
 
 class ActivityRepository {
-  final Box _activitiesBox;
-  ActivityRepository(this._activitiesBox);
+  final String _boxName = AppConstants.activitiesBoxName;
 
-  Map<String, List<Activity>> loadActivities() {
+  ActivityRepository();
+
+  Future<Map<String, List<Activity>>> loadActivities() async {
+    if (Hive.isBoxOpen(_boxName)) {
+      await Hive.box(_boxName).close();
+    }
+    final box = await Hive.openBox(_boxName);
+
     final Map<String, List<Activity>> dailyActivities = {};
     for (var dayKey in AppConstants.dayKeys) {
-      final activityList =
-          _activitiesBox.get(dayKey, defaultValue: <Activity>[]);
-
-      // DEĞİŞİKLİK: Hive'dan gelen nesnelerin kopyalarını oluşturuyoruz.
-      dailyActivities[dayKey] = List<Activity>.from(activityList)
-          .map((activity) => activity.copyWith()) // Her aktiviteyi klonla
-          .toList();
+      final activityList = box.get(dayKey, defaultValue: <Activity>[]);
+      dailyActivities[dayKey] = List<Activity>.from(activityList);
     }
     return dailyActivities;
   }
 
   Future<void> saveActivitiesForDay(
       String dayKey, List<Activity> activities) async {
-    await _activitiesBox.put(dayKey, activities);
+    final box = await Hive.openBox(_boxName);
+    await box.put(dayKey, activities);
   }
 }

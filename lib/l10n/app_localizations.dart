@@ -868,6 +868,30 @@ abstract class AppLocalizations {
   /// In tr, this message translates to:
   /// **'Bu oturumda tamamladığınız {minutes} dakikayı \'{activityName}\' aktivitesine eklemek ister misiniz?'**
   String pomodoro_confirmSaveContent(Object activityName, Object minutes);
+
+  /// No description provided for @permissionRequired.
+  ///
+  /// In tr, this message translates to:
+  /// **'İzin Gerekli'**
+  String get permissionRequired;
+
+  /// No description provided for @permissionExplanation.
+  ///
+  /// In tr, this message translates to:
+  /// **'Bildirimleri ve Pomodoro zamanlayıcıyı kullanmak için uygulama ayarlarından bildirim iznini etkinleştirmeniz gerekmektedir.'**
+  String get permissionExplanation;
+
+  /// No description provided for @openSettings.
+  ///
+  /// In tr, this message translates to:
+  /// **'Ayarları Aç'**
+  String get openSettings;
+
+  /// No description provided for @pomodoroPermissionRequired.
+  ///
+  /// In tr, this message translates to:
+  /// **'Pomodoro zamanlayıcısının çalışması için bildirim izni gereklidir.'**
+  String get pomodoroPermissionRequired;
 }
 
 class _AppLocalizationsDelegate

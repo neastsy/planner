@@ -416,4 +416,16 @@ class AppLocalizationsZh extends AppLocalizations {
   String pomodoro_confirmSaveContent(Object activityName, Object minutes) {
     return '要将您在此会话中完成的 $minutes 分钟添加到活动“$activityName”吗？';
   }
+
+  @override
+  String get permissionRequired => '需要权限';
+
+  @override
+  String get permissionExplanation => '要使用通知和番茄钟，您需要在应用程序设置中启用通知权限。';
+
+  @override
+  String get openSettings => '打开设置';
+
+  @override
+  String get pomodoroPermissionRequired => '番茄钟需要通知权限才能工作。';
 }

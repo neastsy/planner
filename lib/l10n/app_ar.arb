@@ -171,5 +171,9 @@
   "pomodoro_activityCompleted": "هذا النشاط مكتمل بالفعل!",
   "targetReached": "تم الوصول إلى الهدف! لقد أكملت نشاط '{activityName}'.",
   "pomodoro_completedMinutes": "اكتمل {completed} / {total} دقيقة",
-  "pomodoro_confirmSaveContent": "هل تريد إضافة {minutes} دقيقة التي أكملتها في هذه الجلسة إلى نشاط '{activityName}'؟"
+  "pomodoro_confirmSaveContent": "هل تريد إضافة {minutes} دقيقة التي أكملتها في هذه الجلسة إلى نشاط '{activityName}'؟",
+  "permissionRequired": "الإذن مطلوب",
+  "permissionExplanation": "لاستخدام الإشعارات ومؤقت بومودورو، تحتاج إلى تمكين أذونات الإشعارات في إعدادات التطبيق.",
+  "openSettings": "فتح الإعدادات",
+  "pomodoroPermissionRequired": "إذن الإشعارات مطلوب لكي يعمل مؤقت بومودورو."  
 }

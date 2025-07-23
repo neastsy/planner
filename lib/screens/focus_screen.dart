@@ -59,12 +59,10 @@ class _FocusScreenState extends State<FocusScreen> with WidgetsBindingObserver {
       case PomodoroState.longBreak:
         return l10n.pomodoro_sessionStateLongBreak;
       case PomodoroState.stopped:
-        return l10n
-            .pomodoro_sessionStatePaused; // "Durduruldu" daha iyi bir çeviri olabilir.
+        return l10n.pomodoro_sessionStatePaused;
     }
   }
 
-  // GÜNCELLENMİŞ FONKSİYON
   Future<void> _showExitConfirmationDialog(
       BuildContext context, PomodoroProvider pomodoroProvider) async {
     final l10n = AppLocalizations.of(context)!;
@@ -88,7 +86,7 @@ class _FocusScreenState extends State<FocusScreen> with WidgetsBindingObserver {
         title: Text(l10n.pomodoro_endSessionTitle),
         content: Text(l10n.pomodoro_confirmSaveContent(
             pomodoroProvider.remainingTimeInSession.toString(),
-            widget.activityName)), // Daha uygun bir metin
+            widget.activityName)),
         actions: [
           TextButton(
             onPressed: () => Navigator.of(ctx).pop(false),
@@ -96,7 +94,7 @@ class _FocusScreenState extends State<FocusScreen> with WidgetsBindingObserver {
           ),
           TextButton(
             onPressed: () => Navigator.of(ctx).pop(true),
-            child: Text(l10n.pomodoro_saveAndExit), // Daha uygun bir metin
+            child: Text(l10n.pomodoro_saveAndExit),
           ),
         ],
       ),
@@ -107,8 +105,6 @@ class _FocusScreenState extends State<FocusScreen> with WidgetsBindingObserver {
       Navigator.of(context).pop();
     }
   }
-
-  // ... (importlar ve diğer metotlar aynı kalacak)
 
   @override
   Widget build(BuildContext context) {
@@ -187,35 +183,60 @@ class _FocusScreenState extends State<FocusScreen> with WidgetsBindingObserver {
                     style: Theme.of(context).textTheme.titleMedium,
                   ),
                   const SizedBox(height: 60),
-                  if (provider.isSessionActive)
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        IconButton(
-                          iconSize: 80,
-                          icon: Icon(provider.isPaused
-                              ? Icons.play_arrow_rounded
-                              : Icons.pause_rounded),
-                          onPressed: () {
-                            provider.togglePause();
-                          },
-                        ),
-                        const SizedBox(width: 40),
-                        IconButton(
-                          iconSize: 50,
-                          icon: const Icon(Icons.stop_rounded),
-                          onPressed: () {
-                            _showExitConfirmationDialog(context, provider);
-                          },
-                        ),
-                      ],
-                    )
-                  else
-                    ElevatedButton.icon(
-                      icon: const Icon(Icons.arrow_back_rounded),
-                      label: Text(l10n.close),
-                      onPressed: () => Navigator.of(context).pop(),
+                  SizedBox(
+                    height: 80,
+                    child: Center(
+                      child: AnimatedSwitcher(
+                        duration: const Duration(milliseconds: 300),
+                        transitionBuilder:
+                            (Widget child, Animation<double> animation) {
+                          return FadeTransition(
+                            opacity: animation,
+                            child:
+                                ScaleTransition(scale: animation, child: child),
+                          );
+                        },
+                        child: provider.isSessionActive
+                            ? Row(
+                                key: const ValueKey('active_buttons'),
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  IconButton(
+                                    iconSize: 80,
+                                    icon: Icon(provider.isPaused
+                                        ? Icons.play_arrow_rounded
+                                        : Icons.pause_rounded),
+                                    onPressed: () {
+                                      provider.togglePause();
+                                    },
+                                  ),
+                                  const SizedBox(width: 40),
+                                  IconButton(
+                                    iconSize: 50,
+                                    icon: const Icon(Icons.stop_rounded),
+                                    onPressed: () {
+                                      _showExitConfirmationDialog(
+                                          context, provider);
+                                    },
+                                  ),
+                                ],
+                              )
+                            : ElevatedButton.icon(
+                                key: const ValueKey('close_button'),
+                                icon: const Icon(Icons.arrow_back_rounded),
+                                label: Text(l10n.close),
+                                onPressed: () => _showExitConfirmationDialog(
+                                    context, provider),
+                                style: ElevatedButton.styleFrom(
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 24, vertical: 12),
+                                  textStyle:
+                                      Theme.of(context).textTheme.titleMedium,
+                                ),
+                              ),
+                      ),
                     ),
+                  ),
                 ],
               ),
             ),

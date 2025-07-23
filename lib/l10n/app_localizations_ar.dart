@@ -421,4 +421,18 @@ class AppLocalizationsAr extends AppLocalizations {
   String pomodoro_confirmSaveContent(Object activityName, Object minutes) {
     return 'هل تريد إضافة $minutes دقيقة التي أكملتها في هذه الجلسة إلى نشاط \'$activityName\'؟';
   }
+
+  @override
+  String get permissionRequired => 'الإذن مطلوب';
+
+  @override
+  String get permissionExplanation =>
+      'لاستخدام الإشعارات ومؤقت بومودورو، تحتاج إلى تمكين أذونات الإشعارات في إعدادات التطبيق.';
+
+  @override
+  String get openSettings => 'فتح الإعدادات';
+
+  @override
+  String get pomodoroPermissionRequired =>
+      'إذن الإشعارات مطلوب لكي يعمل مؤقت بومودورو.';
 }

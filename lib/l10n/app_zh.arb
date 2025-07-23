@@ -171,5 +171,9 @@
   "pomodoro_activityCompleted": "此活动已完成！",
   "targetReached": "已达成目标！您已完成“{activityName}”活动。",
   "pomodoro_completedMinutes": "已完成 {completed} / {total} 分钟",
-  "pomodoro_confirmSaveContent": "要将您在此会话中完成的 {minutes} 分钟添加到活动“{activityName}”吗？"     
+  "pomodoro_confirmSaveContent": "要将您在此会话中完成的 {minutes} 分钟添加到活动“{activityName}”吗？",
+  "permissionRequired": "需要权限",
+  "permissionExplanation": "要使用通知和番茄钟，您需要在应用程序设置中启用通知权限。",
+  "openSettings": "打开设置",
+  "pomodoroPermissionRequired": "番茄钟需要通知权限才能工作。"       
 }

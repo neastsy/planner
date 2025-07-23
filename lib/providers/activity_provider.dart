@@ -28,20 +28,13 @@ class ActivityProvider with ChangeNotifier {
     super.dispose();
   }
 
-  // GÜNCELLENMİŞ METOT
-  void reloadActivitiesFromDB() async {
+  Future<void> reloadActivitiesFromDB() async {
     debugPrint("ActivityProvider: Reloading activities from database...");
-    _dailyActivities = _activityRepository.loadActivities();
+    _dailyActivities = await _activityRepository.loadActivities();
     _dailyActivities.forEach((_, list) => _sortList(list));
-
-    // Bu satır, notifyListeners'ın bir sonraki olay döngüsünde çalışmasını
-    // sağlayarak UI'ın güncellemeyi yakalamasını garanti eder.
-    await Future.delayed(Duration.zero);
-
     notifyListeners();
   }
 
-  // Geri kalan tüm metotlar aynı...
   DateTime? calculateNextNotificationTime(Activity activity, String dayKey) {
     if (activity.notificationMinutesBefore == null) return null;
     final now = DateTime.now();
@@ -71,10 +64,10 @@ class ActivityProvider with ChangeNotifier {
   List<Activity> get selectedDayActivities =>
       _dailyActivities[_selectedDay] ?? [];
 
-  void _initialize() {
+  void _initialize() async {
     _selectedDay = AppConstants.dayKeys[DateTime.now().weekday - 1];
-    _loadActivities();
-    _clearOutdatedProgress();
+    await _loadActivities();
+    await _clearOutdatedProgress();
   }
 
   Future<void> _clearOutdatedProgress() async {
@@ -114,10 +107,10 @@ class ActivityProvider with ChangeNotifier {
     notifyListeners();
   }
 
-  void _loadActivities() {
-    _dailyActivities = _activityRepository.loadActivities();
+  Future<void> _loadActivities() async {
+    _dailyActivities = await _activityRepository.loadActivities();
     _dailyActivities.forEach((_, list) => _sortList(list));
-    syncNotificationsOnLoad();
+    await syncNotificationsOnLoad();
     notifyListeners();
   }
 

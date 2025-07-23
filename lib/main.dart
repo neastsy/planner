@@ -30,15 +30,11 @@ String dbPath = '';
 Future<void> main() async {
   try {
     WidgetsFlutterBinding.ensureInitialized();
-
-    // KRITIK DÜZELTME: Uygulama dizini yerine sistem cache dizinini kullan
     final directory = await getApplicationDocumentsDirectory();
     dbPath = directory.path;
 
     debugPrint("Database path initialized: $dbPath");
 
-    // KRITIK DÜZELTME: Background service initialization'ı sadece main isolate'te
-    // ve hata yakalama ile
     bool serviceInitialized = false;
     try {
       await initializeService();
@@ -47,7 +43,6 @@ Future<void> main() async {
     } catch (e, stackTrace) {
       debugPrint("Background service initialization failed: $e");
       debugPrint("Stack trace: $stackTrace");
-      // Service başlatılamazsa da uygulamayı çalıştır
     }
 
     // Ekran yönlendirmesini ayarla
@@ -56,7 +51,6 @@ Future<void> main() async {
       DeviceOrientation.portraitDown,
     ]);
 
-    // KRITIK DÜZELTME: Bildirim servisini başlat ve hataları yakala
     bool notificationInitialized = false;
     try {
       await NotificationService().configureLocalTimezone();
@@ -74,7 +68,6 @@ Future<void> main() async {
     // Hive veritabanını başlat
     await Hive.initFlutter(dbPath);
 
-    // KRITIK DÜZELTME: Adapter kayıt kontrolü
     try {
       Hive.registerAdapter(ActivityAdapter());
       Hive.registerAdapter(ActivityTemplateAdapter());
@@ -85,13 +78,11 @@ Future<void> main() async {
     }
 
     // Box'ları aç
-    final activitiesBox = await Hive.openBox(AppConstants.activitiesBoxName);
+    await Hive.openBox(AppConstants.activitiesBoxName);
     final templatesBox =
         await Hive.openBox<ActivityTemplate>(AppConstants.templatesBoxName);
     final settingsBox = await Hive.openBox(AppConstants.settingsBoxName);
-
-    // Repository'leri oluştur
-    final activityRepository = ActivityRepository(activitiesBox);
+    final activityRepository = ActivityRepository();
     final templateRepository = TemplateRepository(templatesBox);
 
     debugPrint("Application initialization completed successfully");

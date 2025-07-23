@@ -424,4 +424,18 @@ class AppLocalizationsEn extends AppLocalizations {
   String pomodoro_confirmSaveContent(Object activityName, Object minutes) {
     return 'Add the $minutes minutes you completed in this session to the \'$activityName\' activity?';
   }
+
+  @override
+  String get permissionRequired => 'Permission Required';
+
+  @override
+  String get permissionExplanation =>
+      'To use notifications and the Pomodoro timer, you need to enable notification permissions in the app settings.';
+
+  @override
+  String get openSettings => 'Open Settings';
+
+  @override
+  String get pomodoroPermissionRequired =>
+      'Notification permission is required for the Pomodoro timer to work.';
 }

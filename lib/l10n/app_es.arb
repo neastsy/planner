@@ -171,5 +171,9 @@
   "pomodoro_activityCompleted": "¡Esta actividad ya está completada!",
   "targetReached": "¡Objetivo alcanzado! Ha completado la actividad '{activityName}'.",
   "pomodoro_completedMinutes": "{completed} / {total} min completados",
-  "pomodoro_confirmSaveContent": "¿Añadir los {minutes} minutos que completó en esta sesión a la actividad '{activityName}'?"
+  "pomodoro_confirmSaveContent": "¿Añadir los {minutes} minutos que completó en esta sesión a la actividad '{activityName}'?",
+  "permissionRequired": "Permiso requerido",
+  "permissionExplanation": "Para usar las notificaciones y el temporizador Pomodoro, debe habilitar los permisos de notificación en la configuración de la aplicación.",
+  "openSettings": "Abrir configuración",
+  "pomodoroPermissionRequired": "Se requiere permiso de notificación para que el temporizador Pomodoro funcione." 
 }

@@ -426,4 +426,18 @@ class AppLocalizationsRu extends AppLocalizations {
   String pomodoro_confirmSaveContent(Object activityName, Object minutes) {
     return 'Добавить $minutes минут, завершенных в этом сеансе, к задаче \'$activityName\'?';
   }
+
+  @override
+  String get permissionRequired => 'Требуется разрешение';
+
+  @override
+  String get permissionExplanation =>
+      'Чтобы использовать уведомления и таймер Pomodoro, вам необходимо включить разрешения на уведомления в настройках приложения.';
+
+  @override
+  String get openSettings => 'Открыть настройки';
+
+  @override
+  String get pomodoroPermissionRequired =>
+      'Для работы таймера Pomodoro требуется разрешение на уведомления.';
 }

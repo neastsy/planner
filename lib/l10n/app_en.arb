@@ -186,5 +186,9 @@
   "pomodoro_activityCompleted": "This activity is already completed!",
   "targetReached": "Target Reached! You completed the '{activityName}' activity.",
   "pomodoro_completedMinutes": "{completed} / {total} min completed",
-  "pomodoro_confirmSaveContent": "Add the {minutes} minutes you completed in this session to the '{activityName}' activity?"
+  "pomodoro_confirmSaveContent": "Add the {minutes} minutes you completed in this session to the '{activityName}' activity?",
+  "permissionRequired": "Permission Required",
+  "permissionExplanation": "To use notifications and the Pomodoro timer, you need to enable notification permissions in the app settings.",
+  "openSettings": "Open Settings",
+  "pomodoroPermissionRequired": "Notification permission is required for the Pomodoro timer to work."
 }

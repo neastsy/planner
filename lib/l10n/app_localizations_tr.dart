@@ -424,4 +424,18 @@ class AppLocalizationsTr extends AppLocalizations {
   String pomodoro_confirmSaveContent(Object activityName, Object minutes) {
     return 'Bu oturumda tamamladığınız $minutes dakikayı \'$activityName\' aktivitesine eklemek ister misiniz?';
   }
+
+  @override
+  String get permissionRequired => 'İzin Gerekli';
+
+  @override
+  String get permissionExplanation =>
+      'Bildirimleri ve Pomodoro zamanlayıcıyı kullanmak için uygulama ayarlarından bildirim iznini etkinleştirmeniz gerekmektedir.';
+
+  @override
+  String get openSettings => 'Ayarları Aç';
+
+  @override
+  String get pomodoroPermissionRequired =>
+      'Pomodoro zamanlayıcısının çalışması için bildirim izni gereklidir.';
 }

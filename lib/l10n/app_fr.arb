@@ -171,5 +171,9 @@
   "pomodoro_activityCompleted": "Cette activité est déjà terminée !",
   "targetReached": "Objectif atteint ! Vous avez terminé l'activité '{activityName}'.",
   "pomodoro_completedMinutes": "{completed} / {total} min terminées",
-  "pomodoro_confirmSaveContent": "Ajouter les {minutes} minutes que vous avez terminées dans cette session à l'activité '{activityName}' ?"
+  "pomodoro_confirmSaveContent": "Ajouter les {minutes} minutes que vous avez terminées dans cette session à l'activité '{activityName}' ?",
+  "permissionRequired": "Autorisation requise",
+  "permissionExplanation": "Pour utiliser les notifications et le minuteur Pomodoro, vous devez activer les autorisations de notification dans les paramètres de l'application.",
+  "openSettings": "Ouvrir les paramètres",
+  "pomodoroPermissionRequired": "L'autorisation de notification est requise pour que le minuteur Pomodoro fonctionne."  
 }

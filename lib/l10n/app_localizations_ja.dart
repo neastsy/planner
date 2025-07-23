@@ -416,4 +416,17 @@ class AppLocalizationsJa extends AppLocalizations {
   String pomodoro_confirmSaveContent(Object activityName, Object minutes) {
     return 'このセッションで完了した$minutes分をアクティビティ「$activityName」に追加しますか？';
   }
+
+  @override
+  String get permissionRequired => '権限が必要です';
+
+  @override
+  String get permissionExplanation =>
+      '通知とポモドーロタイマーを使用するには、アプリの設定で通知権限を有効にする必要があります。';
+
+  @override
+  String get openSettings => '設定を開く';
+
+  @override
+  String get pomodoroPermissionRequired => 'ポモドーロタイマーが機能するには、通知権限が必要です。';
 }

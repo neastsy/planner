@@ -4,7 +4,6 @@ import 'package:flutter_background_service/flutter_background_service.dart';
 import 'package:gunluk_planlayici/models/activity_model.dart';
 import 'package:gunluk_planlayici/repositories/activity_repository.dart';
 import 'package:hive/hive.dart';
-import 'package:gunluk_planlayici/utils/constants.dart';
 import 'package:gunluk_planlayici/adepters/color_adapter.dart';
 import 'package:gunluk_planlayici/adepters/time_of_day_adapter.dart';
 
@@ -98,11 +97,31 @@ void onStart(ServiceInstance service) async {
       });
     }
 
+    void determineNextWorkSessionDuration() {
+      final totalElapsedMinutes =
+          ((alreadyCompletedMinutes * 60) + totalSecondsInThisRun) ~/ 60;
+      final remainingMinutesForActivity =
+          totalTargetMinutes - totalElapsedMinutes;
+      if (remainingMinutesForActivity <= 0) {
+        remainingTimeInSession = 0;
+        currentSessionTotalDuration = 0;
+        return;
+      }
+      final remainingSecondsForActivity = remainingMinutesForActivity * 60;
+      if (remainingSecondsForActivity < workDuration) {
+        remainingTimeInSession = remainingSecondsForActivity;
+        currentSessionTotalDuration = remainingSecondsForActivity;
+      } else {
+        remainingTimeInSession = workDuration;
+        currentSessionTotalDuration = workDuration;
+      }
+    }
+
     Future<void> saveProgress() async {
       if (activityRepository == null) return;
       try {
         final Map<String, List<Activity>> allActivities =
-            activityRepository!.loadActivities();
+            await activityRepository!.loadActivities();
         final List<Activity> activitiesForDay =
             List<Activity>.from(allActivities[currentDayKey] ?? []);
         final index =
@@ -127,46 +146,21 @@ void onStart(ServiceInstance service) async {
           activitiesForDay[index] = updatedActivity;
           await activityRepository!
               .saveActivitiesForDay(currentDayKey, activitiesForDay);
-          // KALDIRILDI: Artık buradan UI'a haber vermiyoruz.
-          // service.invoke('progress_updated');
         }
       } catch (e) {
         debugPrint("BACKGROUND_SERVICE: Error saving progress: $e");
       }
     }
 
-    void determineNextWorkSessionDuration() {
-      final totalElapsedMinutes =
-          ((alreadyCompletedMinutes * 60) + totalSecondsInThisRun) ~/ 60;
-      final remainingMinutesForActivity =
-          totalTargetMinutes - totalElapsedMinutes;
-      if (remainingMinutesForActivity <= 0) {
-        remainingTimeInSession = 0;
-        currentSessionTotalDuration = 0;
-        return;
-      }
-      final remainingSecondsForActivity = remainingMinutesForActivity * 60;
-      if (remainingSecondsForActivity < workDuration) {
-        remainingTimeInSession = remainingSecondsForActivity;
-        currentSessionTotalDuration = remainingSecondsForActivity;
-      } else {
-        remainingTimeInSession = workDuration;
-        currentSessionTotalDuration = workDuration;
-      }
-    }
-
-    // GÜNCELLENMİŞ FONKSİYON
     void onSessionEnd() async {
       isPaused = true;
       if (currentState == PomodoroState.work) {
         completedWorkSessions++;
         service.invoke('play_sound', {'sound': 'sounds/end_sound.mp3'});
       }
-
       final totalElapsedSeconds =
           (alreadyCompletedMinutes * 60) + totalSecondsInThisRun;
       final totalElapsedMinutes = totalElapsedSeconds ~/ 60;
-
       if (totalElapsedMinutes >= totalTargetMinutes) {
         if (workSecondsForSaving > 0) {
           await saveProgress();
@@ -177,7 +171,6 @@ void onStart(ServiceInstance service) async {
         service.stopSelf();
         return;
       }
-
       if (currentState == PomodoroState.work) {
         if (completedWorkSessions % sessionsBeforeLongBreak == 0) {
           currentState = PomodoroState.longBreak;
@@ -226,9 +219,8 @@ void onStart(ServiceInstance service) async {
           Hive.registerAdapter(TimeOfDayAdapter());
         }
         if (!Hive.isAdapterRegistered(3)) Hive.registerAdapter(ColorAdapter());
-        final activitiesBox =
-            await Hive.openBox(AppConstants.activitiesBoxName);
-        activityRepository = ActivityRepository(activitiesBox);
+
+        activityRepository = ActivityRepository();
         return true;
       } catch (e) {
         debugPrint("BACKGROUND_SERVICE: Error initializing Hive: $e");

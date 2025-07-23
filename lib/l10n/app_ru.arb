@@ -171,5 +171,9 @@
   "pomodoro_activityCompleted": "Это задание уже выполнено!",
   "targetReached": "Цель достигнута! Вы завершили задачу '{activityName}'.",
   "pomodoro_completedMinutes": "{completed} / {total} мин завершено",
-  "pomodoro_confirmSaveContent": "Добавить {minutes} минут, завершенных в этом сеансе, к задаче '{activityName}'?"
+  "pomodoro_confirmSaveContent": "Добавить {minutes} минут, завершенных в этом сеансе, к задаче '{activityName}'?",
+  "permissionRequired": "Требуется разрешение",
+  "permissionExplanation": "Чтобы использовать уведомления и таймер Pomodoro, вам необходимо включить разрешения на уведомления в настройках приложения.",
+  "openSettings": "Открыть настройки",
+  "pomodoroPermissionRequired": "Для работы таймера Pomodoro требуется разрешение на уведомления."  
 }
