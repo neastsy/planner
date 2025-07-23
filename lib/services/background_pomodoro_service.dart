@@ -1,6 +1,5 @@
 import 'dart:async';
-import 'dart:ui';
-import 'package:flutter/widgets.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter_background_service/flutter_background_service.dart';
 import 'package:gunluk_planlayici/models/activity_model.dart';
 import 'package:gunluk_planlayici/repositories/activity_repository.dart';
@@ -34,21 +33,15 @@ Future<void> initializeService() async {
 
 @pragma('vm:entry-point')
 bool onIosBackground(ServiceInstance service) {
-  WidgetsFlutterBinding.ensureInitialized();
-  print("BACKGROUND_SERVICE: iOS background mode");
+  debugPrint("BACKGROUND_SERVICE: iOS background mode");
   return true;
 }
 
 @pragma('vm:entry-point')
 void onStart(ServiceInstance service) async {
   try {
-    WidgetsFlutterBinding.ensureInitialized();
-    DartPluginRegistrant.ensureInitialized();
-
     Timer? timer;
     ActivityRepository? activityRepository;
-
-    // Durum Değişkenleri
     PomodoroState currentState = PomodoroState.stopped;
     bool isPaused = true;
     int remainingTimeInSession = 0;
@@ -61,13 +54,10 @@ void onStart(ServiceInstance service) async {
     String currentDayKey = '';
     int currentSessionTotalDuration = 0;
 
-    // Sabitler
     const int workDuration = 2 * 60;
     const int shortBreakDuration = 1 * 60;
     const int longBreakDuration = 15 * 60;
     const int sessionsBeforeLongBreak = 4;
-
-    // --- Yardımcı Fonksiyonlar ---
 
     void updateUIAndNotification({bool isFinished = false}) {
       String title;
@@ -111,8 +101,10 @@ void onStart(ServiceInstance service) async {
     Future<void> saveProgress() async {
       if (activityRepository == null) return;
       try {
-        final List<Activity> activitiesForDay = List<Activity>.from(
-            activityRepository!.loadActivities()[currentDayKey] ?? []);
+        final Map<String, List<Activity>> allActivities =
+            activityRepository!.loadActivities();
+        final List<Activity> activitiesForDay =
+            List<Activity>.from(allActivities[currentDayKey] ?? []);
         final index =
             activitiesForDay.indexWhere((a) => a.id == currentActivityId);
         if (index != -1) {
@@ -135,10 +127,11 @@ void onStart(ServiceInstance service) async {
           activitiesForDay[index] = updatedActivity;
           await activityRepository!
               .saveActivitiesForDay(currentDayKey, activitiesForDay);
-          service.invoke('progress_updated');
+          // KALDIRILDI: Artık buradan UI'a haber vermiyoruz.
+          // service.invoke('progress_updated');
         }
       } catch (e) {
-        print("BACKGROUND_SERVICE: Error saving progress: $e");
+        debugPrint("BACKGROUND_SERVICE: Error saving progress: $e");
       }
     }
 
@@ -162,21 +155,29 @@ void onStart(ServiceInstance service) async {
       }
     }
 
-    void onSessionEnd() {
+    // GÜNCELLENMİŞ FONKSİYON
+    void onSessionEnd() async {
       isPaused = true;
       if (currentState == PomodoroState.work) {
         completedWorkSessions++;
-        // Ses çalma işlemini main UI'ya delegate et
         service.invoke('play_sound', {'sound': 'sounds/end_sound.mp3'});
       }
-      final totalElapsedMinutes =
-          ((alreadyCompletedMinutes * 60) + totalSecondsInThisRun) ~/ 60;
+
+      final totalElapsedSeconds =
+          (alreadyCompletedMinutes * 60) + totalSecondsInThisRun;
+      final totalElapsedMinutes = totalElapsedSeconds ~/ 60;
+
       if (totalElapsedMinutes >= totalTargetMinutes) {
+        if (workSecondsForSaving > 0) {
+          await saveProgress();
+        }
         currentState = PomodoroState.stopped;
         updateUIAndNotification(isFinished: true);
+        service.invoke('task_completed');
         service.stopSelf();
         return;
       }
+
       if (currentState == PomodoroState.work) {
         if (completedWorkSessions % sessionsBeforeLongBreak == 0) {
           currentState = PomodoroState.longBreak;
@@ -188,7 +189,6 @@ void onStart(ServiceInstance service) async {
           currentSessionTotalDuration = shortBreakDuration;
         }
       } else {
-        // Ses çalma işlemini main UI'ya delegate et
         service.invoke('play_sound', {'sound': 'sounds/start_sound.mp3'});
         currentState = PomodoroState.work;
         determineNextWorkSessionDuration();
@@ -216,34 +216,37 @@ void onStart(ServiceInstance service) async {
       });
     }
 
-    // --- Dinleyiciler ---
+    Future<bool> initializeHive(String dbPath) async {
+      try {
+        Hive.init(dbPath);
+        if (!Hive.isAdapterRegistered(1)) {
+          Hive.registerAdapter(ActivityAdapter());
+        }
+        if (!Hive.isAdapterRegistered(2)) {
+          Hive.registerAdapter(TimeOfDayAdapter());
+        }
+        if (!Hive.isAdapterRegistered(3)) Hive.registerAdapter(ColorAdapter());
+        final activitiesBox =
+            await Hive.openBox(AppConstants.activitiesBoxName);
+        activityRepository = ActivityRepository(activitiesBox);
+        return true;
+      } catch (e) {
+        debugPrint("BACKGROUND_SERVICE: Error initializing Hive: $e");
+        return false;
+      }
+    }
 
     service.on('start').listen((event) async {
       if (event == null) return;
-      if (activityRepository == null) {
-        try {
-          String? path = event['dbPath'];
-          if (path != null) {
-            Hive.init(path);
-            if (!Hive.isAdapterRegistered(1)) {
-              Hive.registerAdapter(ActivityAdapter());
-            }
-            if (!Hive.isAdapterRegistered(2)) {
-              Hive.registerAdapter(TimeOfDayAdapter());
-            }
-            if (!Hive.isAdapterRegistered(3)) {
-              Hive.registerAdapter(ColorAdapter());
-            }
-            final activitiesBox =
-                await Hive.openBox(AppConstants.activitiesBoxName);
-            activityRepository = ActivityRepository(activitiesBox);
-          } else {
-            return;
-          }
-        } catch (e) {
-          print("BACKGROUND_SERVICE: Error initializing repository: $e");
-          return;
-        }
+      String? path = event['dbPath'];
+      if (path == null) {
+        debugPrint("BACKGROUND_SERVICE: No database path provided");
+        return;
+      }
+      bool hiveInitialized = await initializeHive(path);
+      if (!hiveInitialized) {
+        debugPrint("BACKGROUND_SERVICE: Failed to initialize Hive");
+        return;
       }
       currentState = PomodoroState.work;
       isPaused = false;
@@ -276,7 +279,7 @@ void onStart(ServiceInstance service) async {
       updateUIAndNotification();
     });
   } catch (e) {
-    print("BACKGROUND_SERVICE: Critical error in onStart: $e");
+    debugPrint("BACKGROUND_SERVICE: Critical error in onStart: $e");
     service.stopSelf();
   }
 }

@@ -1,12 +1,9 @@
-import 'dart:async'; // Timer için bu import gerekli
+import 'dart:async';
 import 'dart:io';
 import 'package:flutter/material.dart';
 import '../models/activity_model.dart';
 import '../repositories/activity_repository.dart';
 import '../services/notification_service.dart';
-import 'package:flutter_background_service/flutter_background_service.dart';
-// ignore: unused_import
-import 'package:timezone/timezone.dart' as tz;
 import 'package:gunluk_planlayici/l10n/app_localizations.dart';
 import '../utils/constants.dart';
 
@@ -19,28 +16,36 @@ class ActivityProvider with ChangeNotifier {
   Map<String, List<Activity>> _dailyActivities = {};
   late String _selectedDay;
   Timer? _syncTimer;
-  // DÜZELTME: Hive dinleyicisini kaldırıyoruz, artık manuel yapacağız.
 
   ActivityProvider(this._activityRepository) {
     _initialize();
     _startPeriodicSync();
-    _listenToService(); // YENİ: Servisten gelen ilerleme güncellemelerini dinle.
+    // KALDIRILDI: _listenToService();
   }
 
+  // KALDIRILDI: Bu metot artık kullanılmıyor.
+  /*
   void _listenToService() {
     FlutterBackgroundService().on('progress_updated').listen((event) {
-      print(
-          "PROVIDER: Progress update received from service! Reloading activities.");
-      // Servis haber verdiğinde, veritabanından en güncel veriyi yükle.
+      debugPrint("PROVIDER: Progress update received from service! Reloading activities.");
       _loadActivities();
     });
   }
+  */
 
   @override
   void dispose() {
     _syncTimer?.cancel();
-    // Artık StreamSubscription olmadığı için cancel'a gerek yok.
     super.dispose();
+  }
+
+  // YENİ METOT: Sadece veriyi yeniden yüklemek için dışarıdan çağrılacak metot.
+  void reloadActivitiesFromDB() {
+    debugPrint("ActivityProvider: Reloading activities from database...");
+    final newActivities = _activityRepository.loadActivities();
+    newActivities.forEach((_, list) => _sortList(list));
+    _dailyActivities = Map.from(newActivities);
+    notifyListeners();
   }
 
   DateTime? calculateNextNotificationTime(Activity activity, String dayKey) {
@@ -407,7 +412,6 @@ class ActivityProvider with ChangeNotifier {
     notifyListeners();
   }
 
-  // DÜZELTİLMİŞ VE NİHAİ METOT
   Future<void> _scheduleNotificationForActivity(
       Activity activity, String dayKey) async {
     final finalScheduledTime = calculateNextNotificationTime(activity, dayKey);

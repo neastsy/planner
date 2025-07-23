@@ -81,8 +81,8 @@ class _PlannerHomePageState extends State<PlannerHomePage>
   void didChangeAppLifecycleState(AppLifecycleState state) {
     super.didChangeAppLifecycleState(state);
     if (state == AppLifecycleState.resumed) {
-      debugPrint("App resumed. Triggering notification sync.");
-      context.read<ActivityProvider>().syncNotificationsOnLoad();
+      debugPrint("PlannerHomePage resumed. Triggering data reload.");
+      context.read<ActivityProvider>().reloadActivitiesFromDB();
     }
   }
 
@@ -1070,23 +1070,34 @@ class _PlannerHomePageState extends State<PlannerHomePage>
   void _startPomodoroSession(
       BuildContext context, Activity activity, String dayKey) async {
     final pomodoroProvider = context.read<PomodoroProvider>();
+    final activityProvider = context.read<ActivityProvider>();
 
-    await pomodoroProvider.start(
-      activityId: activity.id,
-      dayKey: dayKey,
-      dbPath: dbPath,
-      totalActivityMinutes: activity.durationInMinutes,
-      alreadyCompletedMinutes: activity.completedDurationInMinutes,
-    );
+    try {
+      await pomodoroProvider.start(
+        activityId: activity.id,
+        dayKey: dayKey,
+        dbPath: dbPath,
+        totalActivityMinutes: activity.durationInMinutes,
+        alreadyCompletedMinutes: activity.completedDurationInMinutes,
+      );
 
-    // Servis hazır olduktan SONRA FocusScreen'e git.
-    if (context.mounted) {
-      Navigator.of(context).push(MaterialPageRoute(
+      if (!context.mounted) return;
+
+      await Navigator.of(context).push(MaterialPageRoute(
         builder: (context) => FocusScreen(
           activityId: activity.id,
           activityName: activity.name,
         ),
       ));
+
+      debugPrint("Returned from FocusScreen. Triggering UI refresh.");
+      activityProvider.reloadActivitiesFromDB();
+    } catch (e) {
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text("Pomodoro session could not be started: $e")),
+        );
+      }
     }
   }
 
@@ -1376,7 +1387,8 @@ class _PlannerHomePageState extends State<PlannerHomePage>
                                 ],
                               ))
                             : ListView.builder(
-                                key: ValueKey<String>(dayKey),
+                                key: ValueKey(
+                                    "$dayKey-${activities.length}-${activities.first.completedDurationInMinutes}"),
                                 itemCount: activities.length,
                                 itemBuilder: (context, index) {
                                   final activity = activities[index];
