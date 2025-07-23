@@ -1,6 +1,6 @@
 import 'dart:async';
 import 'dart:math';
-
+import '../main.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
@@ -1059,7 +1059,7 @@ class _PlannerHomePageState extends State<PlannerHomePage>
             ? l10n.pomodoro_continueSession
             : l10n.pomodoro_startFocusSession,
         onPressed: () {
-          _startPomodoroSession(context, activity);
+          _startPomodoroSession(context, activity, dayKey);
         },
       );
     } else {
@@ -1067,46 +1067,29 @@ class _PlannerHomePageState extends State<PlannerHomePage>
     }
   }
 
-  void _startPomodoroSession(BuildContext context, Activity activity) async {
-    final l10n = AppLocalizations.of(context)!;
+  void _startPomodoroSession(
+      BuildContext context, Activity activity, String dayKey) async {
+    // async olarak değiştirildi
     final pomodoroProvider = context.read<PomodoroProvider>();
 
-    final totalDuration = activity.durationInMinutes;
-    final completedDuration = activity.completedDurationInMinutes;
-
-    if (completedDuration >= totalDuration && totalDuration > 0) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(l10n.pomodoro_activityCompleted)),
-      );
-      return;
-    }
-
-    // 1. Provider'ı HAZIRLA (callback OLMADAN)
-    pomodoroProvider.startSession(
-      totalActivityMinutes: totalDuration,
-      alreadyCompletedMinutes: completedDuration,
+    // await ile servisin başlatılmasını ve provider'ın ilk verilerle
+    // güncellenmesini bekle.
+    await pomodoroProvider.start(
+      activityId: activity.id,
+      dayKey: dayKey,
+      dbPath: dbPath,
+      totalActivityMinutes: activity.durationInMinutes,
+      alreadyCompletedMinutes: activity.completedDurationInMinutes,
     );
 
-    // 2. FocusScreen'e git ve kapanmasını bekle
-    await Navigator.of(context).push(MaterialPageRoute(
-      builder: (context) => FocusScreen(
-        activityId: activity.id,
-        activityName: activity.name,
-      ),
-    ));
-
-    // 3. FocusScreen kapandıktan SONRA bu kod çalışacak
+    // Servis hazır olduktan SONRA FocusScreen'e git.
     if (context.mounted) {
-      // Provider'daki bayrağı kontrol et
-      if (pomodoroProvider.targetReached) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text("🏆 ${l10n.targetReached(activity.name)}"),
-            backgroundColor: Colors.green,
-          ),
-        );
-      }
-      pomodoroProvider.stop();
+      Navigator.of(context).push(MaterialPageRoute(
+        builder: (context) => FocusScreen(
+          activityId: activity.id,
+          activityName: activity.name,
+        ),
+      ));
     }
   }
 

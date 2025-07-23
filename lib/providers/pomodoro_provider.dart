@@ -1,220 +1,167 @@
-import 'dart:async';
 import 'package:flutter/foundation.dart';
-import 'package:audioplayers/audioplayers.dart';
+import 'package:flutter_background_service/flutter_background_service.dart';
 
 enum PomodoroState {
+  stopped,
   work,
   shortBreak,
   longBreak,
 }
 
 class PomodoroProvider with ChangeNotifier {
-  // --- Ayarlar ---
-  final int _workDuration = 2 * 60;
-  final int _shortBreakDuration = 1 * 60;
-  final int _longBreakDuration = 15 * 60;
-  final int _sessionsBeforeLongBreak = 4;
-
-  // --- Durum Değişkenleri ---
-  PomodoroState _currentState = PomodoroState.work;
+  bool _isLoading = true;
+  PomodoroState _currentState = PomodoroState.stopped;
   bool _isPaused = true;
   int _remainingTimeInSession = 0;
-  int _currentSessionTotalDuration = 0;
   int _completedWorkSessions = 0;
-  Timer? _timer;
-  final AudioPlayer _audioPlayer = AudioPlayer();
+  double _totalActivityProgress = 0.0;
 
-  int _totalTargetMinutes = 0;
-  int _alreadyCompletedMinutes = 0;
-  int _totalSecondsInThisRun = 0;
-  int _workSecondsForSaving = 0;
-  bool _targetReached = false;
-
-  // --- Getter'lar ---
+  // YENİ: Servis dinleyicisinin sadece bir kez kurulduğundan emin olmak için.
+  bool _isServiceListening = false;
+  bool get isLoading => _isLoading;
   PomodoroState get currentState => _currentState;
-  bool get isSessionActive => _totalTargetMinutes > 0;
+  bool get isSessionActive => _currentState != PomodoroState.stopped;
   bool get isPaused => _isPaused;
   int get remainingTimeInSession => _remainingTimeInSession;
-  int get currentSessionTotalDuration => _currentSessionTotalDuration;
   int get completedWorkSessions => _completedWorkSessions;
-  int get minutesToAdd => _workSecondsForSaving ~/ 60;
-  bool get targetReached => _targetReached;
-  int get totalTargetMinutes => _totalTargetMinutes;
-  int get alreadyCompletedMinutes => _alreadyCompletedMinutes;
+  double get totalActivityProgress => _totalActivityProgress;
 
-  // Toplam aktivite ilerlemesi (work + break sürelerini say)
-  double get totalActivityProgress {
-    if (_totalTargetMinutes <= 0) return 0.0;
+  // Bu getter'ı daha sonra servisten gelen veriyle daha akıllı hale getirebiliriz.
+  double get currentSessionProgress => 0.0;
 
-    // Toplam geçen süre = önceki tamamlananlar + bu seanstaki toplam süre
-    final totalElapsedSeconds =
-        (_alreadyCompletedMinutes * 60) + _totalSecondsInThisRun;
-    final totalTargetSeconds = _totalTargetMinutes * 60;
-
-    return (totalElapsedSeconds / totalTargetSeconds).clamp(0.0, 1.0);
+  PomodoroProvider() {
+    // YENİ: Daha sağlam bir başlatma metodu.
+    _initializeServiceConnection();
   }
 
-  double get currentSessionProgress {
-    // Eğer toplam seans süresi 0 veya daha az ise, ilerleme 0'dır.
-    if (_currentSessionTotalDuration <= 0) return 0.0;
-
-    // Mevcut seansta geçen süreyi hesapla
-    final elapsedSecondsInSession =
-        _currentSessionTotalDuration - _remainingTimeInSession;
-
-    // İlerlemeyi (0.0 ile 1.0 arasında bir değer) döndür
-    return (elapsedSecondsInSession / _currentSessionTotalDuration)
-        .clamp(0.0, 1.0);
+  // YENİ: Servis bağlantısını başlatan ve yöneten metot.
+  void _initializeServiceConnection() {
+    if (!_isServiceListening) {
+      _listenToService();
+      _isServiceListening = true;
+    }
+    getStatus();
   }
 
-  // --- Ana Kontrol Metotları ---
+  void getStatus() {
+    final service = FlutterBackgroundService();
+    service.invoke('get_status');
+  }
 
-  void startSession({
+  Future<void> start({
+    required String activityId,
+    required String dayKey,
+    required String dbPath,
     required int totalActivityMinutes,
     required int alreadyCompletedMinutes,
-  }) {
-    if (isSessionActive) return;
-
-    _totalTargetMinutes = totalActivityMinutes;
-    _alreadyCompletedMinutes = alreadyCompletedMinutes;
-    _completedWorkSessions = 0;
-    _workSecondsForSaving = 0;
-    _totalSecondsInThisRun = 0;
-    _currentState = PomodoroState.work;
-    _targetReached = false;
-
-    _determineNextWorkSessionDuration();
+  }) async {
+    _isLoading = true;
     notifyListeners();
-  }
 
-  void toggleTimer() {
-    if (_isPaused && _remainingTimeInSession <= 0 && isSessionActive) {
-      return;
+    try {
+      final service = FlutterBackgroundService();
+      final isRunning = await service.isRunning();
+
+      if (!isRunning) {
+        await service.startService();
+
+        // ✅ DÜZELTME: Servisin tam başlaması için kısa bekleme
+        await Future.delayed(const Duration(milliseconds: 500));
+
+        // ✅ DÜZELTME: Servisin gerçekten başladığını kontrol et
+        int attempts = 0;
+        while (attempts < 5 && !(await service.isRunning())) {
+          await Future.delayed(const Duration(milliseconds: 200));
+          attempts++;
+        }
+      }
+
+      // Servis parametrelerini gönder
+      service.invoke('start', {
+        'activityId': activityId,
+        'dayKey': dayKey,
+        'dbPath': dbPath,
+        'totalActivityMinutes': totalActivityMinutes,
+        'alreadyCompletedMinutes': alreadyCompletedMinutes,
+      });
+
+      // ✅ DÜZELTME: Servis başladıktan sonra status güncellemesi al
+      await Future.delayed(const Duration(milliseconds: 300));
+      service.invoke('get_status');
+    } catch (e) {
+      print("PROVIDER: Error starting service: $e");
+      _isLoading = false;
+      notifyListeners();
     }
-    _isPaused = !_isPaused;
-    if (_isPaused) {
-      _timer?.cancel();
-    } else {
-      if (!isSessionActive) return;
-      _startTimer();
-    }
-    notifyListeners();
   }
 
   void stop() {
-    _timer?.cancel();
-    _isPaused = true;
-    _totalTargetMinutes = 0;
-    _alreadyCompletedMinutes = 0;
-    _completedWorkSessions = 0;
-    _totalSecondsInThisRun = 0;
-    _workSecondsForSaving = 0;
-    _remainingTimeInSession = 0;
-    _currentSessionTotalDuration = 0;
-    _currentState = PomodoroState.work;
-    _targetReached = false;
+    final service = FlutterBackgroundService();
+    service.invoke('stop');
+    _currentState = PomodoroState.stopped;
     notifyListeners();
   }
 
-  void _startTimer() {
-    _timer?.cancel();
-    _timer = Timer.periodic(const Duration(seconds: 1), (timer) {
-      if (_remainingTimeInSession > 0) {
-        _remainingTimeInSession--;
+  void togglePause() {
+    final service = FlutterBackgroundService();
+    service.invoke('togglePause');
+    _isPaused = !_isPaused;
+    notifyListeners();
+  }
 
-        // Her saniyede toplam geçen süreyi artır
-        _totalSecondsInThisRun++;
-
-        // Eğer çalışma durumundaysak, kaydedilecek süreyi de artır
-        if (_currentState == PomodoroState.work) {
-          _workSecondsForSaving++;
-        }
-      } else {
-        _onSessionEnd();
+  void _listenToService() {
+    final service = FlutterBackgroundService();
+    service.on('update').listen((event) {
+      // ✅ DÜZELTME: Loading state'i burada güncelle
+      if (_isLoading) {
+        _isLoading = false;
       }
+
+      if (event == null) return;
+
+      try {
+        final stateString = event['currentState'] as String?;
+        if (stateString != null) {
+          _currentState = PomodoroState.values.firstWhere(
+            (e) => e.toString() == stateString,
+            orElse: () => PomodoroState.stopped,
+          );
+        }
+
+        _isPaused = event['isPaused'] as bool? ?? true;
+        _remainingTimeInSession = event['remainingTimeInSession'] as int? ?? 0;
+        _completedWorkSessions = event['completedWorkSessions'] as int? ?? 0;
+
+        final progressValue = event['totalActivityProgress'];
+        _totalActivityProgress =
+            (progressValue is num) ? progressValue.toDouble() : 0.0;
+
+        // ✅ DÜZELTME: Debug için log ekle
+        print(
+            "PROVIDER: Service update - State: $_currentState, Paused: $_isPaused, Time: $_remainingTimeInSession");
+
+        notifyListeners();
+      } catch (e) {
+        print("PROVIDER: Error parsing service update: $e");
+        _currentState = PomodoroState.stopped;
+        _isPaused = true;
+        _isLoading = false; // ✅ DÜZELTME: Hata durumunda loading'i kapat
+        notifyListeners();
+      }
+    }, onError: (error) {
+      print("PROVIDER: Service stream error: $error");
+      _currentState = PomodoroState.stopped;
+      _isPaused = true;
+      _isLoading = false; // ✅ DÜZELTME: Hata durumunda loading'i kapat
       notifyListeners();
     });
   }
 
-  void _onSessionEnd() {
-    _timer?.cancel();
-    _isPaused = true;
-
-    // 1. ADIM: Önce biten seansın türüne göre GEREKLİ GÜNCELLEMELERİ YAP.
-    if (_currentState == PomodoroState.work) {
-      _completedWorkSessions++; // Son seans olsa bile, önce bunu say.
-    }
-
-    // 2. ADIM: ŞİMDİ HEDEF KONTROLÜNÜ YAP.
-    final totalElapsedMinutes =
-        ((_alreadyCompletedMinutes * 60) + _totalSecondsInThisRun) ~/ 60;
-    if (totalElapsedMinutes >= _totalTargetMinutes && !_targetReached) {
-      _targetReached = true;
-      _playSound('sounds/target_sound.mp3');
-      notifyListeners();
-      return;
-    }
-
-    // 3. ADIM: Eğer hedefe ulaşılmadıysa, normal seans geçişini yap.
-    if (_currentState == PomodoroState.work) {
-      _playSound('sounds/end_sound.mp3');
-
-      if (_completedWorkSessions % _sessionsBeforeLongBreak == 0) {
-        _currentState = PomodoroState.longBreak;
-        _remainingTimeInSession = _longBreakDuration;
-      } else {
-        _currentState = PomodoroState.shortBreak;
-        _remainingTimeInSession = _shortBreakDuration;
-      }
-      _currentSessionTotalDuration = _remainingTimeInSession;
-    } else {
-      _playSound('sounds/start_sound.mp3');
-      _currentState = PomodoroState.work;
-      _determineNextWorkSessionDuration();
-    }
-
-    notifyListeners();
-  }
-
-  // Work session duration hesaplama
-  void _determineNextWorkSessionDuration() {
-    // Toplam geçen dakikayı hesapla
-    final totalElapsedMinutes =
-        ((_alreadyCompletedMinutes * 60) + _totalSecondsInThisRun) ~/ 60;
-
-    // Kalan aktivite süresi (dakika cinsinden)
-    final remainingMinutesForActivity =
-        _totalTargetMinutes - totalElapsedMinutes;
-
-    if (remainingMinutesForActivity <= 0) {
-      _remainingTimeInSession = 0;
-      _currentSessionTotalDuration = 0;
-      return;
-    }
-
-    // Kalan süreyi saniyeye çevir
-    final remainingSecondsForActivity = remainingMinutesForActivity * 60;
-    if (remainingSecondsForActivity < _workDuration) {
-      _remainingTimeInSession = remainingSecondsForActivity;
-    } else {
-      _remainingTimeInSession = _workDuration;
-    }
-
-    _currentSessionTotalDuration = _remainingTimeInSession;
-  }
-
-  Future<void> _playSound(String soundPath) async {
-    try {
-      await _audioPlayer.play(AssetSource(soundPath));
-    } catch (e) {
-      debugPrint("Error playing sound: $e");
-    }
-  }
-
+  // YENİ: Dispose metodu artık daha anlamlı.
   @override
   void dispose() {
-    _timer?.cancel();
-    _audioPlayer.dispose();
+    // Bu, provider yok edildiğinde dinleyicinin tekrar kurulmasını sağlar.
+    _isServiceListening = false;
     super.dispose();
   }
 }

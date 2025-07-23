@@ -3,15 +3,12 @@ import 'package:flutter_timezone/flutter_timezone.dart';
 import 'package:timezone/data/latest_all.dart' as tz;
 import 'package:timezone/timezone.dart' as tz;
 
-const AndroidNotificationDetails pomodoroNotificationDetails =
-    AndroidNotificationDetails(
-  'pomodoro_channel',
-  'Pomodoro Zamanlayıcı',
-  channelDescription: 'Aktif Pomodoro seansları için bildirimler.',
-  importance: Importance.low,
-  priority: Priority.low,
-  ongoing: true,
-  autoCancel: false,
+const AndroidNotificationChannel pomodoroChannel = AndroidNotificationChannel(
+  'pomodoro_channel', // Kanal ID
+  'Pomodoro Zamanlayıcı', // Kullanıcıya görünecek kanal adı
+  description: 'Aktif Pomodoro seansları için bildirimler.',
+  importance: Importance.low, // Sürekli bildirimler için 'low' daha iyidir.
+  showBadge: false, // Bildirim noktasını gösterme
 );
 
 class NotificationService {
@@ -22,6 +19,13 @@ class NotificationService {
 
   final FlutterLocalNotificationsPlugin _notificationsPlugin =
       FlutterLocalNotificationsPlugin();
+
+  Future<void> createPomodoroChannel() async {
+    final androidPlugin =
+        _notificationsPlugin.resolvePlatformSpecificImplementation<
+            AndroidFlutterLocalNotificationsPlugin>();
+    await androidPlugin?.createNotificationChannel(pomodoroChannel);
+  }
 
   Future<void> configureLocalTimezone() async {
     tz.initializeTimeZones();

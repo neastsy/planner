@@ -2,9 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:gunluk_planlayici/l10n/app_localizations.dart';
 import '../providers/pomodoro_provider.dart';
-import '../providers/activity_provider.dart';
 
-class FocusScreen extends StatelessWidget {
+class FocusScreen extends StatefulWidget {
   final String activityId;
   final String activityName;
 
@@ -13,6 +12,43 @@ class FocusScreen extends StatelessWidget {
     required this.activityId,
     required this.activityName,
   });
+
+  @override
+  State<FocusScreen> createState() => _FocusScreenState();
+}
+
+class _FocusScreenState extends State<FocusScreen> with WidgetsBindingObserver {
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addObserver(this);
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      context.read<PomodoroProvider>().getStatus();
+    });
+  }
+
+  @override
+  void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
+    super.dispose();
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    switch (state) {
+      case AppLifecycleState.resumed:
+        // App foreground'a döndüğünde status'u güncelle
+        if (mounted) {
+          context.read<PomodoroProvider>().getStatus();
+        }
+        break;
+      case AppLifecycleState.paused:
+        // App background'a giderken bir şey yapmanız gerekiyorsa
+        break;
+      default:
+        break;
+    }
+  }
 
   String _formatTime(int totalSeconds) {
     final minutes = (totalSeconds / 60).floor().toString().padLeft(2, '0');
@@ -29,55 +65,42 @@ class FocusScreen extends StatelessWidget {
         return l10n.pomodoro_sessionStateShortBreak;
       case PomodoroState.longBreak:
         return l10n.pomodoro_sessionStateLongBreak;
+      case PomodoroState.stopped:
+        return "Durduruldu";
     }
   }
 
   Future<void> _showExitConfirmationDialog(
       BuildContext context, PomodoroProvider pomodoroProvider) async {
     final l10n = AppLocalizations.of(context)!;
-    final minutesToAdd = pomodoroProvider.minutesToAdd;
 
-    if (minutesToAdd == 0) {
-      pomodoroProvider.stop();
-      Navigator.of(context).pop();
+    // Servis zaten durmuşsa (örneğin görev tamamlandığı için), sormadan çık.
+    if (!pomodoroProvider.isSessionActive) {
+      if (mounted) Navigator.of(context).pop();
       return;
     }
 
-    final bool? shouldSave = await showDialog<bool>(
+    final bool? shouldExit = await showDialog<bool>(
       context: context,
       builder: (ctx) => AlertDialog(
         title: Text(l10n.pomodoro_endSessionTitle),
-        content: Text(l10n.pomodoro_confirmSaveContent(
-            activityName, minutesToAdd.toString())),
+        content: Text(
+            "Odaklanma seansını bitirmek istediğinize emin misiniz? Arka planda kaydedilen ilerleme korunacaktır."),
         actions: [
           TextButton(
             onPressed: () => Navigator.of(ctx).pop(false),
-            child: Text(l10n.pomodoro_dontSave),
+            child: Text(l10n.cancel),
           ),
           TextButton(
             onPressed: () => Navigator.of(ctx).pop(true),
-            child: Text(l10n.pomodoro_saveAndExit),
+            child: Text("Evet, Bitir"),
           ),
         ],
       ),
     );
 
-    if (context.mounted) {
-      if (shouldSave == true) {
-        int durationToSave;
-        if (pomodoroProvider.targetReached) {
-          final int totalTarget = pomodoroProvider.totalTargetMinutes;
-          final int alreadyCompleted = pomodoroProvider.alreadyCompletedMinutes;
-          durationToSave = totalTarget - alreadyCompleted;
-        } else {
-          durationToSave = pomodoroProvider.minutesToAdd;
-        }
-        if (durationToSave > 0) {
-          context
-              .read<ActivityProvider>()
-              .addCompletedDuration(activityId, durationToSave);
-        }
-      }
+    if (shouldExit == true && context.mounted) {
+      pomodoroProvider.stop();
       Navigator.of(context).pop();
     }
   }
@@ -87,17 +110,21 @@ class FocusScreen extends StatelessWidget {
     final l10n = AppLocalizations.of(context)!;
     return Consumer<PomodoroProvider>(
       builder: (context, provider, child) {
+        // YENİ VE DAHA TEMİZ KONTROL
+        if (provider.isLoading) {
+          return const Scaffold(
+            body: Center(child: CircularProgressIndicator()),
+          );
+        }
+        // ===================================================================
+
         final remainingTime = provider.remainingTimeInSession;
-
-        final progress = provider.currentSessionProgress;
-
-        // Debug için konsola yazdır
-        debugPrint(
-            'Progress: $progress, Remaining: $remainingTime, State: ${provider.currentState}');
+        final progress = provider.totalActivityProgress;
 
         return Scaffold(
           appBar: AppBar(
-            title: Text(activityName),
+            // DÜZELTME: widget.activityName kullanılıyor.
+            title: Text(widget.activityName),
             leading: IconButton(
               icon: const Icon(Icons.arrow_back),
               onPressed: () => _showExitConfirmationDialog(context, provider),
@@ -116,6 +143,8 @@ class FocusScreen extends StatelessWidget {
                     fit: StackFit.expand,
                     children: [
                       CircularProgressIndicator(
+                        // DÜZELTME: Seans ilerlemesini daha doğru hesaplayalım.
+                        // Bu, servisten gelen toplam ilerlemedir.
                         value: progress,
                         strokeWidth: 12,
                         backgroundColor: Theme.of(context)
@@ -156,7 +185,7 @@ class FocusScreen extends StatelessWidget {
                             : Icons.pause_rounded,
                       ),
                       onPressed: () {
-                        provider.toggleTimer();
+                        provider.togglePause();
                       },
                     ),
                     const SizedBox(width: 40),

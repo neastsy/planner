@@ -6,6 +6,8 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_phoenix/flutter_phoenix.dart';
+import 'package:gunluk_planlayici/services/background_pomodoro_service.dart';
+import 'package:path_provider/path_provider.dart';
 
 import 'package:gunluk_planlayici/l10n/app_localizations.dart';
 import 'package:gunluk_planlayici/models/activity_model.dart';
@@ -23,8 +25,17 @@ import 'package:gunluk_planlayici/utils/constants.dart';
 import 'adepters/color_adapter.dart';
 import 'adepters/time_of_day_adapter.dart';
 
+String dbPath = '';
+
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
+
+  // YENİ: Veritabanı yolunu bul ve global değişkene ata.
+  final directory = await getApplicationDocumentsDirectory();
+  dbPath = directory.path;
+
+  // Arka plan servisini yapılandır.
+  await initializeService();
 
   await SystemChrome.setPreferredOrientations([
     DeviceOrientation.portraitUp,
@@ -34,8 +45,9 @@ Future<void> main() async {
   try {
     await NotificationService().configureLocalTimezone();
     await NotificationService().init();
+    await NotificationService().createPomodoroChannel();
 
-    await Hive.initFlutter();
+    await Hive.initFlutter(dbPath);
 
     Hive.registerAdapter(ActivityAdapter());
     Hive.registerAdapter(ActivityTemplateAdapter());
