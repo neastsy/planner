@@ -428,4 +428,7 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get pomodoroPermissionRequired => '番茄钟需要通知权限才能工作。';
+
+  @override
+  String get themeColor => '主题颜色';
 }

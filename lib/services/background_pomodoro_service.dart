@@ -158,13 +158,13 @@ void onStart(ServiceInstance service) async {
         completedWorkSessions++;
         service.invoke('play_sound', {'sound': 'sounds/end_sound.mp3'});
       }
-      final totalElapsedSeconds =
-          (alreadyCompletedMinutes * 60) + totalSecondsInThisRun;
-      final totalElapsedMinutes = totalElapsedSeconds ~/ 60;
+
+      final totalElapsedMinutes =
+          ((alreadyCompletedMinutes * 60) + totalSecondsInThisRun) ~/ 60;
+
       if (totalElapsedMinutes >= totalTargetMinutes) {
-        if (workSecondsForSaving > 0) {
-          await saveProgress();
-        }
+        await saveProgress();
+
         currentState = PomodoroState.stopped;
         updateUIAndNotification(isFinished: true);
         service.invoke('task_completed');
@@ -259,9 +259,69 @@ void onStart(ServiceInstance service) async {
       updateUIAndNotification();
     });
 
-    service.on('stop').listen((event) {
+    service.on('stop').listen((event) async {
+      debugPrint("BACKGROUND_SERVICE: Stop command received.");
       timer?.cancel();
       timer = null;
+
+      try {
+        // 1. O ana kadar kaç tam dakika geçtiğini hesapla.
+        final int minutesCompletedThisRun = totalSecondsInThisRun ~/ 60;
+
+        // 2. Bu seans başlamadan önce zaten tamamlanmış olan süreyle topla.
+        final int finalTotalCompletedMinutes =
+            alreadyCompletedMinutes + minutesCompletedThisRun;
+
+        // 3. Eğer kaydedilecek yeni bir ilerleme varsa...
+        if (finalTotalCompletedMinutes > alreadyCompletedMinutes) {
+          debugPrint(
+              "Stop command: Final progress to save is $finalTotalCompletedMinutes minutes.");
+
+          // 4. DOĞRUDAN HIVE'A YAZMA MANTIĞI
+          // ActivityRepository'ye güvenmek yerine, son kaydı burada kendimiz yapıyoruz.
+          if (activityRepository != null) {
+            // Önce en güncel aktivite listesini alalım
+            final Map<String, List<Activity>> allActivities =
+                await activityRepository!.loadActivities();
+            final List<Activity> activitiesForDay =
+                List<Activity>.from(allActivities[currentDayKey] ?? []);
+            final index =
+                activitiesForDay.indexWhere((a) => a.id == currentActivityId);
+
+            if (index != -1) {
+              final oldActivity = activitiesForDay[index];
+
+              // Sürenin, aktivitenin toplam süresini aşmadığından emin ol.
+              final newCompletedDuration = finalTotalCompletedMinutes.clamp(
+                  0, oldActivity.durationInMinutes);
+
+              final updatedActivity = Activity(
+                id: oldActivity.id,
+                name: oldActivity.name,
+                startTime: oldActivity.startTime,
+                endTime: oldActivity.endTime,
+                color: oldActivity.color,
+                note: oldActivity.note,
+                notificationMinutesBefore:
+                    oldActivity.notificationMinutesBefore,
+                tags: oldActivity.tags,
+                isNotificationRecurring: oldActivity.isNotificationRecurring,
+                completedDurationInMinutes: newCompletedDuration,
+              );
+
+              activitiesForDay[index] = updatedActivity;
+              // Son durumu Hive'a yaz ve bitmesini bekle.
+              await activityRepository!
+                  .saveActivitiesForDay(currentDayKey, activitiesForDay);
+              debugPrint("Final progress saved successfully to Hive.");
+            }
+          }
+        }
+      } catch (e) {
+        debugPrint("Error during final save on stop: $e");
+      }
+
+      // 5. Tüm kayıt işlemleri bittikten sonra servisi durdur.
       currentState = PomodoroState.stopped;
       updateUIAndNotification();
       service.stopSelf();

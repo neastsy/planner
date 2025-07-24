@@ -175,5 +175,6 @@
   "permissionRequired": "権限が必要です",
   "permissionExplanation": "通知とポモドーロタイマーを使用するには、アプリの設定で通知権限を有効にする必要があります。",
   "openSettings": "設定を開く",
-  "pomodoroPermissionRequired": "ポモドーロタイマーが機能するには、通知権限が必要です。"     
+  "pomodoroPermissionRequired": "ポモドーロタイマーが機能するには、通知権限が必要です。",
+  "themeColor": "テーマカラー" 
 }

@@ -429,4 +429,7 @@ class AppLocalizationsJa extends AppLocalizations {
 
   @override
   String get pomodoroPermissionRequired => 'ポモドーロタイマーが機能するには、通知権限が必要です。';
+
+  @override
+  String get themeColor => 'テーマカラー';
 }

@@ -189,5 +189,6 @@
   "permissionRequired": "İzin Gerekli",
   "permissionExplanation": "Bildirimleri ve Pomodoro zamanlayıcıyı kullanmak için uygulama ayarlarından bildirim iznini etkinleştirmeniz gerekmektedir.",
   "openSettings": "Ayarları Aç",
-  "pomodoroPermissionRequired": "Pomodoro zamanlayıcısının çalışması için bildirim izni gereklidir."
+  "pomodoroPermissionRequired": "Pomodoro zamanlayıcısının çalışması için bildirim izni gereklidir.",
+  "themeColor": "Tema Rengi"
 }

@@ -438,4 +438,7 @@ class AppLocalizationsTr extends AppLocalizations {
   @override
   String get pomodoroPermissionRequired =>
       'Pomodoro zamanlayıcısının çalışması için bildirim izni gereklidir.';
+
+  @override
+  String get themeColor => 'Tema Rengi';
 }

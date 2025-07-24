@@ -440,4 +440,7 @@ class AppLocalizationsRu extends AppLocalizations {
   @override
   String get pomodoroPermissionRequired =>
       'Для работы таймера Pomodoro требуется разрешение на уведомления.';
+
+  @override
+  String get themeColor => 'Цвет темы';
 }

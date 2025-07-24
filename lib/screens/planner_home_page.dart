@@ -235,14 +235,15 @@ class _PlannerHomePageState extends State<PlannerHomePage>
   }
 
   void _showSettingsDialog(BuildContext context) {
-    final l10n = AppLocalizations.of(context)!;
     showDialog(
       context: context,
       builder: (BuildContext dialogContext) {
         return Consumer<SettingsProvider>(
           builder: (context, settingsProvider, child) {
+            final dialogL10n = AppLocalizations.of(context)!;
+
             return AlertDialog(
-              title: Text(l10n.settings),
+              title: Text(dialogL10n.settings),
               content: SingleChildScrollView(
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
@@ -251,7 +252,7 @@ class _PlannerHomePageState extends State<PlannerHomePage>
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        Text(l10n.theme,
+                        Text(dialogL10n.theme,
                             style:
                                 const TextStyle(fontWeight: FontWeight.bold)),
                         ThemeSwitcher(
@@ -266,7 +267,8 @@ class _PlannerHomePageState extends State<PlannerHomePage>
                       ],
                     ),
                     const Divider(),
-                    Text("Theme Color",
+                    // DÜZELTME: "Theme Color" metni yerelleştirildi.
+                    Text(dialogL10n.themeColor,
                         style: const TextStyle(fontWeight: FontWeight.bold)),
                     const SizedBox(height: 12),
                     Wrap(
@@ -292,10 +294,9 @@ class _PlannerHomePageState extends State<PlannerHomePage>
                               boxShadow: [
                                 if (isSelected)
                                   BoxShadow(
-                                    color: theme.primaryColor.withAlpha(128),
-                                    blurRadius: 5,
-                                    spreadRadius: 1,
-                                  )
+                                      color: theme.primaryColor.withAlpha(128),
+                                      blurRadius: 5,
+                                      spreadRadius: 1)
                               ],
                             ),
                           ),
@@ -303,7 +304,7 @@ class _PlannerHomePageState extends State<PlannerHomePage>
                       }).toList(),
                     ),
                     const Divider(),
-                    Text(l10n.selectLanguage,
+                    Text(dialogL10n.selectLanguage,
                         style: const TextStyle(fontWeight: FontWeight.bold)),
                     const SizedBox(height: 8),
                     DropdownButtonFormField<Language>(
@@ -335,7 +336,7 @@ class _PlannerHomePageState extends State<PlannerHomePage>
                     const Divider(),
                     TextButton.icon(
                       icon: const Icon(Icons.notifications_on_outlined),
-                      label: Text(l10n.viewPendingNotifications),
+                      label: Text(dialogL10n.viewPendingNotifications),
                       onPressed: () {
                         Navigator.of(dialogContext).pop();
                         _showPendingNotificationsDialog();
@@ -349,7 +350,7 @@ class _PlannerHomePageState extends State<PlannerHomePage>
                     const Divider(),
                     TextButton.icon(
                       icon: const Icon(Icons.file_copy_outlined),
-                      label: Text(l10n.manageTemplates),
+                      label: Text(dialogL10n.manageTemplates),
                       onPressed: () {
                         Navigator.of(dialogContext).pop();
                         Navigator.of(context).push(MaterialPageRoute(
@@ -368,7 +369,7 @@ class _PlannerHomePageState extends State<PlannerHomePage>
               actions: [
                 TextButton(
                   onPressed: () => Navigator.of(dialogContext).pop(),
-                  child: Text(l10n.close.toUpperCase()),
+                  child: Text(dialogL10n.close.toUpperCase()),
                 ),
               ],
             );

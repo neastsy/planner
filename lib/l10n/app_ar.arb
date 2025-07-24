@@ -175,5 +175,6 @@
   "permissionRequired": "الإذن مطلوب",
   "permissionExplanation": "لاستخدام الإشعارات ومؤقت بومودورو، تحتاج إلى تمكين أذونات الإشعارات في إعدادات التطبيق.",
   "openSettings": "فتح الإعدادات",
-  "pomodoroPermissionRequired": "إذن الإشعارات مطلوب لكي يعمل مؤقت بومودورو."  
+  "pomodoroPermissionRequired": "إذن الإشعارات مطلوب لكي يعمل مؤقت بومودورو.",
+  "themeColor": "لون السمة"
 }

@@ -190,5 +190,6 @@
   "permissionRequired": "Permission Required",
   "permissionExplanation": "To use notifications and the Pomodoro timer, you need to enable notification permissions in the app settings.",
   "openSettings": "Open Settings",
-  "pomodoroPermissionRequired": "Notification permission is required for the Pomodoro timer to work."
+  "pomodoroPermissionRequired": "Notification permission is required for the Pomodoro timer to work.",
+  "themeColor": "Theme Color"
 }

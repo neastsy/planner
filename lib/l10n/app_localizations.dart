@@ -892,6 +892,12 @@ abstract class AppLocalizations {
   /// In tr, this message translates to:
   /// **'Pomodoro zamanlayıcısının çalışması için bildirim izni gereklidir.'**
   String get pomodoroPermissionRequired;
+
+  /// No description provided for @themeColor.
+  ///
+  /// In tr, this message translates to:
+  /// **'Tema Rengi'**
+  String get themeColor;
 }
 
 class _AppLocalizationsDelegate

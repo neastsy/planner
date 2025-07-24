@@ -28,6 +28,36 @@ class ActivityProvider with ChangeNotifier {
     super.dispose();
   }
 
+  Future<void> setCompletedDuration(
+      String activityId, String dayKey, int totalCompletedMinutes) async {
+    final activitiesForDay = _dailyActivities[dayKey];
+    if (activitiesForDay == null) return;
+
+    final index = activitiesForDay.indexWhere((a) => a.id == activityId);
+    if (index != -1) {
+      final oldActivity = activitiesForDay[index];
+      final newCompletedDuration =
+          totalCompletedMinutes.clamp(0, oldActivity.durationInMinutes);
+
+      final updatedActivity = Activity(
+        id: oldActivity.id,
+        name: oldActivity.name,
+        startTime: oldActivity.startTime,
+        endTime: oldActivity.endTime,
+        color: oldActivity.color,
+        note: oldActivity.note,
+        notificationMinutesBefore: oldActivity.notificationMinutesBefore,
+        tags: oldActivity.tags,
+        isNotificationRecurring: oldActivity.isNotificationRecurring,
+        completedDurationInMinutes: newCompletedDuration,
+      );
+
+      activitiesForDay[index] = updatedActivity;
+      _dailyActivities[dayKey] = activitiesForDay;
+      await _saveActivitiesForDay(dayKey);
+    }
+  }
+
   Future<void> reloadActivitiesFromDB() async {
     debugPrint("ActivityProvider: Reloading activities from database...");
     _dailyActivities = await _activityRepository.loadActivities();

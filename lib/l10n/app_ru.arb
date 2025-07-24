@@ -175,5 +175,6 @@
   "permissionRequired": "Требуется разрешение",
   "permissionExplanation": "Чтобы использовать уведомления и таймер Pomodoro, вам необходимо включить разрешения на уведомления в настройках приложения.",
   "openSettings": "Открыть настройки",
-  "pomodoroPermissionRequired": "Для работы таймера Pomodoro требуется разрешение на уведомления."  
+  "pomodoroPermissionRequired": "Для работы таймера Pomodoro требуется разрешение на уведомления.",
+  "themeColor": "Цвет темы"  
 }

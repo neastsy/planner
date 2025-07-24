@@ -438,4 +438,7 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get pomodoroPermissionRequired =>
       'Notification permission is required for the Pomodoro timer to work.';
+
+  @override
+  String get themeColor => 'Theme Color';
 }

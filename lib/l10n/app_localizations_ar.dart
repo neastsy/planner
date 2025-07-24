@@ -435,4 +435,7 @@ class AppLocalizationsAr extends AppLocalizations {
   @override
   String get pomodoroPermissionRequired =>
       'إذن الإشعارات مطلوب لكي يعمل مؤقت بومودورو.';
+
+  @override
+  String get themeColor => 'لون السمة';
 }
