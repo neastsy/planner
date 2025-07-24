@@ -53,8 +53,8 @@ void onStart(ServiceInstance service) async {
     String currentDayKey = '';
     int currentSessionTotalDuration = 0;
 
-    const int workDuration = 2 * 60;
-    const int shortBreakDuration = 1 * 60;
+    const int workDuration = 25 * 60;
+    const int shortBreakDuration = 5 * 60;
     const int longBreakDuration = 15 * 60;
     const int sessionsBeforeLongBreak = 4;
 
