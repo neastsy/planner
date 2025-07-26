@@ -79,14 +79,22 @@ class _FocusScreenState extends State<FocusScreen> with WidgetsBindingObserver {
       if (mounted) Navigator.of(context).pop();
       return;
     }
+    final int elapsedSeconds = pomodoroProvider.currentSessionTotalDuration -
+        pomodoroProvider.remainingTimeInSession;
+    final int elapsedMinutes = elapsedSeconds ~/ 60;
+
+    if (elapsedMinutes < 1) {
+      pomodoroProvider.stop();
+      if (mounted) Navigator.of(context).pop();
+      return;
+    }
 
     final bool? shouldExit = await showDialog<bool>(
       context: context,
       builder: (ctx) => AlertDialog(
         title: Text(l10n.pomodoro_endSessionTitle),
         content: Text(l10n.pomodoro_confirmSaveContent(
-            pomodoroProvider.remainingTimeInSession.toString(),
-            widget.activityName)),
+            widget.activityName, elapsedMinutes.toString())),
         actions: [
           TextButton(
             onPressed: () => Navigator.of(ctx).pop(false),
@@ -103,7 +111,7 @@ class _FocusScreenState extends State<FocusScreen> with WidgetsBindingObserver {
     if (shouldExit == true && context.mounted) {
       pomodoroProvider.stop();
       Navigator.of(context).pop();
-    }
+    } else if (shouldExit == false && context.mounted) {}
   }
 
   @override
