@@ -54,7 +54,7 @@ class _PlannerHomePageState extends State<PlannerHomePage>
     _selectedDate = DateTime.now();
 
     _updateTime();
-    _timer = Timer.periodic(const Duration(seconds: 1), (_) => _updateTime());
+    _timer = Timer.periodic(const Duration(seconds: 60), (_) => _updateTime());
   }
 
   @override
@@ -92,8 +92,10 @@ class _PlannerHomePageState extends State<PlannerHomePage>
 
   void _updateTime() {
     if (mounted) {
-      setState(() => _currentTime =
-          "${DateTime.now().hour.toString().padLeft(2, '0')}:${DateTime.now().minute.toString().padLeft(2, '0')}");
+      setState(() {
+        _currentTime =
+            "${DateTime.now().hour.toString().padLeft(2, '0')}:${DateTime.now().minute.toString().padLeft(2, '0')}";
+      });
     }
   }
 
@@ -1455,7 +1457,50 @@ class _PlannerHomePageState extends State<PlannerHomePage>
                                 itemCount: activities.length,
                                 itemBuilder: (context, index) {
                                   final activity = activities[index];
+                                  bool isCurrentActivity = false;
+                                  final todayKey = AppConstants
+                                      .dayKeys[DateTime.now().weekday - 1];
+                                  if (dayKey == todayKey) {
+                                    final now = TimeOfDay.now();
+                                    int nowInMinutes =
+                                        now.hour * 60 + now.minute;
+
+                                    final startInMinutes =
+                                        activity.startTime.hour * 60 +
+                                            activity.startTime.minute;
+                                    int endInMinutes =
+                                        activity.endTime.hour * 60 +
+                                            activity.endTime.minute;
+
+                                    if (endInMinutes <= startInMinutes) {
+                                      endInMinutes += 24 * 60;
+                                      if (nowInMinutes < startInMinutes) {
+                                        nowInMinutes += 24 * 60;
+                                      }
+                                    }
+
+                                    if (nowInMinutes >= startInMinutes &&
+                                        nowInMinutes < endInMinutes) {
+                                      isCurrentActivity = true;
+                                    }
+
+                                    if (activity.durationInMinutes >= 24 * 60) {
+                                      isCurrentActivity = true;
+                                    }
+                                  }
                                   return Card(
+                                    shape: isCurrentActivity
+                                        ? RoundedRectangleBorder(
+                                            side: BorderSide(
+                                                color: Theme.of(context)
+                                                    .colorScheme
+                                                    .primary,
+                                                width: 2),
+                                            borderRadius:
+                                                BorderRadius.circular(12),
+                                          )
+                                        : null,
+                                    elevation: isCurrentActivity ? 4 : null,
                                     margin: const EdgeInsets.symmetric(
                                         vertical: 8.0),
                                     child: ListTile(
