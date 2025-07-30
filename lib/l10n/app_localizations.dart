@@ -898,6 +898,12 @@ abstract class AppLocalizations {
   /// In tr, this message translates to:
   /// **'Tema Rengi'**
   String get themeColor;
+
+  /// No description provided for @today.
+  ///
+  /// In tr, this message translates to:
+  /// **'Bugün'**
+  String get today;
 }
 
 class _AppLocalizationsDelegate

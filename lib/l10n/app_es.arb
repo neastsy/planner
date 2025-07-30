@@ -176,5 +176,6 @@
   "permissionExplanation": "Para usar las notificaciones y el temporizador Pomodoro, debe habilitar los permisos de notificación en la configuración de la aplicación.",
   "openSettings": "Abrir configuración",
   "pomodoroPermissionRequired": "Se requiere permiso de notificación para que el temporizador Pomodoro funcione.",
-  "themeColor": "Color del tema"
+  "themeColor": "Color del tema",
+  "today": "Hoy"
 }

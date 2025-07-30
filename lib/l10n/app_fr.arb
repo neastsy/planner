@@ -176,5 +176,6 @@
   "permissionExplanation": "Pour utiliser les notifications et le minuteur Pomodoro, vous devez activer les autorisations de notification dans les paramètres de l'application.",
   "openSettings": "Ouvrir les paramètres",
   "pomodoroPermissionRequired": "L'autorisation de notification est requise pour que le minuteur Pomodoro fonctionne.",
-  "themeColor": "Couleur du thème"
+  "themeColor": "Couleur du thème",
+  "today": "Aujourd'hui"
 }

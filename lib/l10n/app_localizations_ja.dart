@@ -432,4 +432,7 @@ class AppLocalizationsJa extends AppLocalizations {
 
   @override
   String get themeColor => 'テーマカラー';
+
+  @override
+  String get today => '今日';
 }

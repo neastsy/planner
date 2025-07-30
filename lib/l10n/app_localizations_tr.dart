@@ -441,4 +441,7 @@ class AppLocalizationsTr extends AppLocalizations {
 
   @override
   String get themeColor => 'Tema Rengi';
+
+  @override
+  String get today => 'Bugün';
 }

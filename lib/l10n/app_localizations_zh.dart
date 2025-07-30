@@ -431,4 +431,7 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get themeColor => '主题颜色';
+
+  @override
+  String get today => '今天';
 }

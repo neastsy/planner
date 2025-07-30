@@ -4,6 +4,7 @@ import '../main.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:intl/intl.dart';
 
 import '../utils/permissions.dart';
 import '../l10n/app_localizations.dart';
@@ -40,6 +41,7 @@ class _PlannerHomePageState extends State<PlannerHomePage>
   late PageController _pageController;
   final TransformationController _transformationController =
       TransformationController();
+  late DateTime _selectedDate;
 
   @override
   void initState() {
@@ -49,6 +51,7 @@ class _PlannerHomePageState extends State<PlannerHomePage>
     final todayIndex = DateTime.now().weekday - 1;
     final startingPage = (1000 * 7) + todayIndex;
     _pageController = PageController(initialPage: startingPage);
+    _selectedDate = DateTime.now();
 
     _updateTime();
     _timer = Timer.periodic(const Duration(seconds: 1), (_) => _updateTime());
@@ -402,6 +405,21 @@ class _PlannerHomePageState extends State<PlannerHomePage>
         ],
       ),
     );
+  }
+
+  void _updateSelectedDate(int dayIndex) {
+    final now = DateTime.now();
+    final todayIndex = now.weekday - 1;
+    int difference = dayIndex - todayIndex;
+
+    if (difference < 0) {
+      difference += 7;
+    }
+
+    setState(() {
+      _selectedDate = DateTime(now.year, now.month, now.day)
+          .add(Duration(days: difference));
+    });
   }
 
   void _showCopyDayDialog(BuildContext context) {
@@ -1162,9 +1180,40 @@ class _PlannerHomePageState extends State<PlannerHomePage>
     final clockColor = Theme.of(context).colorScheme.onSurface;
     final activityProvider = context.watch<ActivityProvider>();
 
+    final String formattedDate =
+        DateFormat.yMMMMEEEEd(Localizations.localeOf(context).toString())
+            .format(_selectedDate);
+
     return Scaffold(
       resizeToAvoidBottomInset: false,
       appBar: AppBar(
+        // YENİ: AppBar'ın 'leading' kısmına "Bugün" butonunu ekle.
+        leading: TextButton(
+          onPressed: () {
+            final todayIndex = DateTime.now().weekday - 1;
+            const middleCycle = 1000;
+            final targetPage = (middleCycle * 7) + todayIndex;
+
+            // Eğer zaten bugündeysek bir şey yapma.
+            if (activityProvider.selectedDay == hiveKeys[todayIndex]) return;
+
+            activityProvider.changeDay(hiveKeys[todayIndex]);
+            _transformationController.value = Matrix4.identity();
+            if (_pageController.page?.round() != targetPage) {
+              _pageController.jumpToPage(targetPage);
+            }
+            // Tarihi de bugüne ayarla.
+            _updateSelectedDate(todayIndex);
+          },
+          child: Text(
+            l10n.today, // .arb dosyalarına 'today' anahtarını eklememiz gerekecek
+            style: TextStyle(
+              fontWeight: FontWeight.bold,
+              color: Theme.of(context).colorScheme.primary,
+            ),
+          ),
+        ),
+        leadingWidth: 80, // Butonun sığması için genişliği ayarla
         title: Text(l10n.appTitle),
         backgroundColor: Colors.transparent,
         elevation: 0,
@@ -1221,6 +1270,7 @@ class _PlannerHomePageState extends State<PlannerHomePage>
                         if (_pageController.page?.round() != targetPage) {
                           _pageController.jumpToPage(targetPage);
                         }
+                        _updateSelectedDate(index);
                       },
                       child: Text(
                         dayLabel,
@@ -1238,6 +1288,16 @@ class _PlannerHomePageState extends State<PlannerHomePage>
               }),
             ),
           ),
+          Padding(
+            padding: const EdgeInsets.only(top: 16.0, bottom: 8.0),
+            child: Text(
+              formattedDate,
+              style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                    fontWeight: FontWeight.bold,
+                    color: Theme.of(context).textTheme.bodySmall?.color,
+                  ),
+            ),
+          ),
           Expanded(
             child: PageView.builder(
               controller: _pageController,
@@ -1246,6 +1306,7 @@ class _PlannerHomePageState extends State<PlannerHomePage>
                 final dayIndex = pageIndex % 7;
                 context.read<ActivityProvider>().changeDay(hiveKeys[dayIndex]);
                 _transformationController.value = Matrix4.identity();
+                _updateSelectedDate(dayIndex);
               },
               itemBuilder: (context, pageIndex) {
                 final dayKey = hiveKeys[pageIndex % 7];

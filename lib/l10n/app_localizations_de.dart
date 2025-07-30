@@ -448,4 +448,7 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get themeColor => 'Themenfarbe';
+
+  @override
+  String get today => 'Heute';
 }

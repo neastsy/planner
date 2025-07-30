@@ -438,4 +438,7 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get themeColor => 'لون السمة';
+
+  @override
+  String get today => 'اليوم';
 }

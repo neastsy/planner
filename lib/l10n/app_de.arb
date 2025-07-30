@@ -176,5 +176,6 @@
   "permissionExplanation": "Um Benachrichtigungen und den Pomodoro-Timer zu verwenden, müssen Sie die Benachrichtigungsberechtigungen in den App-Einstellungen aktivieren.",
   "openSettings": "Einstellungen öffnen",
   "pomodoroPermissionRequired": "Die Benachrichtigungsberechtigung ist erforderlich, damit der Pomodoro-Timer funktioniert.",
-  "themeColor": "Themenfarbe"
+  "themeColor": "Themenfarbe",
+  "today": "Heute"
 }

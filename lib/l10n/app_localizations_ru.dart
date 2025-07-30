@@ -443,4 +443,7 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get themeColor => 'Цвет темы';
+
+  @override
+  String get today => 'Сегодня';
 }
