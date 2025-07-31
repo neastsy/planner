@@ -1314,6 +1314,10 @@ class _PlannerHomePageState extends State<PlannerHomePage>
                 final dayKey = hiveKeys[pageIndex % 7];
                 final activities =
                     activityProvider.dailyActivities[dayKey] ?? [];
+                final todayKey =
+                    AppConstants.dayKeys[DateTime.now().weekday - 1];
+                final bool isToday = (dayKey == todayKey);
+
                 return Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 16.0),
                   child: Column(
@@ -1341,6 +1345,9 @@ class _PlannerHomePageState extends State<PlannerHomePage>
                                     .bodySmall!
                                     .color!,
                                 circleColor: Theme.of(context).dividerColor,
+                                currentTime:
+                                    TimeOfDay.fromDateTime(DateTime.now()),
+                                isToday: isToday,
                               ),
                               child: Center(
                                 child: Column(
