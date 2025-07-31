@@ -1142,13 +1142,14 @@ class _PlannerHomePageState extends State<PlannerHomePage>
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
       ),
-      builder: (context) {
+      builder: (bottomSheetContext) {
+        // 'context' çakışmasını önlemek için 'bottomSheetContext' kullandık
         return Wrap(
           children: <Widget>[
             ListTile(
               title: Text(
                 activity.name,
-                style: Theme.of(context).textTheme.titleLarge,
+                style: Theme.of(bottomSheetContext).textTheme.titleLarge,
                 textAlign: TextAlign.center,
               ),
             ),
@@ -1160,14 +1161,42 @@ class _PlannerHomePageState extends State<PlannerHomePage>
             ),
             ListTile(
               leading: Icon(Icons.refresh_rounded,
-                  color: Theme.of(context).colorScheme.error),
+                  color: Theme.of(bottomSheetContext).colorScheme.error),
               title: Text(
                 l10n.pomodoro_resetProgress,
-                style: TextStyle(color: Theme.of(context).colorScheme.error),
+                style: TextStyle(
+                    color: Theme.of(bottomSheetContext).colorScheme.error),
               ),
-              onTap: () {
-                activityProvider.resetCompletedDuration(activity.id);
-                Navigator.pop(context);
+              // --- DEĞİŞİKLİK BURADA BAŞLIYOR ---
+              onTap: () async {
+                // Önce alttaki menüyü kapatıyoruz ki diyalog onun üstünde görünmesin.
+                Navigator.pop(bottomSheetContext);
+
+                final bool? shouldReset = await showDialog<bool>(
+                  context: context, // Ana sayfanın context'ini kullan
+                  builder: (dialogContext) => AlertDialog(
+                    title: Text(l10n.pomodoro_resetConfirmationTitle),
+                    content: Text(l10n.pomodoro_resetConfirmationContent),
+                    actions: [
+                      TextButton(
+                        onPressed: () => Navigator.pop(dialogContext, false),
+                        child: Text(l10n.cancel),
+                      ),
+                      TextButton(
+                        style: TextButton.styleFrom(
+                          foregroundColor: Theme.of(context).colorScheme.error,
+                        ),
+                        onPressed: () => Navigator.pop(dialogContext, true),
+                        child: Text(l10n.pomodoro_resetProgress),
+                      ),
+                    ],
+                  ),
+                );
+
+                // Diyalogdan 'true' sonucu dönerse sıfırlama işlemini yap.
+                if (shouldReset == true) {
+                  activityProvider.resetCompletedDuration(activity.id);
+                }
               },
             ),
           ],

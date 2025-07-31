@@ -177,5 +177,7 @@
   "openSettings": "Ouvrir les paramètres",
   "pomodoroPermissionRequired": "L'autorisation de notification est requise pour que le minuteur Pomodoro fonctionne.",
   "themeColor": "Couleur du thème",
-  "today": "Aujourd'hui"
+  "today": "Aujourd'hui",
+  "pomodoro_resetConfirmationTitle": "Confirmer la réinitialisation", 
+  "pomodoro_resetConfirmationContent": "Voulez-vous vraiment réinitialiser la progression Pomodoro pour cette activité ? Cette action est irréversible."
 }

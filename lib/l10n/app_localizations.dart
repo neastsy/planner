@@ -904,6 +904,18 @@ abstract class AppLocalizations {
   /// In tr, this message translates to:
   /// **'Bugün'**
   String get today;
+
+  /// No description provided for @pomodoro_resetConfirmationTitle.
+  ///
+  /// In tr, this message translates to:
+  /// **'Sıfırlamayı Onayla'**
+  String get pomodoro_resetConfirmationTitle;
+
+  /// No description provided for @pomodoro_resetConfirmationContent.
+  ///
+  /// In tr, this message translates to:
+  /// **'Bu aktivite için Pomodoro ilerlemesini sıfırlamak istediğinizden emin misiniz? Bu işlem geri alınamaz.'**
+  String get pomodoro_resetConfirmationContent;
 }
 
 class _AppLocalizationsDelegate

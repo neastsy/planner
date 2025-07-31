@@ -177,5 +177,7 @@
   "openSettings": "فتح الإعدادات",
   "pomodoroPermissionRequired": "إذن الإشعارات مطلوب لكي يعمل مؤقت بومودورو.",
   "themeColor": "لون السمة",
-  "today": "اليوم"
+  "today": "اليوم",
+  "pomodoro_resetConfirmationTitle": "تأكيد إعادة التعيين",
+  "pomodoro_resetConfirmationContent": "هل أنت متأكد من أنك تريد إعادة تعيين تقدم بومودورو لهذا النشاط؟ لا يمكن التراجع عن هذا الإجراء."
 }

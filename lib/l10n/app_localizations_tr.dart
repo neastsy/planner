@@ -444,4 +444,11 @@ class AppLocalizationsTr extends AppLocalizations {
 
   @override
   String get today => 'Bugün';
+
+  @override
+  String get pomodoro_resetConfirmationTitle => 'Sıfırlamayı Onayla';
+
+  @override
+  String get pomodoro_resetConfirmationContent =>
+      'Bu aktivite için Pomodoro ilerlemesini sıfırlamak istediğinizden emin misiniz? Bu işlem geri alınamaz.';
 }

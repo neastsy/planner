@@ -451,4 +451,11 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get today => 'Heute';
+
+  @override
+  String get pomodoro_resetConfirmationTitle => 'Zurücksetzen bestätigen';
+
+  @override
+  String get pomodoro_resetConfirmationContent =>
+      'Möchten Sie den Pomodoro-Fortschritt für diese Aktivität wirklich zurücksetzen? Diese Aktion kann nicht rückgängig gemacht werden.';
 }

@@ -446,4 +446,11 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get today => 'Сегодня';
+
+  @override
+  String get pomodoro_resetConfirmationTitle => 'Подтвердите сброс';
+
+  @override
+  String get pomodoro_resetConfirmationContent =>
+      'Вы уверены, что хотите сбросить прогресс Pomodoro для этого занятия? Это действие необратимо.';
 }

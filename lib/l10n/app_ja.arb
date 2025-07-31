@@ -177,5 +177,7 @@
   "openSettings": "設定を開く",
   "pomodoroPermissionRequired": "ポモドーロタイマーが機能するには、通知権限が必要です。",
   "themeColor": "テーマカラー",
-  "today": "今日"
+  "today": "今日",
+  "pomodoro_resetConfirmationTitle": "リセットの確認",
+  "pomodoro_resetConfirmationContent": "このアクティビティのポモドーロの進捗をリセットしてもよろしいですか？この操作は元に戻せません。"
 }

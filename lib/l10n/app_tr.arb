@@ -191,5 +191,7 @@
   "openSettings": "Ayarları Aç",
   "pomodoroPermissionRequired": "Pomodoro zamanlayıcısının çalışması için bildirim izni gereklidir.",
   "themeColor": "Tema Rengi",
-  "today": "Bugün"
+  "today": "Bugün",
+  "pomodoro_resetConfirmationTitle": "Sıfırlamayı Onayla",
+  "pomodoro_resetConfirmationContent": "Bu aktivite için Pomodoro ilerlemesini sıfırlamak istediğinizden emin misiniz? Bu işlem geri alınamaz."
 }

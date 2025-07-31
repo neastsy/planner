@@ -435,4 +435,11 @@ class AppLocalizationsJa extends AppLocalizations {
 
   @override
   String get today => '今日';
+
+  @override
+  String get pomodoro_resetConfirmationTitle => 'リセットの確認';
+
+  @override
+  String get pomodoro_resetConfirmationContent =>
+      'このアクティビティのポモドーロの進捗をリセットしてもよろしいですか？この操作は元に戻せません。';
 }

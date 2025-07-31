@@ -177,5 +177,7 @@
   "openSettings": "Abrir configuración",
   "pomodoroPermissionRequired": "Se requiere permiso de notificación para que el temporizador Pomodoro funcione.",
   "themeColor": "Color del tema",
-  "today": "Hoy"
+  "today": "Hoy",
+  "pomodoro_resetConfirmationTitle": "Confirmar reinicio",
+  "pomodoro_resetConfirmationContent": "¿Está seguro de que desea reiniciar el progreso de Pomodoro para esta actividad? Esta acción no se puede deshacer."
 }

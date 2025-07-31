@@ -192,5 +192,7 @@
   "openSettings": "Open Settings",
   "pomodoroPermissionRequired": "Notification permission is required for the Pomodoro timer to work.",
   "themeColor": "Theme Color",
-  "today": "Today"
+  "today": "Today",
+  "pomodoro_resetConfirmationTitle": "Confirm Reset",
+  "pomodoro_resetConfirmationContent": "Are you sure you want to reset the Pomodoro progress for this activity? This action cannot be undone."
 }

@@ -434,4 +434,10 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get today => '今天';
+
+  @override
+  String get pomodoro_resetConfirmationTitle => '确认重置';
+
+  @override
+  String get pomodoro_resetConfirmationContent => '您确定要重置此活动的番茄钟进度吗？此操作无法撤销。';
 }

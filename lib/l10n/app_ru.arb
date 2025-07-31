@@ -177,5 +177,7 @@
   "openSettings": "Открыть настройки",
   "pomodoroPermissionRequired": "Для работы таймера Pomodoro требуется разрешение на уведомления.",
   "themeColor": "Цвет темы",
-  "today": "Сегодня"
+  "today": "Сегодня",
+  "pomodoro_resetConfirmationTitle": "Подтвердите сброс",
+  "pomodoro_resetConfirmationContent": "Вы уверены, что хотите сбросить прогресс Pomodoro для этого занятия? Это действие необратимо."
 }

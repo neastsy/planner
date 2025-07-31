@@ -177,5 +177,7 @@
   "openSettings": "Einstellungen öffnen",
   "pomodoroPermissionRequired": "Die Benachrichtigungsberechtigung ist erforderlich, damit der Pomodoro-Timer funktioniert.",
   "themeColor": "Themenfarbe",
-  "today": "Heute"
+  "today": "Heute",
+  "pomodoro_resetConfirmationTitle": "Zurücksetzen bestätigen",
+  "pomodoro_resetConfirmationContent": "Möchten Sie den Pomodoro-Fortschritt für diese Aktivität wirklich zurücksetzen? Diese Aktion kann nicht rückgängig gemacht werden."
 }

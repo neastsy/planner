@@ -441,4 +441,11 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get today => 'اليوم';
+
+  @override
+  String get pomodoro_resetConfirmationTitle => 'تأكيد إعادة التعيين';
+
+  @override
+  String get pomodoro_resetConfirmationContent =>
+      'هل أنت متأكد من أنك تريد إعادة تعيين تقدم بومودورو لهذا النشاط؟ لا يمكن التراجع عن هذا الإجراء.';
 }
