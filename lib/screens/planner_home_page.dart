@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:intl/intl.dart';
+import 'package:sticky_headers/sticky_headers.dart';
 
 import '../utils/permissions.dart';
 import '../l10n/app_localizations.dart';
@@ -972,26 +973,72 @@ class _PlannerHomePageState extends State<PlannerHomePage>
 
     final selectedTemplate = await showDialog<ActivityTemplate>(
       context: context,
-      builder: (context) => AlertDialog(
-        title: Text(l10n.selectTemplate),
-        content: SizedBox(
-          width: double.maxFinite,
-          child: ListView.builder(
-            shrinkWrap: true,
-            itemCount: templateProvider.templates.length,
-            itemBuilder: (context, index) {
-              final template = templateProvider.templates[index];
-              return ListTile(
-                leading: Icon(Icons.circle, color: template.color),
-                title: Text(template.name),
-                onTap: () {
-                  Navigator.of(context).pop(template);
-                },
-              );
-            },
+      builder: (context) {
+        // Provider'dan kategorize edilmiş veriyi al.
+        final categorizedTemplates = templateProvider.templatesByCategory;
+        // Kategorileri sırala.
+        final sortedCategories = categorizedTemplates.keys.toList()
+          ..sort((a, b) {
+            if (a == 'untagged') return 1;
+            if (b == 'untagged') return -1;
+            return a.compareTo(b);
+          });
+
+        return AlertDialog(
+          title: Text(l10n.selectTemplate),
+          content: SizedBox(
+            width: double.maxFinite,
+            child: ListView.builder(
+              shrinkWrap: true,
+              itemCount: sortedCategories.length,
+              itemBuilder: (context, index) {
+                final category = sortedCategories[index];
+                final templates = categorizedTemplates[category]!;
+
+                return StickyHeader(
+                  header: Container(
+                    height: 40.0,
+                    color: DialogTheme.of(context).backgroundColor ??
+                        Theme.of(context).cardTheme.color ??
+                        Theme.of(context).colorScheme.surface,
+                    padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                    alignment: Alignment.centerLeft,
+                    child: Text(
+                      category == 'untagged' ? l10n.untagged : category,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: Theme.of(context)
+                          .textTheme
+                          .titleMedium
+                          ?.copyWith(fontWeight: FontWeight.bold),
+                    ),
+                  ),
+                  content: Column(
+                    children: templates.map((template) {
+                      return ListTile(
+                        leading:
+                            Icon(Icons.circle, color: template.color, size: 20),
+                        title: Text(template.name),
+                        subtitle: Text(l10n.durationLabel(
+                            template.durationInMinutes.toString())),
+                        onTap: () {
+                          Navigator.of(context).pop(template);
+                        },
+                      );
+                    }).toList(),
+                  ),
+                );
+              },
+            ),
           ),
-        ),
-      ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(),
+              child: Text(l10n.cancel),
+            )
+          ],
+        );
+      },
     );
 
     if (selectedTemplate == null || !mounted) return;
