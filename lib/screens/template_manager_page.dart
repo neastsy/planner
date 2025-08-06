@@ -125,6 +125,8 @@ class _TemplateManagerPageState extends State<TemplateManagerPage> {
                   alignment: Alignment.centerLeft,
                   child: Text(
                     category == 'untagged' ? l10n.untagged : category,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
                     style: Theme.of(context)
                         .textTheme
                         .titleLarge
