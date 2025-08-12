@@ -57,5 +57,14 @@ class AppTheme {
       darkBackgroundColor: Color(0xFF2a224a),
       darkCardColor: Color(0xFF3c316e),
     ),
+    const AppTheme(
+      name: 'Amber Yellow',
+      primaryColor: Colors.amber,
+      lightBackgroundColor: Color(0xFFFFFBEB), // Çok açık sarı
+      lightCardColor: Color(0xFFFEF3C7), // Açık sarı
+      darkBackgroundColor: Color(0xFF291d00), // Çok koyu sarı/kahve
+      darkCardColor: Color(0xFF412d00), // Koyu sarı/kahve
+    ),
+    // --- YENİ TEMA SONU ---
   ];
 }

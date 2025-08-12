@@ -255,46 +255,74 @@ class _PlannerHomePageState extends State<PlannerHomePage>
                   mainAxisSize: MainAxisSize.min,
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Text(dialogL10n.theme,
-                            style:
-                                const TextStyle(fontWeight: FontWeight.bold)),
-                        ThemeSwitcher(
-                          isDarkMode:
-                              settingsProvider.themeMode == ThemeMode.dark,
-                          onToggle: (isDark) {
-                            final newMode =
-                                isDark ? ThemeMode.dark : ThemeMode.light;
-                            settingsProvider.changeThemeMode(newMode);
-                          },
-                        ),
-                      ],
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 4.0),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text(dialogL10n.theme,
+                              style:
+                                  const TextStyle(fontWeight: FontWeight.bold)),
+                          ThemeSwitcher(
+                            isDarkMode:
+                                settingsProvider.themeMode == ThemeMode.dark,
+                            onToggle: (isDark) {
+                              final newMode =
+                                  isDark ? ThemeMode.dark : ThemeMode.light;
+                              settingsProvider.changeThemeMode(newMode);
+                            },
+                          ),
+                        ],
+                      ),
                     ),
                     if (settingsProvider.themeMode == ThemeMode.dark)
                       Padding(
                         padding: const EdgeInsets.only(
-                            top: 8.0), // Üstten biraz boşluk
-                        child: SwitchListTile(
-                          title: Text(dialogL10n.useAmoledTheme),
-                          subtitle: Text(dialogL10n.useAmoledThemeSubtitle),
-                          value: settingsProvider.useAmoledTheme,
-                          onChanged: (newValue) {
-                            settingsProvider.changeAmoledTheme(newValue);
-                          },
-                          contentPadding:
-                              const EdgeInsets.symmetric(horizontal: 4),
+                            left: 4.0, right: 4.0, top: 8.0),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            // Açıklamayı içeren esnek bir Column
+                            Expanded(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(dialogL10n.useAmoledTheme),
+                                  const SizedBox(height: 2),
+                                  Text(
+                                    dialogL10n.useAmoledThemeSubtitle,
+                                    style: Theme.of(context)
+                                        .textTheme
+                                        .bodySmall
+                                        ?.copyWith(
+                                          color: Theme.of(context)
+                                              .textTheme
+                                              .bodySmall
+                                              ?.color
+                                              ?.withAlpha((255 * 0.7).round()),
+                                        ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                            // Switch'i sağa yasla
+                            Switch(
+                              value: settingsProvider.useAmoledTheme,
+                              onChanged: (newValue) {
+                                settingsProvider.changeAmoledTheme(newValue);
+                              },
+                            ),
+                          ],
                         ),
                       ),
+                    const SizedBox(height: 12),
                     const Divider(),
-                    // DÜZELTME: "Theme Color" metni yerelleştirildi.
                     Text(dialogL10n.themeColor,
                         style: const TextStyle(fontWeight: FontWeight.bold)),
                     const SizedBox(height: 12),
-                    Wrap(
-                      spacing: 16,
-                      runSpacing: 12,
+                    Row(
+                      // Elemanlar arasında ve kenarlarda eşit boşluk bırak.
+                      mainAxisAlignment: MainAxisAlignment.spaceAround,
                       children: AppTheme.themeList.map((theme) {
                         final bool isSelected =
                             theme.name == settingsProvider.appTheme.name;
@@ -324,6 +352,7 @@ class _PlannerHomePageState extends State<PlannerHomePage>
                         );
                       }).toList(),
                     ),
+                    const SizedBox(height: 12), // Altına biraz boşluk ekleyelim
                     const Divider(),
                     Text(dialogL10n.selectLanguage,
                         style: const TextStyle(fontWeight: FontWeight.bold)),
