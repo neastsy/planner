@@ -179,5 +179,7 @@
   "themeColor": "テーマカラー",
   "today": "今日",
   "pomodoro_resetConfirmationTitle": "リセットの確認",
-  "pomodoro_resetConfirmationContent": "このアクティビティのポモドーロの進捗をリセットしてもよろしいですか？この操作は元に戻せません。"
+  "pomodoro_resetConfirmationContent": "このアクティビティのポモドーロの進捗をリセットしてもよろしいですか？この操作は元に戻せません。",
+  "useAmoledTheme": "AMOLEDブラックテーマ",
+  "useAmoledThemeSubtitle": "OLEDスクリーンでバッテリーを節約するために純粋な黒の背景を使用します。"
 }

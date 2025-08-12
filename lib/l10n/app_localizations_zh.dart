@@ -440,4 +440,10 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get pomodoro_resetConfirmationContent => '您确定要重置此活动的番茄钟进度吗？此操作无法撤销。';
+
+  @override
+  String get useAmoledTheme => 'AMOLED 纯黑主题';
+
+  @override
+  String get useAmoledThemeSubtitle => '在 OLED 屏幕上使用纯黑背景以节省电池电量。';
 }

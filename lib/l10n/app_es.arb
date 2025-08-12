@@ -179,5 +179,7 @@
   "themeColor": "Color del tema",
   "today": "Hoy",
   "pomodoro_resetConfirmationTitle": "Confirmar reinicio",
-  "pomodoro_resetConfirmationContent": "¿Está seguro de que desea reiniciar el progreso de Pomodoro para esta actividad? Esta acción no se puede deshacer."
+  "pomodoro_resetConfirmationContent": "¿Está seguro de que desea reiniciar el progreso de Pomodoro para esta actividad? Esta acción no se puede deshacer.",
+  "useAmoledTheme": "Tema Negro AMOLED",
+  "useAmoledThemeSubtitle": "Usa un fondo negro puro para ahorrar batería en pantallas OLED."
 }

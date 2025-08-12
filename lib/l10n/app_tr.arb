@@ -193,5 +193,7 @@
   "themeColor": "Tema Rengi",
   "today": "Bugün",
   "pomodoro_resetConfirmationTitle": "Sıfırlamayı Onayla",
-  "pomodoro_resetConfirmationContent": "Bu aktivite için Pomodoro ilerlemesini sıfırlamak istediğinizden emin misiniz? Bu işlem geri alınamaz."
+  "pomodoro_resetConfirmationContent": "Bu aktivite için Pomodoro ilerlemesini sıfırlamak istediğinizden emin misiniz? Bu işlem geri alınamaz.",
+  "useAmoledTheme": "AMOLED Siyah Tema",
+  "useAmoledThemeSubtitle": "OLED ekranlarda pil tasarrufu için saf siyah arka plan kullanır."
 }

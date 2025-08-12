@@ -7,10 +7,12 @@ class SettingsProvider with ChangeNotifier {
   static const String _themeModeKey = 'themeMode';
   static const String _localeKey = 'locale';
   static const String _themeNameKey = 'themeName';
+  static const String _useAmoledThemeKey = 'useAmoledTheme';
 
   ThemeMode _themeMode = ThemeMode.dark;
   Locale? _locale;
   AppTheme _appTheme = AppTheme.themeList.first;
+  bool _useAmoledTheme = false;
 
   SettingsProvider(this._settingsBox) {
     _loadSettings();
@@ -20,6 +22,7 @@ class SettingsProvider with ChangeNotifier {
   ThemeMode get themeMode => _themeMode;
   Locale? get locale => _locale;
   AppTheme get appTheme => _appTheme;
+  bool get useAmoledTheme => _useAmoledTheme;
 
   void _loadSettings() {
     // Açık/Koyu modunu yükle
@@ -37,6 +40,9 @@ class SettingsProvider with ChangeNotifier {
         defaultValue: AppTheme.themeList.first.name) as String;
     _appTheme = AppTheme.themeList.firstWhere((t) => t.name == themeName,
         orElse: () => AppTheme.themeList.first);
+
+    _useAmoledTheme =
+        _settingsBox.get(_useAmoledThemeKey, defaultValue: false) as bool;
   }
 
   Future<void> changeThemeMode(ThemeMode newMode) async {
@@ -60,6 +66,13 @@ class SettingsProvider with ChangeNotifier {
     if (_locale == newLocale) return;
     _locale = newLocale;
     await _settingsBox.put(_localeKey, newLocale.languageCode);
+    notifyListeners();
+  }
+
+  Future<void> changeAmoledTheme(bool newValue) async {
+    if (_useAmoledTheme == newValue) return;
+    _useAmoledTheme = newValue;
+    await _settingsBox.put(_useAmoledThemeKey, newValue);
     notifyListeners();
   }
 }

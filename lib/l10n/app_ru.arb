@@ -179,5 +179,7 @@
   "themeColor": "Цвет темы",
   "today": "Сегодня",
   "pomodoro_resetConfirmationTitle": "Подтвердите сброс",
-  "pomodoro_resetConfirmationContent": "Вы уверены, что хотите сбросить прогресс Pomodoro для этого занятия? Это действие необратимо."
+  "pomodoro_resetConfirmationContent": "Вы уверены, что хотите сбросить прогресс Pomodoro для этого занятия? Это действие необратимо.",
+  "useAmoledTheme": "Черная тема AMOLED",
+  "useAmoledThemeSubtitle": "Использует чисто черный фон для экономии заряда батареи на OLED-экранах."
 }

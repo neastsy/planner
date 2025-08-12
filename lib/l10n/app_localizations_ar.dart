@@ -448,4 +448,11 @@ class AppLocalizationsAr extends AppLocalizations {
   @override
   String get pomodoro_resetConfirmationContent =>
       'هل أنت متأكد من أنك تريد إعادة تعيين تقدم بومودورو لهذا النشاط؟ لا يمكن التراجع عن هذا الإجراء.';
+
+  @override
+  String get useAmoledTheme => 'سمة AMOLED السوداء';
+
+  @override
+  String get useAmoledThemeSubtitle =>
+      'يستخدم خلفية سوداء خالصة لتوفير طاقة البطارية على شاشات OLED.';
 }

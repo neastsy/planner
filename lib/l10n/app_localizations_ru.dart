@@ -453,4 +453,11 @@ class AppLocalizationsRu extends AppLocalizations {
   @override
   String get pomodoro_resetConfirmationContent =>
       'Вы уверены, что хотите сбросить прогресс Pomodoro для этого занятия? Это действие необратимо.';
+
+  @override
+  String get useAmoledTheme => 'Черная тема AMOLED';
+
+  @override
+  String get useAmoledThemeSubtitle =>
+      'Использует чисто черный фон для экономии заряда батареи на OLED-экранах.';
 }

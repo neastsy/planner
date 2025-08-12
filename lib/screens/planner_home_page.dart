@@ -272,6 +272,21 @@ class _PlannerHomePageState extends State<PlannerHomePage>
                         ),
                       ],
                     ),
+                    if (settingsProvider.themeMode == ThemeMode.dark)
+                      Padding(
+                        padding: const EdgeInsets.only(
+                            top: 8.0), // Üstten biraz boşluk
+                        child: SwitchListTile(
+                          title: Text(dialogL10n.useAmoledTheme),
+                          subtitle: Text(dialogL10n.useAmoledThemeSubtitle),
+                          value: settingsProvider.useAmoledTheme,
+                          onChanged: (newValue) {
+                            settingsProvider.changeAmoledTheme(newValue);
+                          },
+                          contentPadding:
+                              const EdgeInsets.symmetric(horizontal: 4),
+                        ),
+                      ),
                     const Divider(),
                     // DÜZELTME: "Theme Color" metni yerelleştirildi.
                     Text(dialogL10n.themeColor,

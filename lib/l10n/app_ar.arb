@@ -179,5 +179,7 @@
   "themeColor": "لون السمة",
   "today": "اليوم",
   "pomodoro_resetConfirmationTitle": "تأكيد إعادة التعيين",
-  "pomodoro_resetConfirmationContent": "هل أنت متأكد من أنك تريد إعادة تعيين تقدم بومودورو لهذا النشاط؟ لا يمكن التراجع عن هذا الإجراء."
+  "pomodoro_resetConfirmationContent": "هل أنت متأكد من أنك تريد إعادة تعيين تقدم بومودورو لهذا النشاط؟ لا يمكن التراجع عن هذا الإجراء.",
+  "useAmoledTheme": "سمة AMOLED السوداء",
+  "useAmoledThemeSubtitle": "يستخدم خلفية سوداء خالصة لتوفير طاقة البطارية على شاشات OLED."
 }

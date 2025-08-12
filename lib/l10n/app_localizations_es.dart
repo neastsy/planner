@@ -457,4 +457,11 @@ class AppLocalizationsEs extends AppLocalizations {
   @override
   String get pomodoro_resetConfirmationContent =>
       '¿Está seguro de que desea reiniciar el progreso de Pomodoro para esta actividad? Esta acción no se puede deshacer.';
+
+  @override
+  String get useAmoledTheme => 'Tema Negro AMOLED';
+
+  @override
+  String get useAmoledThemeSubtitle =>
+      'Usa un fondo negro puro para ahorrar batería en pantallas OLED.';
 }

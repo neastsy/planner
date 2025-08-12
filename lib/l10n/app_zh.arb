@@ -179,5 +179,7 @@
   "themeColor": "主题颜色",
   "today": "今天",
   "pomodoro_resetConfirmationTitle": "确认重置",
-  "pomodoro_resetConfirmationContent": "您确定要重置此活动的番茄钟进度吗？此操作无法撤销。"
+  "pomodoro_resetConfirmationContent": "您确定要重置此活动的番茄钟进度吗？此操作无法撤销。",
+  "useAmoledTheme": "AMOLED 纯黑主题",
+  "useAmoledThemeSubtitle": "在 OLED 屏幕上使用纯黑背景以节省电池电量。"
 }

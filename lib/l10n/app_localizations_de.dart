@@ -458,4 +458,11 @@ class AppLocalizationsDe extends AppLocalizations {
   @override
   String get pomodoro_resetConfirmationContent =>
       'Möchten Sie den Pomodoro-Fortschritt für diese Aktivität wirklich zurücksetzen? Diese Aktion kann nicht rückgängig gemacht werden.';
+
+  @override
+  String get useAmoledTheme => 'AMOLED Schwarzes Thema';
+
+  @override
+  String get useAmoledThemeSubtitle =>
+      'Verwendet rein schwarzen Hintergrund zur Batterieschonung auf OLED-Bildschirmen.';
 }

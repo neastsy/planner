@@ -194,5 +194,7 @@
   "themeColor": "Theme Color",
   "today": "Today",
   "pomodoro_resetConfirmationTitle": "Confirm Reset",
-  "pomodoro_resetConfirmationContent": "Are you sure you want to reset the Pomodoro progress for this activity? This action cannot be undone."
+  "pomodoro_resetConfirmationContent": "Are you sure you want to reset the Pomodoro progress for this activity? This action cannot be undone.",
+  "useAmoledTheme": "AMOLED Black Theme",
+  "useAmoledThemeSubtitle": "Uses pure black background for battery saving on OLED screens."
 }

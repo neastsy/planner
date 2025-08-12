@@ -451,4 +451,11 @@ class AppLocalizationsTr extends AppLocalizations {
   @override
   String get pomodoro_resetConfirmationContent =>
       'Bu aktivite için Pomodoro ilerlemesini sıfırlamak istediğinizden emin misiniz? Bu işlem geri alınamaz.';
+
+  @override
+  String get useAmoledTheme => 'AMOLED Siyah Tema';
+
+  @override
+  String get useAmoledThemeSubtitle =>
+      'OLED ekranlarda pil tasarrufu için saf siyah arka plan kullanır.';
 }

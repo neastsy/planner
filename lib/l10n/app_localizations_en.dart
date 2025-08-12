@@ -451,4 +451,11 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get pomodoro_resetConfirmationContent =>
       'Are you sure you want to reset the Pomodoro progress for this activity? This action cannot be undone.';
+
+  @override
+  String get useAmoledTheme => 'AMOLED Black Theme';
+
+  @override
+  String get useAmoledThemeSubtitle =>
+      'Uses pure black background for battery saving on OLED screens.';
 }

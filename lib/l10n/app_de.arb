@@ -179,5 +179,7 @@
   "themeColor": "Themenfarbe",
   "today": "Heute",
   "pomodoro_resetConfirmationTitle": "Zurücksetzen bestätigen",
-  "pomodoro_resetConfirmationContent": "Möchten Sie den Pomodoro-Fortschritt für diese Aktivität wirklich zurücksetzen? Diese Aktion kann nicht rückgängig gemacht werden."
+  "pomodoro_resetConfirmationContent": "Möchten Sie den Pomodoro-Fortschritt für diese Aktivität wirklich zurücksetzen? Diese Aktion kann nicht rückgängig gemacht werden.",
+  "useAmoledTheme": "AMOLED Schwarzes Thema",
+  "useAmoledThemeSubtitle": "Verwendet rein schwarzen Hintergrund zur Batterieschonung auf OLED-Bildschirmen."
 }

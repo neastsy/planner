@@ -144,6 +144,8 @@ class MyApp extends StatelessWidget {
     final Color darkBackgroundColor = selectedTheme.darkBackgroundColor;
     final Color darkCardColor = selectedTheme.darkCardColor;
     final Color primaryColor = selectedTheme.primaryColor;
+    final finalDarkBackgroundColor =
+        settingsProvider.useAmoledTheme ? Colors.black : darkBackgroundColor;
 
     return MaterialApp(
       onGenerateTitle: (context) {
@@ -221,9 +223,11 @@ class MyApp extends StatelessWidget {
           textTheme: GoogleFonts.notoSansTextTheme(
             Theme.of(context).primaryTextTheme,
           ).apply(bodyColor: const Color(0xFFe5e7eb)),
-          scaffoldBackgroundColor: darkBackgroundColor,
+          scaffoldBackgroundColor: finalDarkBackgroundColor,
           cardTheme: CardThemeData(
-            color: darkCardColor,
+            color: settingsProvider.useAmoledTheme
+                ? const Color(0xFF121212) // Saf siyaha yakın koyu gri
+                : darkCardColor,
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(12.0),
             ),

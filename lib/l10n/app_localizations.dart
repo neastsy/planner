@@ -916,6 +916,18 @@ abstract class AppLocalizations {
   /// In tr, this message translates to:
   /// **'Bu aktivite için Pomodoro ilerlemesini sıfırlamak istediğinizden emin misiniz? Bu işlem geri alınamaz.'**
   String get pomodoro_resetConfirmationContent;
+
+  /// No description provided for @useAmoledTheme.
+  ///
+  /// In tr, this message translates to:
+  /// **'AMOLED Siyah Tema'**
+  String get useAmoledTheme;
+
+  /// No description provided for @useAmoledThemeSubtitle.
+  ///
+  /// In tr, this message translates to:
+  /// **'OLED ekranlarda pil tasarrufu için saf siyah arka plan kullanır.'**
+  String get useAmoledThemeSubtitle;
 }
 
 class _AppLocalizationsDelegate
