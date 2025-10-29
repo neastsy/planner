@@ -333,7 +333,7 @@ class _AddActivitySheetState extends State<AddActivitySheet>
                       fontWeight: FontWeight.bold, fontSize: 16)),
               const SizedBox(height: 10),
               DropdownButtonFormField<int?>(
-                value: _selectedNotificationMinutes,
+                initialValue: _selectedNotificationMinutes,
                 onChanged: isRecurringEnabled
                     ? null
                     : (int? newValue) {

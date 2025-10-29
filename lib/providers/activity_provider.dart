@@ -137,6 +137,42 @@ class ActivityProvider with ChangeNotifier {
     notifyListeners();
   }
 
+  Future<void> toggleActivityCompleted(String activityId) async {
+    String? dayKeyOfActivity;
+    int? indexInList;
+
+    // Aktiviteyi tüm günler içinde ara
+    for (var dayKey in _dailyActivities.keys) {
+      final activities = _dailyActivities[dayKey]!;
+      final index = activities.indexWhere((a) => a.id == activityId);
+      if (index != -1) {
+        dayKeyOfActivity = dayKey;
+        indexInList = index;
+        break;
+      }
+    }
+
+    if (dayKeyOfActivity != null && indexInList != null) {
+      final activitiesForDay = _dailyActivities[dayKeyOfActivity]!;
+      final oldActivity = activitiesForDay[indexInList];
+
+      // copyWith kullanarak yeni bir aktivite nesnesi oluştur ve isCompleted durumunu tersine çevir
+      final updatedActivity = oldActivity.copyWith(
+        isCompleted: !oldActivity.isCompleted,
+      );
+
+      // Listeyi güncelle
+      activitiesForDay[indexInList] = updatedActivity;
+      _dailyActivities[dayKeyOfActivity] = activitiesForDay;
+
+      // Değişikliği veritabanına kaydet
+      await _saveActivitiesForDay(dayKeyOfActivity);
+
+      // UI'ı bilgilendir
+      notifyListeners();
+    }
+  }
+
   Future<void> _loadActivities() async {
     _dailyActivities = await _activityRepository.loadActivities();
     _dailyActivities.forEach((_, list) => _sortList(list));

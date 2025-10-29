@@ -358,7 +358,7 @@ class _PlannerHomePageState extends State<PlannerHomePage>
                         style: const TextStyle(fontWeight: FontWeight.bold)),
                     const SizedBox(height: 8),
                     DropdownButtonFormField<Language>(
-                      value: Language.languageList().firstWhere(
+                      initialValue: Language.languageList().firstWhere(
                         (lang) =>
                             lang.code ==
                             (settingsProvider.locale?.languageCode ??
@@ -471,14 +471,13 @@ class _PlannerHomePageState extends State<PlannerHomePage>
 
   void _showCopyDayDialog(BuildContext context) {
     final activityProvider =
-        Provider.of<ActivityProvider>(context, listen: false);
+    Provider.of<ActivityProvider>(context, listen: false);
     final l10n = AppLocalizations.of(context)!;
 
     final String sourceDayKey = activityProvider.selectedDay;
     final String sourceDayLabel = _days[hiveKeys.indexOf(sourceDayKey)];
 
-    final List<String> availableDays = List.from(hiveKeys)
-      ..remove(sourceDayKey);
+    final List<String> availableDays = List.from(hiveKeys)..remove(sourceDayKey);
     String targetDayKey = availableDays.first;
 
     CopyMode selectedMode = CopyMode.merge;
@@ -524,7 +523,9 @@ class _PlannerHomePageState extends State<PlannerHomePage>
                   RadioListTile<CopyMode>(
                     title: Text(l10n.copyModeMerge),
                     value: CopyMode.merge,
+                    // ignore: deprecated_member_use
                     groupValue: selectedMode,
+                    // ignore: deprecated_member_use
                     onChanged: (CopyMode? value) {
                       setDialogState(() {
                         selectedMode = value!;
@@ -534,7 +535,9 @@ class _PlannerHomePageState extends State<PlannerHomePage>
                   RadioListTile<CopyMode>(
                     title: Text(l10n.copyModeOverwrite),
                     value: CopyMode.overwrite,
+                    // ignore: deprecated_member_use
                     groupValue: selectedMode,
+                    // ignore: deprecated_member_use
                     onChanged: (CopyMode? value) {
                       setDialogState(() {
                         selectedMode = value!;
@@ -550,12 +553,13 @@ class _PlannerHomePageState extends State<PlannerHomePage>
                 ),
                 TextButton(
                   onPressed: () async {
+                    // ... (geri kalan kod aynı)
                     bool shouldProceed = true;
                     if (selectedMode == CopyMode.overwrite) {
                       if (!activityProvider.isDayEmpty(targetDayKey)) {
                         shouldProceed =
                             await _showFinalOverwriteConfirmationDialog(context,
-                                    toDay: targetDayKey) ??
+                                toDay: targetDayKey) ??
                                 false;
                       }
                     }
@@ -574,7 +578,7 @@ class _PlannerHomePageState extends State<PlannerHomePage>
 
                     if (context.mounted) {
                       final targetDayLabel =
-                          _days[hiveKeys.indexOf(targetDayKey)];
+                      _days[hiveKeys.indexOf(targetDayKey)];
                       ScaffoldMessenger.of(context).showSnackBar(
                         SnackBar(
                           content: Text(
@@ -588,7 +592,7 @@ class _PlannerHomePageState extends State<PlannerHomePage>
                           ),
                           behavior: SnackBarBehavior.floating,
                           backgroundColor:
-                              Theme.of(context).colorScheme.secondaryContainer,
+                          Theme.of(context).colorScheme.secondaryContainer,
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(24),
                           ),
@@ -1615,34 +1619,65 @@ class _PlannerHomePageState extends State<PlannerHomePage>
                                       isCurrentActivity = true;
                                     }
                                   }
+                                  // HATALI OLAN Card(...) BLOKUNU SİLİP, BU DOĞRU KODU YAPIŞTIRIN
                                   return Card(
                                     shape: isCurrentActivity
-                                        ? RoundedRectangleBorder(
-                                            side: BorderSide(
-                                                color: Theme.of(context)
-                                                    .colorScheme
-                                                    .primary,
-                                                width: 2),
-                                            borderRadius:
-                                                BorderRadius.circular(12),
-                                          )
+                                        ? RoundedRectangleBorder( // DÜZELTME: İsim doğru yazıldı.
+                                      side: BorderSide(
+                                          color: Theme.of(context).colorScheme.primary,
+                                          width: 2),
+                                      borderRadius:
+                                      BorderRadius.circular(12),
+                                    )
                                         : null,
                                     elevation: isCurrentActivity ? 4 : null,
+                                    // YENİ: Tamamlanan aktiviteleri daha soluk göster
+                                    color: activity.isCompleted
+                                        ? Theme.of(context).cardTheme.color?.withAlpha(150)
+                                        : Theme.of(context).cardTheme.color,
                                     margin: const EdgeInsets.symmetric(
                                         vertical: 8.0),
                                     child: ListTile(
-                                      leading: Container(
-                                          width: 10, color: activity.color),
-                                      title: Text(activity.name,
-                                          style: Theme.of(context)
+                                      // YENİ: 'leading' artık renkli çubuk yerine bir Checkbox
+                                      leading: Checkbox(
+                                        value: activity.isCompleted,
+                                        onChanged: (bool? newValue) {
+                                          // Provider'daki yeni fonksiyonumuzu çağırıyoruz
+                                          context.read<ActivityProvider>()
+                                              .toggleActivityCompleted(activity.id);
+                                        },
+                                        activeColor: activity.color,
+                                        side: BorderSide(
+                                          color: Theme.of(context).dividerColor,
+                                          width: 2,
+                                        ),
+                                      ),
+                                      title: Text(
+                                        activity.name,
+                                        style: Theme.of(context)
+                                            .textTheme
+                                            .titleMedium
+                                            ?.copyWith(
+                                          fontWeight: FontWeight.bold,
+                                          // YENİ: Tamamlanan aktivitenin üzerini çiz
+                                          decoration: activity.isCompleted
+                                              ? TextDecoration.lineThrough
+                                              : TextDecoration.none,
+                                          // YENİ: Tamamlanan aktivitenin rengini soluklaştır
+                                          color: activity.isCompleted
+                                              ? Theme.of(context)
+                                              .textTheme
+                                              .bodySmall
+                                              ?.color
+                                              : Theme.of(context)
                                               .textTheme
                                               .titleMedium
-                                              ?.copyWith(
-                                                fontWeight: FontWeight.bold,
-                                              )),
+                                              ?.color,
+                                        ),
+                                      ),
                                       subtitle: Column(
                                         crossAxisAlignment:
-                                            CrossAxisAlignment.start,
+                                        CrossAxisAlignment.start,
                                         children: [
                                           Builder(builder: (context) {
                                             final baseSubtitleColor =
@@ -1652,35 +1687,35 @@ class _PlannerHomePageState extends State<PlannerHomePage>
                                                     ?.color;
                                             return Column(
                                               crossAxisAlignment:
-                                                  CrossAxisAlignment.start,
+                                              CrossAxisAlignment.start,
                                               children: [
                                                 Text(
                                                   '${_formatTime(activity.startTime)} - ${_formatTime(activity.endTime)}',
                                                   style: TextStyle(
                                                     color: baseSubtitleColor
                                                         ?.withAlpha((255 * 0.7)
-                                                            .round()),
+                                                        .round()),
                                                   ),
                                                 ),
                                                 if (activity.note != null &&
                                                     activity.note!.isNotEmpty)
                                                   Padding(
                                                     padding:
-                                                        const EdgeInsets.only(
-                                                            top: 4.0),
+                                                    const EdgeInsets.only(
+                                                        top: 4.0),
                                                     child: Text(
                                                       activity.note!,
                                                       style: TextStyle(
                                                         fontStyle:
-                                                            FontStyle.italic,
+                                                        FontStyle.italic,
                                                         color: baseSubtitleColor
                                                             ?.withAlpha(
-                                                                (255 * 0.6)
-                                                                    .round()),
+                                                            (255 * 0.6)
+                                                                .round()),
                                                       ),
                                                       maxLines: 2,
                                                       overflow:
-                                                          TextOverflow.ellipsis,
+                                                      TextOverflow.ellipsis,
                                                     ),
                                                   ),
                                               ],
@@ -1697,30 +1732,30 @@ class _PlannerHomePageState extends State<PlannerHomePage>
                                                   ...activity.tags
                                                       .take(2)
                                                       .map((tag) => Chip(
-                                                            label: Text(tag),
-                                                            labelStyle:
-                                                                TextStyle(
-                                                              fontSize: 12,
-                                                              color: Theme.of(
-                                                                      context)
-                                                                  .colorScheme
-                                                                  .onSecondaryContainer,
-                                                            ),
-                                                            backgroundColor: Theme
-                                                                    .of(context)
-                                                                .colorScheme
-                                                                .secondaryContainer,
-                                                            materialTapTargetSize:
-                                                                MaterialTapTargetSize
-                                                                    .shrinkWrap,
-                                                            padding:
-                                                                const EdgeInsets
-                                                                    .symmetric(
-                                                                    horizontal:
-                                                                        6,
-                                                                    vertical:
-                                                                        0),
-                                                          )),
+                                                    label: Text(tag),
+                                                    labelStyle:
+                                                    TextStyle(
+                                                      fontSize: 12,
+                                                      color: Theme.of(
+                                                          context)
+                                                          .colorScheme
+                                                          .onSecondaryContainer,
+                                                    ),
+                                                    backgroundColor: Theme
+                                                        .of(context)
+                                                        .colorScheme
+                                                        .secondaryContainer,
+                                                    materialTapTargetSize:
+                                                    MaterialTapTargetSize
+                                                        .shrinkWrap,
+                                                    padding:
+                                                    const EdgeInsets
+                                                        .symmetric(
+                                                        horizontal:
+                                                        6,
+                                                        vertical:
+                                                        0),
+                                                  )),
                                                   if (activity.tags.length > 2)
                                                     Chip(
                                                       label: Text(
@@ -1732,12 +1767,12 @@ class _PlannerHomePageState extends State<PlannerHomePage>
                                                             .onSurfaceVariant,
                                                       ),
                                                       backgroundColor: Theme.of(
-                                                              context)
+                                                          context)
                                                           .colorScheme
                                                           .surfaceContainerHighest,
                                                       materialTapTargetSize:
-                                                          MaterialTapTargetSize
-                                                              .shrinkWrap,
+                                                      MaterialTapTargetSize
+                                                          .shrinkWrap,
                                                       padding: const EdgeInsets
                                                           .symmetric(
                                                           horizontal: 6,
@@ -1747,7 +1782,7 @@ class _PlannerHomePageState extends State<PlannerHomePage>
                                               ),
                                             ),
                                           if (activity
-                                                  .completedDurationInMinutes >
+                                              .completedDurationInMinutes >
                                               0)
                                             GestureDetector(
                                               onTap: () {
@@ -1758,42 +1793,42 @@ class _PlannerHomePageState extends State<PlannerHomePage>
                                                 margin: const EdgeInsets.only(
                                                     top: 8.0),
                                                 padding:
-                                                    const EdgeInsets.all(8.0),
+                                                const EdgeInsets.all(8.0),
                                                 decoration: BoxDecoration(
                                                   color: Theme.of(context)
                                                       .colorScheme
                                                       .surfaceContainer,
                                                   borderRadius:
-                                                      BorderRadius.circular(8),
+                                                  BorderRadius.circular(8),
                                                 ),
                                                 child: Column(
                                                   crossAxisAlignment:
-                                                      CrossAxisAlignment.start,
+                                                  CrossAxisAlignment.start,
                                                   children: [
                                                     LinearProgressIndicator(
                                                       value: activity
-                                                                  .durationInMinutes >
-                                                              0
+                                                          .durationInMinutes >
+                                                          0
                                                           ? activity
-                                                                  .completedDurationInMinutes /
-                                                              activity
-                                                                  .durationInMinutes
+                                                          .completedDurationInMinutes /
+                                                          activity
+                                                              .durationInMinutes
                                                           : 0,
                                                       backgroundColor: Theme.of(
-                                                              context)
+                                                          context)
                                                           .colorScheme
                                                           .surfaceContainerHighest,
                                                       valueColor:
-                                                          AlwaysStoppedAnimation<
-                                                                  Color>(
-                                                              activity.color
-                                                                  .withAlpha((255 *
-                                                                          0.7)
-                                                                      .round())),
+                                                      AlwaysStoppedAnimation<
+                                                          Color>(
+                                                          activity.color
+                                                              .withAlpha((255 *
+                                                              0.7)
+                                                              .round())),
                                                       minHeight: 6,
                                                       borderRadius:
-                                                          BorderRadius.circular(
-                                                              3),
+                                                      BorderRadius.circular(
+                                                          3),
                                                     ),
                                                     const SizedBox(height: 4),
                                                     Builder(builder: (context) {
@@ -1814,8 +1849,8 @@ class _PlannerHomePageState extends State<PlannerHomePage>
                                                           fontSize: 12,
                                                           color: baseTextColor
                                                               ?.withAlpha(
-                                                                  (255 * 0.8)
-                                                                      .round()),
+                                                              (255 * 0.8)
+                                                                  .round()),
                                                         ),
                                                       );
                                                     }),
@@ -1836,7 +1871,7 @@ class _PlannerHomePageState extends State<PlannerHomePage>
                                                       .iconTheme
                                                       .color
                                                       ?.withAlpha(
-                                                          (255 * 0.6).round())),
+                                                      (255 * 0.6).round())),
                                               onPressed: () => _editActivity(
                                                   context, activity)),
                                           IconButton(
@@ -1852,11 +1887,11 @@ class _PlannerHomePageState extends State<PlannerHomePage>
                                             },
                                             itemBuilder:
                                                 (BuildContext context) =>
-                                                    <PopupMenuEntry<int>>[
+                                            <PopupMenuEntry<int>>[
                                               PopupMenuItem<int>(
                                                 value: -1,
                                                 child:
-                                                    Text(l10n.notificationsOff),
+                                                Text(l10n.notificationsOff),
                                               ),
                                               PopupMenuItem<int>(
                                                 value: 0,
@@ -1865,7 +1900,7 @@ class _PlannerHomePageState extends State<PlannerHomePage>
                                               PopupMenuItem<int>(
                                                 value: 5,
                                                 child:
-                                                    Text(l10n.notify5MinBefore),
+                                                Text(l10n.notify5MinBefore),
                                               ),
                                               PopupMenuItem<int>(
                                                 value: 15,
@@ -1874,7 +1909,7 @@ class _PlannerHomePageState extends State<PlannerHomePage>
                                               ),
                                             ],
                                             icon:
-                                                _getNotificationIcon(activity),
+                                            _getNotificationIcon(activity),
                                           ),
                                         ],
                                       ),

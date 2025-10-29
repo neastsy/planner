@@ -258,7 +258,7 @@ class _AddEditTemplateSheetState extends State<AddEditTemplateSheet> {
                       fontWeight: FontWeight.bold, fontSize: 16)),
               const SizedBox(height: 10),
               DropdownButtonFormField<int?>(
-                value: _selectedNotificationMinutes,
+                initialValue: _selectedNotificationMinutes,
                 onChanged: (int? newValue) {
                   setState(() {
                     _selectedNotificationMinutes = newValue;

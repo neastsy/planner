@@ -36,6 +36,9 @@ class Activity extends HiveObject {
   @HiveField(9)
   final int completedDurationInMinutes;
 
+  @HiveField(10)
+  final bool isCompleted;
+
   Activity copyWith({
     String? id,
     String? name,
@@ -47,6 +50,7 @@ class Activity extends HiveObject {
     List<String>? tags,
     bool? isNotificationRecurring,
     int? completedDurationInMinutes,
+    bool? isCompleted,
   }) {
     return Activity(
       id: id ?? this.id,
@@ -62,6 +66,7 @@ class Activity extends HiveObject {
           isNotificationRecurring ?? this.isNotificationRecurring,
       completedDurationInMinutes:
           completedDurationInMinutes ?? this.completedDurationInMinutes,
+      isCompleted: isCompleted ?? this.isCompleted,
     );
   }
 
@@ -93,6 +98,7 @@ class Activity extends HiveObject {
     List<String>? tags,
     this.isNotificationRecurring = false,
     this.completedDurationInMinutes = 0,
+    this.isCompleted = false,
   })  : id = id ?? const Uuid().v4(),
         tags = tags ?? [];
 }
